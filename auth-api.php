@@ -1,7 +1,7 @@
 <?php
-// Enable strict error reporting to handle any hidden hosting issues
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Disable HTML error output so JSON doesn't break
+error_reporting(0);
+ini_set('display_errors', 0);
 
 header("Content-Type: application/json");
 
@@ -47,7 +47,7 @@ try {
 // 3. Define the Local Profile Backup Storage Settings
 $baseDir = __DIR__ . '/api/profiles/users/';
 if (!is_dir($baseDir)) {
-    mkdir($baseDir, 0777, true);
+    mkdir($baseDir, 0755, true);
 }
 
 // 4. Reject direct browser entry page loads (GET)
@@ -146,7 +146,7 @@ switch ($action) {
                 file_put_contents($userFilePath, json_encode($userRow, JSON_PRETTY_PRINT));
 
                 // NEW: Add JWT and logging
-                require_once __DIR__ . '/jwt-helper.php';
+                require_once __DIR__ . '/api/jwt-helper.php';
                 $token = JWTSecurity::generateToken($userRow['username']);
                 JWTSecurity::logUserAction($userRow['username'], "User logged into account successfully via web portal.");
 
