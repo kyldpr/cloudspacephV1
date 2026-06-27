@@ -501,10 +501,11 @@
             text-align: center;
         }
 
+        /* Active tab color changed to sage green */
         .settings-tab.active {
-            background: #f4c2c2;
+            background: #b2c9ab;
             color: #0a0a2e;
-            box-shadow: 2px 3px 0 #dbb594;
+            box-shadow: 2px 3px 0 #8a9a7a;
             transform: translateY(-1px);
         }
 
@@ -1189,12 +1190,23 @@
     // ── FORUMS FEATURE ──
     // ============================================================
 
-    // ── Sub-Tab Switcher ──
+    // ── Sub-Tab Switcher (updated version) ──
     function toggleForumSection(targetSection) {
         currentForumSubView = targetSection;
-        document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
-        document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
-        document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
+
+        // Explicitly clear all active classes first
+        document.getElementById('forumFeedTabBtn').classList.remove('active');
+        document.getElementById('forumMyTabBtn').classList.remove('active');
+        document.getElementById('forumCreateTabBtn').classList.remove('active');
+
+        // Then set only the target
+        if (targetSection === 'feed') {
+            document.getElementById('forumFeedTabBtn').classList.add('active');
+        } else if (targetSection === 'my-posts') {
+            document.getElementById('forumMyTabBtn').classList.add('active');
+        } else if (targetSection === 'create') {
+            document.getElementById('forumCreateTabBtn').classList.add('active');
+        }
 
         const feedPanel = document.getElementById('forumMainFeedPanel');
         const createPanel = document.getElementById('forumThreadCreationPanel');
