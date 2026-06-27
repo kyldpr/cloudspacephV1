@@ -89,13 +89,15 @@ class JWTSecurity {
     }
 
     public static function logUserAction($username, $actionDescription) {
-        // Change __DIR__ . '/profiles/users/logs/' to explicitly target the accurate sub-level:
-        $logsDir = dirname(__DIR__) . '/profiles/users/logs/';
+        // Use an absolute canonical path pointing from the api directory safely
+        $logsDir = __DIR__ . '/profiles/users/logs/';
+        
         if (!is_dir($logsDir)) {
+            // Create the directory using recursive flag with proper permissions
             mkdir($logsDir, 0777, true);
         }
 
-        // Sanitize name to prevent file traversal vulnerabilities
+        // Sanitize username to ensure safe filenames
         $safeUsername = preg_replace('/[^a-zA-Z0-9_\-\.\@]/', '_', $username);
         $logFile = $logsDir . $safeUsername . '.json';
 
@@ -110,10 +112,7 @@ class JWTSecurity {
             'action' => $actionDescription
         ];
 
-        // Put the newest action on top
         array_unshift($currentLogs, $newLogEntry);
-        
-        // Write back to the log file
         file_put_contents($logFile, json_encode($currentLogs, JSON_PRETTY_PRINT));
     }
 
