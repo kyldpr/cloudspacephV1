@@ -693,6 +693,38 @@
             display: none;
         }
 
+        /* Style for Publish Thread Button to blend with the UI */
+        #forumSubmitBtn, .comment-submit {
+            background: #1a2a5e;
+            color: #fcf8f0;
+            border: 2px solid #1a2a5e;
+            padding: 0.75rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #b2c9ab;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        #forumSubmitBtn:hover, .comment-submit:hover {
+            background: #b2c9ab;
+            color: #0a0a2e;
+            border-color: #0a0a2e;
+            box-shadow: 1px 1px 0 #0a0a2e;
+            transform: translate(2px, 2px);
+        }
+
+        #forumSubmitBtn:disabled {
+            background: #cccccc;
+            border-color: #bbbbbb;
+            color: #666666;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* ── Refactored Mobile Responsive Layout ── */
         @media (max-width: 768px) {
             .app {
@@ -1194,19 +1226,10 @@
     function toggleForumSection(targetSection) {
         currentForumSubView = targetSection;
 
-        // Explicitly clear all active classes first
-        document.getElementById('forumFeedTabBtn').classList.remove('active');
-        document.getElementById('forumMyTabBtn').classList.remove('active');
-        document.getElementById('forumCreateTabBtn').classList.remove('active');
-
-        // Then set only the target
-        if (targetSection === 'feed') {
-            document.getElementById('forumFeedTabBtn').classList.add('active');
-        } else if (targetSection === 'my-posts') {
-            document.getElementById('forumMyTabBtn').classList.add('active');
-        } else if (targetSection === 'create') {
-            document.getElementById('forumCreateTabBtn').classList.add('active');
-        }
+        // Explicitly set active class on the matching sub-tab button, remove from others
+        document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
+        document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
+        document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
 
         const feedPanel = document.getElementById('forumMainFeedPanel');
         const createPanel = document.getElementById('forumThreadCreationPanel');
