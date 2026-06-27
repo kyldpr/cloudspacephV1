@@ -1,6 +1,9 @@
 <?php
 header("Content-Type: application/json");
 
+// ── Include JWT helper for logging ──
+require_once __DIR__ . '/../jwt-helper.php';
+
 // ── Config ──
 $postsDir  = __DIR__ . '/post/';
 $commentsDir = __DIR__ . '/commnents/';
@@ -248,6 +251,9 @@ switch ($action) {
         }
 
         writeJson($postFile, $post);
+
+        // ── ADD LOGGING AFTER SUCCESSFUL POST CREATION ──
+        JWTSecurity::logUserAction($author, "Created a new forum thread entry: '" . $title . "'");
 
         echo json_encode([
             "status" => "success",
