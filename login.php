@@ -629,7 +629,7 @@
             };
 
             try {
-                const res = await fetch('auth-api', {
+                const res = await fetch('auth-api.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
@@ -682,7 +682,7 @@
             };
 
             try {
-                const res = await fetch('auth-api', {
+                const res = await fetch('auth-api.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
