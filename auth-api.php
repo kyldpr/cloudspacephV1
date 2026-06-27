@@ -5,49 +5,7 @@ ini_set('display_errors', 1);
 
 header("Content-Type: application/json");
 
-// ─────────────────────────────────────────────
-// 0. JWT Helper (self-contained)
-// ─────────────────────────────────────────────
-class JWTSecurity {
-    private static $secret = 'your-super-secret-key-change-this-in-production';
-    private static $algo = 'HS256';
-
-    public static function generateToken($username) {
-        $header = json_encode(['typ' => 'JWT', 'alg' => self::$algo]);
-        $payload = json_encode([
-            'username' => $username,
-            'iat' => time(),
-            'exp' => time() + 3600 * 24 // 24 hours
-        ]);
-
-        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-        $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, self::$secret, true);
-        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
-        return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-    }
-
-    public static function validateToken($token) {
-        $parts = explode('.', $token);
-        if (count($parts) !== 3) return false;
-
-        list($header64, $payload64, $signature64) = $parts;
-        $signature = base64_decode(str_replace(['-', '_'], ['+', '/'], $signature64));
-        $expectedSignature = hash_hmac('sha256', $header64 . "." . $payload64, self::$secret, true);
-
-        if (!hash_equals($expectedSignature, $signature)) return false;
-
-        $payload = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $payload64)), true);
-        if (!$payload || isset($payload['exp']) && $payload['exp'] < time()) return false;
-
-        return $payload;
-    }
-}
-
-// ─────────────────────────────────────────────
 // 1. Native Environment File (.env) Parser Logic
-// ─────────────────────────────────────────────
 $envPath = __DIR__ . '/.env';
 
 if (!file_exists($envPath)) {
@@ -88,8 +46,8 @@ try {
 
 // 3. Define the Local Profile Backup Storage Settings
 $baseDir = __DIR__ . '/api/profiles/users/';
-if (!file_exists($baseDir)) {
-    mkdir($baseDir, 0777, true); // Create directory safely if it drops out
+if (!is_dir($baseDir)) {
+    mkdir($baseDir, 0777, true);
 }
 
 // 4. Reject direct browser entry page loads (GET)
@@ -187,13 +145,15 @@ switch ($action) {
                 $userFilePath = $baseDir . strtolower($userIn) . '.json';
                 file_put_contents($userFilePath, json_encode($userRow, JSON_PRETTY_PRINT));
 
-                // ── GENERATE JWT TOKEN ──
+                // NEW: Add JWT and logging
+                require_once __DIR__ . '/jwt-helper.php';
                 $token = JWTSecurity::generateToken($userRow['username']);
+                JWTSecurity::logUserAction($userRow['username'], "User logged into account successfully via web portal.");
 
                 echo json_encode([
-                    "status" => "success",
+                    "status" => "success", 
                     "message" => "Login successful.",
-                    "token" => $token,   // token included for frontend
+                    "token" => $token,
                     "user" => $userRow
                 ]);
             } else {
@@ -205,7 +165,7 @@ switch ($action) {
         }
         break;
 
-    // ─── CHANGE PASSWORD ───
+    // ─── NEW: CHANGE PASSWORD ───
     case 'change_password':
         $username = trim($inputData['username'] ?? '');
         $current  = trim($inputData['current_password'] ?? '');
@@ -216,6 +176,7 @@ switch ($action) {
             exit;
         }
 
+        // Enforce minimum length (optional)
         if (strlen($new) < 8) {
             echo json_encode(["status" => "error", "message" => "New password must be at least 8 characters."]);
             exit;
@@ -234,6 +195,9 @@ switch ($action) {
             $newHash = password_hash($new, PASSWORD_BCRYPT);
             $update = $pdo->prepare("UPDATE cloudspaceph_users SET passoword = ? WHERE LOWER(username) = LOWER(?)");
             $update->execute([$newHash, $username]);
+
+            // Optionally update the JSON profile (but we don't store password there)
+            // so no need to touch the file.
 
             echo json_encode(["status" => "success", "message" => "Password updated successfully."]);
         } catch (PDOException $e) {
