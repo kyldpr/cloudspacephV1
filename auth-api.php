@@ -47,7 +47,7 @@ try {
 // 3. Define the Local Profile Backup Storage Settings
 $baseDir = __DIR__ . '/api/profiles/users/';
 if (!file_exists($baseDir)) {
-    mkdir($baseDir, 0777, true);
+    mkdir($baseDir, 0777, true); // Create directory safely if it drops out
 }
 
 // 4. Reject direct browser entry page loads (GET)
@@ -157,34 +157,6 @@ switch ($action) {
         } catch (PDOException $e) {
             echo json_encode(["status" => "error", "message" => "Database verification exception occurred: " . $e->getMessage()]);
         }
-        break;
-
-    // ──────────────────────────────────────────────
-    // NEW: getProfile – fetch user JSON profile
-    // ──────────────────────────────────────────────
-    case 'getProfile':
-        $userIn = trim($inputData['username'] ?? '');
-        if (empty($userIn)) {
-            echo json_encode(["status" => "error", "message" => "Username is required."]);
-            exit;
-        }
-
-        $profileFile = $baseDir . strtolower($userIn) . '.json';
-        if (!file_exists($profileFile)) {
-            echo json_encode(["status" => "error", "message" => "Profile not found for user: " . $userIn]);
-            exit;
-        }
-
-        $profileData = json_decode(file_get_contents($profileFile), true);
-        if ($profileData === null) {
-            echo json_encode(["status" => "error", "message" => "Invalid profile data."]);
-            exit;
-        }
-
-        echo json_encode([
-            "status" => "success",
-            "profile" => $profileData
-        ]);
         break;
 
     default:
