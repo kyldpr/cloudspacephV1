@@ -94,7 +94,7 @@ class JWTSecurity {
         
         if (!is_dir($logsDir)) {
             // Create the directory using recursive flag with proper permissions
-            mkdir($logsDir, 0777, true);
+            mkdir($logsDir, 0755, true);
         }
 
         // Sanitize username to ensure safe filenames
