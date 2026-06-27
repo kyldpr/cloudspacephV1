@@ -38,10 +38,10 @@
 
         /* ── Sidebar ── */
         .sidebar {
-            flex: 0 0 auto;              /* don't grow or shrink */
-            width: fit-content;           /* size to content */
-            min-width: 200px;             /* ensure a minimum for readability */
-            max-width: 320px;             /* prevent it from becoming too wide */
+            flex: 0 0 auto;
+            width: fit-content;
+            min-width: 200px;
+            max-width: 320px;
             background: #fcf8f0;
             padding: 2rem 1.8rem;
             border-right: 3px solid #b2c9ab;
@@ -51,11 +51,9 @@
             top: 0;
             height: 100vh;
             overflow-y: auto;
-            /* Hide scrollbars while keeping scroll functionality */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;     /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        /* Hide scrollbar for Chrome, Safari and Opera */
         .sidebar::-webkit-scrollbar,
         .main::-webkit-scrollbar {
             display: none;
@@ -107,7 +105,7 @@
             width: 100%;
             text-align: left;
             font-family: inherit;
-            white-space: nowrap;  /* keep text on one line */
+            white-space: nowrap;
         }
 
         .sidebar nav a:hover {
@@ -261,7 +259,7 @@
             box-shadow: 1px 2px 0 #8a9a7a;
         }
 
-        /* ── POST LIST ── */
+        /* ── POST LIST (reused in forums) ── */
         .post-list { list-style: none; padding: 0; }
         .post-item {
             background: #fff9f0;
@@ -286,8 +284,8 @@
         .post-meta .comments-count { color: #1a2a5e; font-weight: 800; }
         .empty-state { text-align: center; color: #1a2a5e; font-size: 1rem; padding: 2rem 0; }
 
-        /* ── POST DETAIL ── */
-        #postDetailView {
+        /* ── POST DETAIL (for forums) ── */
+        #forumPostDetailView {
             display: none;
         }
 
@@ -326,7 +324,7 @@
             box-shadow: 2px 3px 0 #dbb594;
         }
 
-        /* ── COMMENTS ── */
+        /* ── COMMENTS (for forums detail) ── */
         .comment-section-title {
             font-size: 0.95rem;
             font-weight: 800;
@@ -414,16 +412,17 @@
             background: #b2c9ab;
             color: #0a0a2e;
             border: none;
-            padding: 0.5rem 1.6rem;
+            padding: 0.6rem 2rem;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 2px 4px 0 #8a9a7a;
+            font-family: inherit;
         }
 
-        .comment-form .comment-submit:hover {
+        .comment-form .comment-submit:hover:not(:disabled) {
             background: #9fb89a;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #8a9a7a;
@@ -535,7 +534,8 @@
             margin-bottom: 0.25rem;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 0.6rem 1rem;
             border: 2px solid #b2c9ab;
@@ -549,7 +549,8 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 1px 2px 0 #dbb594;
         }
 
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus {
             border-color: #f4c2c2;
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.2), 1px 2px 0 #dbb594;
@@ -571,6 +572,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 2px 4px 0 #8a9a7a;
+            font-family: inherit;
         }
 
         .submit-btn:hover:not(:disabled) {
@@ -630,6 +632,64 @@
         .log-item .log-time {
             color: #4a6a8a;
             font-weight: 600;
+        }
+
+        /* ── Custom Forum Dashboard Additions ── */
+        .forum-layout-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .search-wrapper-box {
+            width: 100%;
+        }
+        .search-wrapper-box input {
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #b2c9ab;
+            border-radius: 40px;
+            background: #fff9f0;
+            font-size: 0.95rem;
+            outline: none;
+            box-shadow: 2px 3px 0 #dbb594;
+        }
+        .search-wrapper-box input:focus {
+            border-color: #f4c2c2;
+            background: #ffffff;
+        }
+
+        .forum-image-preview-card {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 16px;
+            border: 2px solid #b2c9ab;
+            object-fit: contain;
+            margin: 0.5rem 0;
+            background: #f5ede4;
+        }
+
+        /* ── Custom file input button ── */
+        .custom-file-upload {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: #b2c9ab;
+            color: #0a0a2e;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 2px 4px 0 #8a9a7a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .custom-file-upload:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+            box-shadow: 2px 6px 0 #8a9a7a;
+        }
+        .custom-file-upload input[type="file"] {
+            display: none;
         }
 
         /* ── Refactored Mobile Responsive Layout ── */
@@ -758,6 +818,9 @@
             <a href="#" data-page="settings">
                 <span class="icon-planet" style="width:18px;height:18px;"></span> Settings
             </a>
+            <a href="#" id="nav-forums" data-page="forums">
+                <span class="icon-planet" style="width:18px;height:18px;"></span> Forums
+            </a>
         </nav>
         <button class="logout-btn" id="logoutBtn">
             <span style="display:inline-block;width:20px;height:20px;background:#d4a0a0;border-radius:50%;text-align:center;line-height:20px;font-size:1rem;">🚪</span>
@@ -768,7 +831,7 @@
     <!-- ─── MAIN CONTENT ─── -->
     <main class="main">
 
-        <!-- ─── DASHBOARD PAGE ─── -->
+        <!-- ─── DASHBOARD PAGE (only profile) ─── -->
         <div id="page-dashboard" class="page">
             <div class="user-card" id="userCard">
                 <div class="user-avatar" id="userAvatar">?</div>
@@ -776,37 +839,6 @@
                     <div class="name" id="userName">Loading...</div>
                     <div class="detail" id="userDetail">📧 <span>—</span> &bull; 🎫 <span>—</span></div>
                     <div class="detail" style="font-size:0.75rem; color:#4a6a8a;" id="userSince">📅 Joined: —</div>
-                </div>
-            </div>
-
-            <div id="postListView">
-                <div class="section-title">
-                    📝 Forum Posts
-                    <span class="badge" id="postCount">0</span>
-                </div>
-                <ul class="post-list" id="postList">
-                    <li class="empty-state">⏳ Loading posts...</li>
-                </ul>
-            </div>
-
-            <div id="postDetailView">
-                <div class="post-detail-header">
-                    <button class="back-btn" id="backBtn">← Back</button>
-                    <div class="post-detail-title" id="detailTitle"></div>
-                    <div class="post-detail-meta">
-                        ✍️ by <span class="author" id="detailAuthor"></span>
-                        <span class="date" id="detailDate"></span>
-                    </div>
-                </div>
-                <div class="post-detail-body" id="detailBody"></div>
-                <div class="comment-section-title">💬 Comments</div>
-                <ul class="comments-list" id="commentsList">
-                    <li class="empty-state">No comments yet. Be the first! 😊</li>
-                </ul>
-                <div class="comment-form">
-                    <textarea id="commentInput" placeholder="Write a comment..." maxlength="1000"></textarea>
-                    <button class="comment-submit" id="commentSubmitBtn">📤 Post Comment</button>
-                    <div class="comment-status" id="commentStatus"></div>
                 </div>
             </div>
         </div>
@@ -863,6 +895,85 @@
             </div>
         </div>
 
+        <!-- ─── FORUMS PAGE ─── -->
+        <div id="page-forums" class="page hidden">
+            <div class="user-card">
+                <div class="user-info">
+                    <div class="name">🏛️ Community Interaction Hub</div>
+                    <div class="detail">Share, browse, and track internal system information files.</div>
+                </div>
+            </div>
+
+            <div class="settings-tabs">
+                <button class="settings-tab active" id="forumFeedTabBtn" onclick="toggleForumSection('feed')">🌐 Public Feed</button>
+                <button class="settings-tab" id="forumMyTabBtn" onclick="toggleForumSection('my-posts')">👤 My Forums</button>
+                <button class="settings-tab" id="forumCreateTabBtn" onclick="toggleForumSection('create')">📝 Create Thread</button>
+            </div>
+
+            <div class="forum-layout-container">
+                <!-- Feed Panel -->
+                <div id="forumMainFeedPanel">
+                    <div class="form-group search-wrapper-box" id="searchBarUIElement">
+                        <input type="text" id="forumSearchTextElement" placeholder="🔍 Search existing threads by title or content matching..." oninput="triggerDebouncedSearch()" />
+                    </div>
+                    <div class="section-title" style="margin-top:1.2rem;">
+                        <span id="forumFeedHeadingText">Latest Public Records</span>
+                    </div>
+                    <ul class="post-list" id="globalForumsListElement">
+                        <li class="empty-state">⏳ Querying dataset files...</li>
+                    </ul>
+                </div>
+
+                <!-- Create Thread Panel -->
+                <div id="forumThreadCreationPanel" style="display: none;">
+                    <div class="section-title">✨ Create a New Forum Post</div>
+                    <form id="newForumFormSubmitElement" onsubmit="transmitNewThreadPayload(event)" style="background:#fff9f0; padding:1.5rem; border-radius:24px; border:2px solid #b2c9ab; box-shadow:3px 4px 0 #dbb594;">
+                        <div class="form-group">
+                            <label>📌 Thread Subject Title</label>
+                            <input type="text" id="forumFormTitle" required placeholder="Enter your subject line topic heading..." />
+                        </div>
+                        <div class="form-group">
+                            <label>💬 Thread Content Body</label>
+                            <textarea id="forumFormBody" required style="min-height:120px;" placeholder="Compose detailed discussion points here..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>🖼️ Upload Resource Image <span style="font-weight:normal; font-size:0.8rem; color:#4a6a8a;">(Optional - JPG/PNG)</span></label>
+                            <!-- Custom file upload button -->
+                            <label class="custom-file-upload">
+                                <input type="file" id="forumFormFile" accept="image/*" />
+                                📁 Choose Image
+                            </label>
+                            <span id="fileChosen" style="margin-left: 0.8rem; font-size:0.85rem; color:#4a6a8a;">No file chosen</span>
+                        </div>
+                        <button type="submit" class="comment-submit" id="forumSubmitBtn" style="align-self:flex-start; margin-top:0.5rem;">🚀 Publish Thread</button>
+                        <div id="forumFormStatus" class="comment-status"></div>
+                    </form>
+                </div>
+
+                <!-- Post Detail Panel (for forums) -->
+                <div id="forumPostDetailView">
+                    <div class="post-detail-header">
+                        <button class="back-btn" id="forumBackBtn">← Back to Feed</button>
+                        <div class="post-detail-title" id="forumDetailTitle"></div>
+                        <div class="post-detail-meta">
+                            ✍️ by <span class="author" id="forumDetailAuthor"></span>
+                            <span class="date" id="forumDetailDate"></span>
+                        </div>
+                    </div>
+                    <div class="post-detail-body" id="forumDetailBody"></div>
+                    <div class="comment-section-title">💬 Comments</div>
+                    <ul class="comments-list" id="forumCommentsList">
+                        <li class="empty-state">No comments yet. Be the first! 😊</li>
+                    </ul>
+                    <div class="comment-form">
+                        <textarea id="forumCommentInput" placeholder="Write a comment..." maxlength="1000"></textarea>
+                        <button class="comment-submit" id="forumCommentSubmitBtn">📤 Post Comment</button>
+                        <div class="comment-status" id="forumCommentStatus"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -873,26 +984,31 @@
         window.location.href = 'login';
     }
 
+    // ── Token handling ──
+    if (!localStorage.getItem('cloudspace_token')) {
+        localStorage.setItem('cloudspace_token', 'dummy-token-' + Date.now());
+    }
+
     const API_BASE = 'api/forums/forums-api.php';
     const AUTH_API = 'auth-api.php';
 
     // ── State ──
-    let currentPostId = null;
-    let currentPost = null;
+    let currentForumPostId = null;
+    let currentForumSubView = 'feed';
+    let searchDebounceTimer = null;
 
     // ── UI references ──
-    const postListView = document.getElementById('postListView');
-    const postDetailView = document.getElementById('postDetailView');
-    const backBtn = document.getElementById('backBtn');
     const pageDashboard = document.getElementById('page-dashboard');
     const pageSettings = document.getElementById('page-settings');
+    const pageForums = document.getElementById('page-forums');
     const navLinks = document.querySelectorAll('.sidebar nav a');
     const logoutBtn = document.getElementById('logoutBtn');
 
     // ── Navigation switching ──
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-        document.getElementById('page-' + pageId).classList.remove('hidden');
+        const targetPage = document.getElementById('page-' + pageId);
+        if (targetPage) targetPage.classList.remove('hidden');
 
         navLinks.forEach(link => {
             link.classList.toggle('active', link.dataset.page === pageId);
@@ -900,6 +1016,12 @@
 
         if (pageId === 'settings') {
             showSettingsTab('change-password');
+        } else if (pageId === 'forums') {
+            // Ensure we show feed (and hide detail if open)
+            document.getElementById('forumPostDetailView').style.display = 'none';
+            document.getElementById('forumMainFeedPanel').style.display = 'block';
+            document.getElementById('forumThreadCreationPanel').style.display = 'none';
+            toggleForumSection('feed');
         }
     }
 
@@ -908,12 +1030,9 @@
             e.preventDefault();
             const page = link.dataset.page;
             if (page === 'dashboard') {
-                if (postDetailView.style.display === 'block') {
-                    goBackToList();
-                }
                 showPage('dashboard');
             } else {
-                showPage('settings');
+                showPage(page);
             }
         });
     });
@@ -943,170 +1062,6 @@
         tab.addEventListener('click', () => {
             showSettingsTab(tab.dataset.tab);
         });
-    });
-
-    // ── Load posts ──
-    async function loadPosts() {
-        try {
-            const res = await fetch(API_BASE + '?action=list_posts');
-            const data = await res.json();
-            if (data.status !== 'success') {
-                document.getElementById('postList').innerHTML = '<li class="empty-state">Failed to load posts.</li>';
-                return;
-            }
-            const posts = data.posts;
-            document.getElementById('postCount').textContent = posts.length;
-            const postList = document.getElementById('postList');
-            postList.innerHTML = '';
-            if (posts.length === 0) {
-                postList.innerHTML = '<li class="empty-state">No forum posts yet.</li>';
-                return;
-            }
-            posts.forEach(post => {
-                const li = document.createElement('li');
-                li.className = 'post-item';
-                li.setAttribute('data-post-id', post.id);
-                li.innerHTML = `
-                    <span class="post-title">${escapeHtml(post.title)}</span>
-                    <span class="post-meta">
-                        <span class="author">${escapeHtml(post.author)}</span>
-                        <span class="date">${formatDate(post.timestamp)}</span>
-                        <span class="comments-count">💬 ${post.comment_count || 0}</span>
-                    </span>
-                `;
-                li.addEventListener('click', () => openPost(post.id));
-                postList.appendChild(li);
-            });
-        } catch (err) {
-            console.error('loadPosts error:', err);
-            document.getElementById('postList').innerHTML = '<li class="empty-state">Network error loading posts.</li>';
-        }
-    }
-
-    // ── Open post detail ──
-    async function openPost(postId) {
-        currentPostId = postId;
-        try {
-            const res = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(postId));
-            const data = await res.json();
-            if (data.status !== 'success') {
-                alert('Could not load post.');
-                return;
-            }
-            currentPost = data.post;
-            document.getElementById('detailTitle').textContent = data.post.title;
-            document.getElementById('detailAuthor').textContent = data.post.author;
-            document.getElementById('detailDate').textContent = formatDate(data.post.timestamp);
-            document.getElementById('detailBody').textContent = data.post.content;
-            renderComments(data.comments);
-            postListView.style.display = 'none';
-            postDetailView.style.display = 'block';
-            backBtn.style.display = 'inline-block';
-            document.getElementById('commentInput').value = '';
-            document.getElementById('commentStatus').className = 'comment-status';
-            document.getElementById('commentStatus').textContent = '';
-        } catch (err) {
-            console.error('openPost error:', err);
-            alert('Network error loading post.');
-        }
-    }
-
-    function renderComments(comments) {
-        const list = document.getElementById('commentsList');
-        list.innerHTML = '';
-        if (!comments || comments.length === 0) {
-            list.innerHTML = '<li class="empty-state">No comments yet. Be the first! 😊</li>';
-            return;
-        }
-        const loggedUser = username.toLowerCase();
-        comments.forEach(comment => {
-            const li = document.createElement('li');
-            li.className = 'comment-item';
-            const isYours = comment.author.toLowerCase() === loggedUser;
-            li.innerHTML = `
-                <div class="comment-header">
-                    <span class="comment-author">
-                        ${escapeHtml(comment.author)}
-                        ${isYours ? '<span class="you-badge">You</span>' : ''}
-                    </span>
-                    <span class="comment-date">${formatDate(comment.timestamp)}</span>
-                </div>
-                <div class="comment-content">${escapeHtml(comment.content)}</div>
-            `;
-            list.appendChild(li);
-        });
-    }
-
-    // ── Post comment ──
-    async function postComment() {
-        const input = document.getElementById('commentInput');
-        const content = input.value.trim();
-        const statusEl = document.getElementById('commentStatus');
-        const btn = document.getElementById('commentSubmitBtn');
-        if (!content) {
-            statusEl.className = 'comment-status error';
-            statusEl.textContent = 'Please write a comment.';
-            return;
-        }
-        if (!currentPostId) return;
-        btn.disabled = true;
-        btn.textContent = 'Posting...';
-        statusEl.className = 'comment-status';
-        statusEl.textContent = '';
-        try {
-            const res = await fetch(API_BASE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'add_comment',
-                    post_id: currentPostId,
-                    author: username,
-                    content: content
-                })
-            });
-            const data = await res.json();
-            if (data.status === 'success') {
-                input.value = '';
-                statusEl.className = 'comment-status success';
-                statusEl.textContent = 'Comment posted! ✅';
-                setTimeout(() => {
-                    statusEl.className = 'comment-status';
-                    statusEl.textContent = '';
-                }, 2500);
-                const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentPostId));
-                const postData = await postRes.json();
-                if (postData.status === 'success') {
-                    renderComments(postData.comments);
-                }
-                loadPosts();
-            } else {
-                statusEl.className = 'comment-status error';
-                statusEl.textContent = data.message || 'Failed to post comment.';
-            }
-        } catch (err) {
-            console.error('postComment error:', err);
-            statusEl.className = 'comment-status error';
-            statusEl.textContent = 'Network error posting comment.';
-        }
-        btn.disabled = false;
-        btn.textContent = '📤 Post Comment';
-    }
-
-    function goBackToList() {
-        currentPostId = null;
-        currentPost = null;
-        postDetailView.style.display = 'none';
-        postListView.style.display = 'block';
-        backBtn.style.display = 'none';
-    }
-
-    backBtn.addEventListener('click', goBackToList);
-    document.getElementById('commentSubmitBtn').addEventListener('click', postComment);
-    document.getElementById('commentInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-            e.preventDefault();
-            postComment();
-        }
     });
 
     // ── Format date ──
@@ -1156,6 +1111,7 @@
     // ── Logout ──
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('cloudspace_username');
+        localStorage.removeItem('cloudspace_token');
         window.location.href = 'login';
     });
 
@@ -1229,11 +1185,309 @@
         list.innerHTML = '<li class="empty-state">No logs available.</li>';
     }
 
+    // ============================================================
+    // ── FORUMS FEATURE ──
+    // ============================================================
+
+    // ── Sub-Tab Switcher ──
+    function toggleForumSection(targetSection) {
+        currentForumSubView = targetSection;
+        document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
+        document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
+        document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
+
+        const feedPanel = document.getElementById('forumMainFeedPanel');
+        const createPanel = document.getElementById('forumThreadCreationPanel');
+        const searchBar = document.getElementById('searchBarUIElement');
+        const heading = document.getElementById('forumFeedHeadingText');
+
+        // Hide detail view when switching tabs
+        document.getElementById('forumPostDetailView').style.display = 'none';
+        feedPanel.style.display = 'block';
+
+        if (targetSection === 'create') {
+            feedPanel.style.display = 'none';
+            createPanel.style.display = 'block';
+        } else {
+            createPanel.style.display = 'none';
+            feedPanel.style.display = 'block';
+            searchBar.style.display = 'block';
+            heading.textContent = targetSection === 'my-posts' ? '👤 My Thread Uploads' : '🌐 Latest Public Records';
+            fetchForumFeedDataset();
+        }
+    }
+
+    // ── Debounce ──
+    function triggerDebouncedSearch() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            fetchForumFeedDataset();
+        }, 300);
+    }
+
+    // ── Fetch Feed ──
+    async function fetchForumFeedDataset() {
+        const listElement = document.getElementById('globalForumsListElement');
+        const searchVal = encodeURIComponent(document.getElementById('forumSearchTextElement').value.trim());
+        const savedToken = localStorage.getItem('cloudspace_token') || '';
+
+        let requestURL = `api/forums/forums-api.php?action=list_posts&search=${searchVal}`;
+        if (currentForumSubView === 'my-posts') {
+            requestURL += `&author=${encodeURIComponent(username)}`;
+        }
+
+        try {
+            const response = await fetch(requestURL, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${savedToken}` }
+            });
+            const dataset = await response.json();
+
+            if (dataset.status !== 'success') {
+                listElement.innerHTML = `<li class="empty-state">❌ Unauthorized: ${dataset.message || 'Verification rejected.'}</li>`;
+                return;
+            }
+
+            listElement.innerHTML = '';
+            if (dataset.posts.length === 0) {
+                listElement.innerHTML = '<li class="empty-state">No forum threads matching criteria found.</li>';
+                return;
+            }
+
+            dataset.posts.forEach(post => {
+                const li = document.createElement('li');
+                li.className = 'post-item';
+                li.innerHTML = `
+                    <span class="post-title">${escapeHtml(post.title)} ${post.image ? '🖼️' : ''}</span>
+                    <span class="post-meta">
+                        <span class="author">${escapeHtml(post.author)}</span>
+                        <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
+                        <span class="comments-count">💬 ${post.comment_count || 0}</span>
+                    </span>
+                `;
+                li.onclick = () => openForumPost(post.id);
+                listElement.appendChild(li);
+            });
+        } catch (err) {
+            listElement.innerHTML = '<li class="empty-state">Error connecting to the authenticated security layer.</li>';
+        }
+    }
+
+    // ── Open Post Detail (forums) ──
+    async function openForumPost(postId) {
+        currentForumPostId = postId;
+        try {
+            const res = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(postId));
+            const data = await res.json();
+            if (data.status !== 'success') {
+                alert('Could not load post.');
+                return;
+            }
+
+            // Hide feed and create panels, show detail
+            document.getElementById('forumMainFeedPanel').style.display = 'none';
+            document.getElementById('forumThreadCreationPanel').style.display = 'none';
+            const detailView = document.getElementById('forumPostDetailView');
+            detailView.style.display = 'block';
+
+            // Populate detail
+            document.getElementById('forumDetailTitle').textContent = data.post.title;
+            document.getElementById('forumDetailAuthor').textContent = data.post.author;
+            document.getElementById('forumDetailDate').textContent = formatDate(data.post.timestamp);
+            document.getElementById('forumDetailBody').textContent = data.post.content;
+
+            // Render comments
+            renderForumComments(data.comments);
+
+            // Clear comment input
+            document.getElementById('forumCommentInput').value = '';
+            document.getElementById('forumCommentStatus').className = 'comment-status';
+            document.getElementById('forumCommentStatus').textContent = '';
+
+        } catch (err) {
+            console.error('openForumPost error:', err);
+            alert('Network error loading post.');
+        }
+    }
+
+    // ── Render Comments (forums) ──
+    function renderForumComments(comments) {
+        const list = document.getElementById('forumCommentsList');
+        list.innerHTML = '';
+        if (!comments || comments.length === 0) {
+            list.innerHTML = '<li class="empty-state">No comments yet. Be the first! 😊</li>';
+            return;
+        }
+        const loggedUser = username.toLowerCase();
+        comments.forEach(comment => {
+            const li = document.createElement('li');
+            li.className = 'comment-item';
+            const isYours = comment.author.toLowerCase() === loggedUser;
+            li.innerHTML = `
+                <div class="comment-header">
+                    <span class="comment-author">
+                        ${escapeHtml(comment.author)}
+                        ${isYours ? '<span class="you-badge">You</span>' : ''}
+                    </span>
+                    <span class="comment-date">${formatDate(comment.timestamp)}</span>
+                </div>
+                <div class="comment-content">${escapeHtml(comment.content)}</div>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    // ── Post Comment (forums) ──
+    async function postForumComment() {
+        const input = document.getElementById('forumCommentInput');
+        const content = input.value.trim();
+        const statusEl = document.getElementById('forumCommentStatus');
+        const btn = document.getElementById('forumCommentSubmitBtn');
+
+        if (!content) {
+            statusEl.className = 'comment-status error';
+            statusEl.textContent = 'Please write a comment.';
+            return;
+        }
+        if (!currentForumPostId) return;
+
+        btn.disabled = true;
+        btn.textContent = 'Posting...';
+        statusEl.className = 'comment-status';
+        statusEl.textContent = '';
+
+        try {
+            const res = await fetch(API_BASE, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'add_comment',
+                    post_id: currentForumPostId,
+                    author: username,
+                    content: content
+                })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                input.value = '';
+                statusEl.className = 'comment-status success';
+                statusEl.textContent = 'Comment posted! ✅';
+                setTimeout(() => {
+                    statusEl.className = 'comment-status';
+                    statusEl.textContent = '';
+                }, 2500);
+
+                // Reload comments
+                const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentForumPostId));
+                const postData = await postRes.json();
+                if (postData.status === 'success') {
+                    renderForumComments(postData.comments);
+                }
+                // Refresh feed count in background
+                fetchForumFeedDataset();
+            } else {
+                statusEl.className = 'comment-status error';
+                statusEl.textContent = data.message || 'Failed to post comment.';
+            }
+        } catch (err) {
+            console.error('postForumComment error:', err);
+            statusEl.className = 'comment-status error';
+            statusEl.textContent = 'Network error posting comment.';
+        }
+
+        btn.disabled = false;
+        btn.textContent = '📤 Post Comment';
+    }
+
+    // ── Back to Feed ──
+    function goBackToForumFeed() {
+        document.getElementById('forumPostDetailView').style.display = 'none';
+        document.getElementById('forumMainFeedPanel').style.display = 'block';
+        // If we were in a sub‑tab, keep it
+        // but we also want to refresh the feed
+        fetchForumFeedDataset();
+    }
+
+    // ── Create Thread ──
+    async function transmitNewThreadPayload(event) {
+        event.preventDefault();
+        const submitBtn = document.getElementById('forumSubmitBtn');
+        const statusMsg = document.getElementById('forumFormStatus');
+        const titleVal = document.getElementById('forumFormTitle').value.trim();
+        const bodyVal = document.getElementById('forumFormBody').value.trim();
+        const imageInput = document.getElementById('forumFormFile');
+        const savedToken = localStorage.getItem('cloudspace_token') || '';
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading files...';
+        statusMsg.className = 'comment-status';
+        statusMsg.style.display = 'none';
+
+        const packetBody = new FormData();
+        packetBody.append('action', 'create_post');
+        packetBody.append('title', titleVal);
+        packetBody.append('content', bodyVal);
+        if (imageInput.files[0]) {
+            packetBody.append('image', imageInput.files[0]);
+        }
+
+        try {
+            const response = await fetch('api/forums/forums-api.php', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${savedToken}` },
+                body: packetBody
+            });
+            const outcome = await response.json();
+
+            if (outcome.status === 'success') {
+                document.getElementById('newForumFormSubmitElement').reset();
+                // Reset file input label
+                document.getElementById('fileChosen').textContent = 'No file chosen';
+                statusMsg.className = 'comment-status success';
+                statusMsg.textContent = '🎉 Thread uploaded securely to CloudSpacePH!';
+                statusMsg.style.display = 'block';
+                setTimeout(() => { toggleForumSection('feed'); }, 1200);
+            } else {
+                statusMsg.className = 'comment-status error';
+                statusMsg.textContent = outcome.message || 'Transaction rejected by server files.';
+                statusMsg.style.display = 'block';
+            }
+        } catch (err) {
+            statusMsg.className = 'comment-status error';
+            statusMsg.textContent = 'Network communication interface validation failure.';
+            statusMsg.style.display = 'block';
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚀 Publish Thread';
+    }
+
+    // ── File input display helper ──
+    document.getElementById('forumFormFile').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+        document.getElementById('fileChosen').textContent = fileName;
+    });
+
     // ── Init ──
     loadProfile();
-    loadPosts();
     loadLogs();
     showPage('dashboard');
+
+    // Event listeners for forums detail
+    document.getElementById('forumBackBtn').addEventListener('click', goBackToForumFeed);
+    document.getElementById('forumCommentSubmitBtn').addEventListener('click', postForumComment);
+    document.getElementById('forumCommentInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            postForumComment();
+        }
+    });
+
+    // Expose functions globally for inline onclick handlers
+    window.toggleForumSection = toggleForumSection;
+    window.triggerDebouncedSearch = triggerDebouncedSearch;
+    window.transmitNewThreadPayload = transmitNewThreadPayload;
+    window.openForumPost = openForumPost;
 </script>
 
 </body>
