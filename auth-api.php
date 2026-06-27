@@ -159,6 +159,46 @@ switch ($action) {
         }
         break;
 
+    // ─── NEW: CHANGE PASSWORD ───
+    case 'change_password':
+        $username = trim($inputData['username'] ?? '');
+        $current  = trim($inputData['current_password'] ?? '');
+        $new      = trim($inputData['new_password'] ?? '');
+
+        if (empty($username) || empty($current) || empty($new)) {
+            echo json_encode(["status" => "error", "message" => "All fields are required."]);
+            exit;
+        }
+
+        // Enforce minimum length (optional)
+        if (strlen($new) < 8) {
+            echo json_encode(["status" => "error", "message" => "New password must be at least 8 characters."]);
+            exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare("SELECT passoword FROM cloudspaceph_users WHERE LOWER(username) = LOWER(?)");
+            $stmt->execute([$username]);
+            $row = $stmt->fetch();
+
+            if (!$row || !password_verify($current, $row['passoword'])) {
+                echo json_encode(["status" => "error", "message" => "Current password is incorrect."]);
+                exit;
+            }
+
+            $newHash = password_hash($new, PASSWORD_BCRYPT);
+            $update = $pdo->prepare("UPDATE cloudspaceph_users SET passoword = ? WHERE LOWER(username) = LOWER(?)");
+            $update->execute([$newHash, $username]);
+
+            // Optionally update the JSON profile (but we don't store password there)
+            // so no need to touch the file.
+
+            echo json_encode(["status" => "success", "message" => "Password updated successfully."]);
+        } catch (PDOException $e) {
+            echo json_encode(["status" => "error", "message" => "Database error: " . $e->getMessage()]);
+        }
+        break;
+
     default:
         echo json_encode(["status" => "error", "message" => "Invalid action specified."]);
         break;
