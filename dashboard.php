@@ -14,7 +14,6 @@
             padding: 0;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: 'Open Sans', sans-serif;
             background: #f5ede4;
@@ -25,8 +24,6 @@
             margin: 0;
             position: relative;
         }
-
-        /* ── Main Layout: Sidebar + Content ── */
         .app {
             display: flex;
             width: 100%;
@@ -36,7 +33,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* ── Sidebar ── */
+        /* ── Sidebar (unchanged) ── */
         .sidebar {
             flex: 0 0 auto;
             width: fit-content;
@@ -58,7 +55,6 @@
         .main::-webkit-scrollbar {
             display: none;
         }
-
         .sidebar .brand {
             font-size: 1.6rem;
             font-weight: 900;
@@ -72,7 +68,6 @@
             white-space: nowrap;
             flex-shrink: 0;
         }
-
         .sidebar .brand span {
             background: #b2c9ab;
             padding: 0.2rem 0.6rem;
@@ -80,14 +75,12 @@
             font-size: 0.8rem;
             color: #0a0a2e;
         }
-
         .sidebar nav {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
             flex: 1;
         }
-
         .sidebar nav a {
             display: flex;
             align-items: center;
@@ -107,18 +100,15 @@
             font-family: inherit;
             white-space: nowrap;
         }
-
         .sidebar nav a:hover {
             background: #e8d5c4;
             transform: translateX(4px);
         }
-
         .sidebar nav a.active {
             background: #b2c9ab;
             color: #0a0a2e;
             box-shadow: none;
         }
-
         .sidebar .logout-btn {
             margin-top: auto;
             background: #f4c2c2;
@@ -139,14 +129,11 @@
             box-shadow: 2px 4px 0 #d4a0a0;
             white-space: nowrap;
         }
-
         .sidebar .logout-btn:hover {
             background: #e8b4b8;
             transform: translateX(4px);
             box-shadow: 2px 4px 0 #c09090;
         }
-
-        /* Sidebar icons – minimal planet/star drawings */
         .icon-planet {
             display: inline-block;
             width: 24px;
@@ -187,8 +174,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-
-        /* ── PAGES ── */
         .page {
             display: block;
             animation: fadeIn 0.3s ease;
@@ -196,7 +181,6 @@
         .page.hidden {
             display: none;
         }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -208,7 +192,7 @@
             }
         }
 
-        /* ── USER CARD ── */
+        /* ── USER CARD (unchanged) ── */
         .user-card {
             background: #fff9f0;
             border-radius: 28px;
@@ -221,7 +205,6 @@
             flex-wrap: wrap;
             box-shadow: 4px 6px 0 #dbb594;
         }
-
         .user-avatar {
             width: 64px;
             height: 64px;
@@ -238,7 +221,6 @@
             border: 3px solid #fcf8f0;
             box-shadow: 2px 4px 0 #d4a0a0;
         }
-
         .user-info {
             flex: 1;
         }
@@ -271,7 +253,6 @@
             align-items: center;
             gap: 0.6rem;
         }
-
         .section-title .badge {
             background: #b2c9ab;
             color: #0a0a2e;
@@ -281,49 +262,88 @@
             box-shadow: 1px 2px 0 #8a9a7a;
         }
 
-        /* ── POST LIST (reused in forums) ── */
+        /* ── POST LIST – CARD STYLE ── */
         .post-list {
             list-style: none;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
         .post-item {
             background: #fff9f0;
             border-radius: 20px;
-            padding: 0.8rem 1.2rem;
-            margin-bottom: 0.8rem;
+            padding: 1.2rem 1.5rem;
             border: 2px solid #b2c9ab;
-            transition: all 0.15s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            box-shadow: 2px 4px 0 #dbb594;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            box-shadow: 2px 3px 0 #dbb594;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
         }
         .post-item:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 2px 8px 0 #dbb594;
             background: #fcf3e8;
-            box-shadow: 2px 5px 0 #dbb594;
         }
         .post-item:active {
-            transform: translateY(2px);
-            box-shadow: 2px 1px 0 #dbb594;
+            transform: translateY(3px);
+            box-shadow: 2px 2px 0 #dbb594;
+        }
+
+        /* Thumbnail */
+        .post-thumb {
+            flex: 0 0 110px;
+            height: 110px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f5ede4;
+            border: 2px solid #b2c9ab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .post-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .post-thumb .no-image {
+            font-size: 2.5rem;
+            color: #b2c9ab;
+            font-weight: 700;
+        }
+
+        /* Content area */
+        .post-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 0;
         }
         .post-title {
             font-weight: 700;
             color: #0a0a2e;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.3;
         }
         .post-meta {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #1a2a5e;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
         .post-meta .author {
             font-weight: 700;
             color: #1a2a5e;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         .post-meta .date {
             color: #4a6a8a;
@@ -332,6 +352,24 @@
             color: #1a2a5e;
             font-weight: 800;
         }
+
+        /* Author avatar (circle with initial) */
+        .post-author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f4c2c2;
+            color: #1a2a5e;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            border: 2px solid #b2c9ab;
+            flex-shrink: 0;
+        }
+
         .empty-state {
             text-align: center;
             color: #1a2a5e;
@@ -339,22 +377,19 @@
             padding: 2rem 0;
         }
 
-        /* ── POST DETAIL (for forums) ── */
+        /* ── POST DETAIL ── */
         #forumPostDetailView {
             display: none;
         }
-
         .post-detail-header {
             margin-bottom: 1rem;
         }
-
         .post-detail-title {
             font-size: 1.4rem;
             font-weight: 900;
             color: #0a0a2e;
             line-height: 1.3;
         }
-
         .post-detail-meta {
             font-size: 0.8rem;
             color: #1a2a5e;
@@ -363,12 +398,10 @@
             align-items: center;
             gap: 0.6rem;
         }
-
         .post-detail-meta .author {
             font-weight: 700;
             color: #1a2a5e;
         }
-
         .post-detail-body {
             background: #fff9f0;
             border-radius: 20px;
@@ -381,21 +414,17 @@
             white-space: pre-wrap;
             box-shadow: 2px 3px 0 #dbb594;
         }
-
-        /* ── COMMENTS (for forums detail) ── */
         .comment-section-title {
             font-size: 0.95rem;
             font-weight: 800;
             color: #0a0a2e;
             margin-bottom: 0.6rem;
         }
-
         .comments-list {
             list-style: none;
             padding: 0;
             margin-bottom: 1.2rem;
         }
-
         .comment-item {
             background: #fff9f0;
             border-radius: 18px;
@@ -404,7 +433,6 @@
             border: 2px solid #b2c9ab;
             box-shadow: 2px 2px 0 #dbb594;
         }
-
         .comment-item .comment-header {
             display: flex;
             justify-content: space-between;
@@ -412,23 +440,19 @@
             margin-bottom: 0.25rem;
             font-size: 0.75rem;
         }
-
         .comment-item .comment-author {
             font-weight: 800;
             color: #1a2a5e;
         }
-
         .comment-item .comment-date {
             color: #4a6a8a;
         }
-
         .comment-item .comment-content {
             font-size: 0.9rem;
             color: #0a0a2e;
             line-height: 1.5;
             white-space: pre-wrap;
         }
-
         .comment-item .you-badge {
             background: #f4c2c2;
             color: #1a2a5e;
@@ -439,13 +463,11 @@
             font-weight: 800;
             text-transform: uppercase;
         }
-
         .comment-form {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-
         .comment-form textarea {
             width: 100%;
             padding: 0.7rem 1rem;
@@ -462,13 +484,11 @@
             transition: border-color 0.2s ease;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 1px 2px 0 #dbb594;
         }
-
         .comment-form textarea:focus {
             border-color: #f4c2c2;
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.3), 1px 2px 0 #dbb594;
         }
-
         .comment-form .comment-submit {
             align-self: flex-end;
             background: #b2c9ab;
@@ -482,43 +502,22 @@
             transition: all 0.2s ease;
             box-shadow: 2px 4px 0 #8a9a7a;
             font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
         }
-
         .comment-form .comment-submit:hover:not(:disabled) {
             background: #9fb89a;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #8a9a7a;
         }
-
         .comment-form .comment-submit:disabled {
             background: #d4d9c8;
             box-shadow: 2px 2px 0 #8a9a7a;
             cursor: not-allowed;
             transform: none;
         }
-
-        .comment-status {
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-            margin-top: 0.3rem;
-            display: none;
-        }
-
-        .comment-status.success {
-            display: block;
-            background: #d4edda;
-            color: #155724;
-            box-shadow: 1px 2px 0 #8a9a7a;
-        }
-        .comment-status.error {
-            display: block;
-            background: #f8d7da;
-            color: #721c24;
-            box-shadow: 1px 2px 0 #dbb594;
-        }
-
         .back-btn {
             background: transparent;
             border: none;
@@ -537,15 +536,13 @@
             box-shadow: 1px 2px 0 #dbb594;
         }
 
-        /* ── SETTINGS TABS ── */
-        /* ── Consistent pill-style tabs matching the "Choose Image" button ── */
+        /* ── SETTINGS TABS (unchanged) ── */
         .settings-tabs {
             display: flex;
             gap: 0.6rem;
             flex-wrap: wrap;
             margin-bottom: 1.8rem;
         }
-
         .settings-tab {
             padding: 0.6rem 1.5rem;
             background: #b2c9ab;
@@ -560,41 +557,33 @@
             font-family: inherit;
             white-space: nowrap;
         }
-
         .settings-tab:hover {
             background: #9fb89a;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #8a9a7a;
         }
-
         .settings-tab:active {
             transform: translateY(2px);
             box-shadow: 2px 1px 0 #8a9a7a;
         }
-
         .settings-tab.active {
             background: #1a2a5e;
             color: #fcf8f0;
             box-shadow: 2px 4px 0 #0a0a2e;
         }
-
         .settings-tab.active:hover {
             background: #1a2a5e;
             color: #fcf8f0;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #0a0a2e;
         }
-
-        /* ── SETTINGS PANELS ── */
         .settings-panel {
             display: none;
             animation: fadeSlide 0.25s ease both;
         }
-
         .settings-panel.active {
             display: block;
         }
-
         @keyframes fadeSlide {
             from {
                 opacity: 0;
@@ -609,7 +598,6 @@
         .form-group {
             margin-bottom: 1rem;
         }
-
         .form-group label {
             display: block;
             font-size: 0.85rem;
@@ -617,7 +605,6 @@
             color: #0a0a2e;
             margin-bottom: 0.25rem;
         }
-
         .form-group input,
         .form-group textarea {
             width: 100%;
@@ -632,19 +619,16 @@
             font-family: inherit;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 1px 2px 0 #dbb594;
         }
-
         .form-group input:focus,
         .form-group textarea:focus {
             border-color: #f4c2c2;
             background: #ffffff;
             box-shadow: 0 0 0 4px rgba(244, 194, 194, 0.2), 1px 2px 0 #dbb594;
         }
-
         .form-group textarea {
             resize: vertical;
             min-height: 90px;
         }
-
         .submit-btn {
             background: #b2c9ab;
             color: #0a0a2e;
@@ -658,20 +642,17 @@
             box-shadow: 2px 4px 0 #8a9a7a;
             font-family: inherit;
         }
-
         .submit-btn:hover:not(:disabled) {
             background: #9fb89a;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #8a9a7a;
         }
-
         .submit-btn:disabled {
             background: #d4d9c8;
             box-shadow: 2px 2px 0 #8a9a7a;
             cursor: not-allowed;
             transform: none;
         }
-
         .settings-message {
             margin-top: 0.8rem;
             font-size: 0.85rem;
@@ -679,7 +660,6 @@
             padding: 0.3rem 1rem;
             border-radius: 30px;
         }
-
         .settings-message.success {
             background: #d4edda;
             color: #155724;
@@ -690,7 +670,6 @@
             color: #721c24;
             box-shadow: 1px 2px 0 #dbb594;
         }
-
         .log-list {
             list-style: none;
             padding: 0;
@@ -699,7 +678,6 @@
             border: 2px solid #b2c9ab;
             box-shadow: 2px 3px 0 #dbb594;
         }
-
         .log-item {
             padding: 0.7rem 1rem;
             border-bottom: 1px solid #b2c9ab;
@@ -708,11 +686,9 @@
             display: flex;
             justify-content: space-between;
         }
-
         .log-item:last-child {
             border-bottom: none;
         }
-
         .log-item .log-time {
             color: #4a6a8a;
             font-weight: 600;
@@ -741,7 +717,6 @@
             border-color: #f4c2c2;
             background: #ffffff;
         }
-
         .forum-image-preview-card {
             max-width: 100%;
             max-height: 320px;
@@ -776,7 +751,7 @@
             display: none;
         }
 
-        /* Style for Publish Thread Button to blend with the UI */
+        /* ── Publish Button with Spinner ── */
         #forumSubmitBtn,
         .comment-submit {
             background: #1a2a5e;
@@ -790,8 +765,11 @@
             box-shadow: 3px 3px 0 #b2c9ab;
             transition: all 0.2s ease;
             font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
         }
-
         #forumSubmitBtn:hover,
         .comment-submit:hover {
             background: #b2c9ab;
@@ -800,7 +778,6 @@
             box-shadow: 1px 1px 0 #0a0a2e;
             transform: translate(2px, 2px);
         }
-
         #forumSubmitBtn:disabled {
             background: #cccccc;
             border-color: #bbbbbb;
@@ -809,16 +786,41 @@
             cursor: not-allowed;
             transform: none;
         }
+        /* Spinner animation */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Published state */
+        .btn-published {
+            background: #2e7d32 !important;
+            border-color: #2e7d32 !important;
+            color: #fff !important;
+            box-shadow: 3px 3px 0 #1b5e20 !important;
+        }
+        .btn-published:hover {
+            background: #1b5e20 !important;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #1b5e20 !important;
+        }
 
         /* ── Forum Navigation Tabs ── */
-        /* ── Consistent pill-style tabs matching the "Choose Image" button ── */
         .forum-nav-container {
             display: flex;
             gap: 0.6rem;
             flex-wrap: wrap;
             margin-bottom: 1.8rem;
         }
-
         .forum-nav-btn {
             padding: 0.6rem 1.5rem;
             background: #b2c9ab;
@@ -838,24 +840,20 @@
             white-space: nowrap;
             flex: 0 1 auto;
         }
-
         .forum-nav-btn:hover {
             background: #9fb89a;
             transform: translateY(-2px);
             box-shadow: 2px 6px 0 #8a9a7a;
         }
-
         .forum-nav-btn:active {
             transform: translateY(2px);
             box-shadow: 2px 1px 0 #8a9a7a;
         }
-
         .forum-nav-btn.active {
             background: #1a2a5e;
             color: #fcf8f0;
             box-shadow: 2px 4px 0 #0a0a2e;
         }
-
         .forum-nav-btn.active:hover {
             background: #1a2a5e;
             color: #fcf8f0;
@@ -863,14 +861,71 @@
             box-shadow: 2px 6px 0 #0a0a2e;
         }
 
-        /* ── Refactored Mobile Responsive Layout ── */
+        /* ── Toast Notifications ── */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-width: 400px;
+            width: 100%;
+            pointer-events: none;
+        }
+        .toast {
+            background: #fff9f0;
+            border: 2px solid #b2c9ab;
+            border-left-width: 6px;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            box-shadow: 2px 4px 0 #dbb594;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: toastSlide 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            pointer-events: auto;
+            transition: opacity 0.3s ease;
+        }
+        .toast.success {
+            border-left-color: #2e7d32;
+        }
+        .toast.error {
+            border-left-color: #c62828;
+        }
+        .toast .toast-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+        .toast .toast-message {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #0a0a2e;
+            flex: 1;
+        }
+        @keyframes toastSlide {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .toast.hide {
+            opacity: 0;
+            transform: translateX(60px);
+        }
+
+        /* ── Mobile Responsive ── */
         @media (max-width: 768px) {
             .app {
                 flex-direction: column;
                 height: 100vh;
                 overflow: hidden;
             }
-
             .sidebar {
                 width: 100%;
                 height: 64px;
@@ -887,36 +942,30 @@
                 min-width: unset;
                 max-width: unset;
             }
-
             .sidebar .brand {
                 margin-bottom: 0;
                 font-size: 1.2rem;
                 flex-shrink: 0;
                 white-space: nowrap;
             }
-
             .sidebar .brand span {
                 display: none;
             }
-
             .sidebar nav {
                 flex-direction: row;
                 gap: 0.25rem;
                 flex: unset;
                 align-items: center;
             }
-
             .sidebar nav a {
                 padding: 0.5rem 0.8rem;
                 font-size: 0.85rem;
                 width: auto;
                 border-radius: 8px;
             }
-
             .sidebar nav a:hover {
                 transform: none;
             }
-
             .sidebar .logout-btn {
                 margin-top: 0;
                 width: auto;
@@ -925,26 +974,22 @@
                 box-shadow: none;
                 border-radius: 50%;
             }
-
             .sidebar .logout-btn:hover {
                 background: #f4c2c2;
                 transform: none;
                 box-shadow: none;
             }
-
             .sidebar .logout-btn {
                 font-size: 0;
             }
             .sidebar .logout-btn span {
                 font-size: 1.1rem;
             }
-
             .main {
                 flex: 1;
                 padding: 1.2rem;
                 overflow-y: auto;
             }
-
             .user-card {
                 flex-direction: column;
                 align-items: flex-start;
@@ -957,10 +1002,14 @@
             }
             .post-item {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 0.2rem;
+                align-items: stretch;
+                gap: 1rem;
             }
-
+            .post-thumb {
+                flex: 0 0 80px;
+                height: 80px;
+                width: 100%;
+            }
             .settings-tabs {
                 gap: 0.4rem;
             }
@@ -968,7 +1017,6 @@
                 padding: 0.5rem 1.1rem;
                 font-size: 0.82rem;
             }
-
             .forum-nav-container {
                 gap: 0.4rem;
             }
@@ -976,9 +1024,12 @@
                 padding: 0.5rem 1.1rem;
                 font-size: 0.82rem;
             }
+            .toast-container {
+                bottom: 1rem;
+                right: 1rem;
+                max-width: 90%;
+            }
         }
-
-        /* Additional responsiveness for the forum-nav */
         @media (max-width: 480px) {
             .settings-tabs {
                 flex-direction: column;
@@ -989,7 +1040,6 @@
                 text-align: center;
                 justify-content: center;
             }
-
             .forum-nav-container {
                 flex-direction: column;
                 gap: 0.4rem;
@@ -997,6 +1047,10 @@
             .forum-nav-btn {
                 width: 100%;
                 justify-content: center;
+            }
+            .post-thumb {
+                flex: 0 0 60px;
+                height: 60px;
             }
         }
     </style>
@@ -1032,7 +1086,7 @@
         <!-- ─── MAIN CONTENT ─── -->
         <main class="main">
 
-            <!-- ─── DASHBOARD PAGE (only profile) ─── -->
+            <!-- ─── DASHBOARD PAGE ─── -->
             <div id="page-dashboard" class="page">
                 <div class="user-card" id="userCard">
                     <div class="user-avatar" id="userAvatar">?</div>
@@ -1105,7 +1159,7 @@
                     </div>
                 </div>
 
-                <!-- Modern segmented navigation tabs - now matching the Choose Image button style -->
+                <!-- Navigation tabs -->
                 <div class="forum-nav-container">
                     <button class="forum-nav-btn active" id="forumFeedTabBtn" onclick="toggleForumSection('feed')">
                         <span>🌐</span> Public Feed
@@ -1146,7 +1200,6 @@
                             </div>
                             <div class="form-group">
                                 <label>🖼️ Upload Resource Image <span style="font-weight:normal; font-size:0.8rem; color:#4a6a8a;">(Optional - JPG/PNG)</span></label>
-                                <!-- Custom file upload button -->
                                 <label class="custom-file-upload">
                                     <input type="file" id="forumFormFile" accept="image/*" />
                                     📁 Choose Image
@@ -1158,7 +1211,7 @@
                         </form>
                     </div>
 
-                    <!-- Post Detail Panel (for forums) -->
+                    <!-- Post Detail Panel -->
                     <div id="forumPostDetailView">
                         <div class="post-detail-header">
                             <button class="back-btn" id="forumBackBtn">← Back to Feed</button>
@@ -1176,7 +1229,7 @@
                         <div class="comment-form">
                             <textarea id="forumCommentInput" placeholder="Write a comment..." maxlength="1000"></textarea>
                             <button class="comment-submit" id="forumCommentSubmitBtn">📤 Post Comment</button>
-                            <div class="comment-status" id="forumCommentStatus"></div>
+                            <!-- Inline status removed — toasts used instead -->
                         </div>
                     </div>
                 </div>
@@ -1184,6 +1237,9 @@
 
         </main>
     </div>
+
+    <!-- ─── TOAST CONTAINER ─── -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <script>
         // ── Check authentication ──
@@ -1211,6 +1267,25 @@
         const pageForums = document.getElementById('page-forums');
         const navLinks = document.querySelectorAll('.sidebar nav a');
         const logoutBtn = document.getElementById('logoutBtn');
+        const toastContainer = document.getElementById('toastContainer');
+
+        // ── Toast Helper ──
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '✅' : '❌';
+            toast.innerHTML = `
+                        <span class="toast-icon">${icon}</span>
+                        <span class="toast-message">${escapeHtml(message)}</span>
+                    `;
+            toastContainer.appendChild(toast);
+
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+        }
 
         // ── Navigation switching ──
         function showPage(pageId) {
@@ -1225,7 +1300,6 @@
             if (pageId === 'settings') {
                 showSettingsTab('change-password');
             } else if (pageId === 'forums') {
-                // Ensure we show feed (and hide detail if open)
                 document.getElementById('forumPostDetailView').style.display = 'none';
                 document.getElementById('forumMainFeedPanel').style.display = 'block';
                 document.getElementById('forumThreadCreationPanel').style.display = 'none';
@@ -1265,7 +1339,6 @@
             document.getElementById('bugMessage').className = 'settings-message';
             document.getElementById('bugMessage').textContent = '';
 
-            // Refresh logs when switching to the Account Logs tab
             if (tabId === 'account-logs') {
                 loadLogs();
             }
@@ -1300,7 +1373,7 @@
             return `api/forums/image.php?file=${encodeURIComponent(filename)}&token=${encodeURIComponent(token)}`;
         }
 
-        // ── Load profile via authenticated API (token in header) ──
+        // ── Load profile ──
         async function loadProfile() {
             const token = localStorage.getItem('cloudspace_token');
             if (!token) {
@@ -1311,15 +1384,12 @@
             try {
                 const res = await fetch('auth-api.php', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token 
+                        'Authorization': 'Bearer ' + token
                     },
-                    body: JSON.stringify({
-                        action: 'get_profile'
-                    })
+                    body: JSON.stringify({ action: 'get_profile' })
                 });
-
                 const data = await res.json();
 
                 if (data.status !== 'success' || !data.user) {
@@ -1397,7 +1467,7 @@
             }
         });
 
-        // ── Bug Report (placeholder) ──
+        // ── Bug Report ──
         document.getElementById('bugReportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msg = document.getElementById('bugMessage');
@@ -1416,7 +1486,7 @@
             document.getElementById('bugReportForm').reset();
         });
 
-        // ── Account Logs (updated) ──
+        // ── Account Logs ──
         async function loadLogs() {
             const token = localStorage.getItem('cloudspace_token');
             const list = document.getElementById('logList');
@@ -1431,10 +1501,7 @@
                 const res = await fetch('auth-api.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'get_logs',
-                        token: token
-                    })
+                    body: JSON.stringify({ action: 'get_logs', token: token })
                 });
                 const data = await res.json();
 
@@ -1449,7 +1516,6 @@
                     return;
                 }
 
-                // Group logs by date (YYYY-MM-DD)
                 const groups = {};
                 logs.forEach(log => {
                     const date = new Date(log.timestamp);
@@ -1458,9 +1524,7 @@
                     groups[key].push(log);
                 });
 
-                // Sort dates descending (newest first)
                 const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
-
                 let html = '';
                 sortedDates.forEach(dateKey => {
                     const dateObj = new Date(dateKey + 'T00:00:00');
@@ -1470,21 +1534,21 @@
                         day: 'numeric',
                         year: 'numeric'
                     });
-                    html += `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
+                    html +=
+                        `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
                     groups[dateKey].forEach(log => {
                         const time = new Date(log.timestamp).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit'
                         });
                         html += `
-                            <li class="log-item">
-                                <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
-                                <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
-                            </li>
-                        `;
+                                    <li class="log-item">
+                                        <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
+                                        <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
+                                    </li>
+                                `;
                     });
                 });
-
                 list.innerHTML = html;
 
             } catch (err) {
@@ -1497,11 +1561,9 @@
         // ── FORUMS FEATURE ──
         // ============================================================
 
-        // ── Sub-Tab Switcher (updated version) ──
         function toggleForumSection(targetSection) {
             currentForumSubView = targetSection;
 
-            // Toggle using the new explicit class token handlers
             document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
             document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
             document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
@@ -1523,7 +1585,6 @@
             }
         }
 
-        // ── Debounce ──
         function triggerDebouncedSearch() {
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(() => {
@@ -1569,18 +1630,44 @@
                     console.log(`Post ${post.id} image: ${post.image || 'none'}`);
                     const li = document.createElement('li');
                     li.className = 'post-item';
-                    const imageHtml = post.image ? `<img src="${getSecureImageUrl(post.image)}" alt="thumbnail" style="max-height:40px; max-width:60px; border-radius:4px; margin-left:8px; vertical-align:middle;" />` : '';
-                    li.innerHTML = `
-                        <span class="post-title">
-                            ${escapeHtml(post.title)}
-                            ${imageHtml}
-                        </span>
-                        <span class="post-meta">
-                            <span class="author">${escapeHtml(post.author)}</span>
-                            <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
-                            <span class="comments-count">💬 ${post.comment_count || 0}</span>
-                        </span>
-                    `;
+
+                    // Thumbnail
+                    const thumbDiv = document.createElement('div');
+                    thumbDiv.className = 'post-thumb';
+                    if (post.image) {
+                        const img = document.createElement('img');
+                        img.src = getSecureImageUrl(post.image);
+                        img.alt = 'Thumbnail';
+                        thumbDiv.appendChild(img);
+                    } else {
+                        const noImg = document.createElement('span');
+                        noImg.className = 'no-image';
+                        noImg.textContent = '📄';
+                        thumbDiv.appendChild(noImg);
+                    }
+
+                    // Content
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'post-content';
+                    const titleSpan = document.createElement('div');
+                    titleSpan.className = 'post-title';
+                    titleSpan.textContent = post.title;
+                    const metaSpan = document.createElement('div');
+                    metaSpan.className = 'post-meta';
+                    const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : '?';
+                    metaSpan.innerHTML = `
+                                <span class="author">
+                                    <span class="post-author-avatar">${escapeHtml(authorInitial)}</span>
+                                    ${escapeHtml(post.author)}
+                                </span>
+                                <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
+                                <span class="comments-count">💬 ${post.comment_count || 0}</span>
+                            `;
+                    contentDiv.appendChild(titleSpan);
+                    contentDiv.appendChild(metaSpan);
+
+                    li.appendChild(thumbDiv);
+                    li.appendChild(contentDiv);
                     li.onclick = () => openForumPost(post.id);
                     listElement.appendChild(li);
                 });
@@ -1589,7 +1676,7 @@
             }
         }
 
-        // ── Open Post Detail (forums) ──
+        // ── Open Post Detail ──
         async function openForumPost(postId) {
             currentForumPostId = postId;
             try {
@@ -1600,38 +1687,29 @@
                     return;
                 }
 
-                // Hide feed and create panels, show detail
                 document.getElementById('forumMainFeedPanel').style.display = 'none';
                 document.getElementById('forumThreadCreationPanel').style.display = 'none';
                 const detailView = document.getElementById('forumPostDetailView');
                 detailView.style.display = 'block';
 
-                // Populate detail
                 document.getElementById('forumDetailTitle').textContent = data.post.title;
                 document.getElementById('forumDetailAuthor').textContent = data.post.author;
                 document.getElementById('forumDetailDate').textContent = formatDate(data.post.timestamp);
-                document.getElementById('forumDetailBody').textContent = data.post.content;
 
-                // Insert image if present
-                const imageContainer = document.createElement('div');
+                const bodyEl = document.getElementById('forumDetailBody');
+                const bodyText = data.post.content;
+                let bodyHtml = `<div style="white-space:pre-wrap;">${escapeHtml(bodyText)}</div>`;
                 if (data.post.image) {
                     const imgUrl = getSecureImageUrl(data.post.image);
-                    imageContainer.innerHTML = `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" />`;
-                    const bodyEl = document.getElementById('forumDetailBody');
-                    bodyEl.parentNode.insertBefore(imageContainer, bodyEl.nextSibling);
-                } else {
-                    // Remove any existing image container if post has no image
-                    const existing = document.querySelector('.forum-image-preview-card');
-                    if (existing) existing.remove();
+                    bodyHtml += `<hr style="border:2px solid #b2c9ab; margin:1rem 0;" />`;
+                    bodyHtml +=
+                        `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
                 }
+                bodyEl.innerHTML = bodyHtml;
 
-                // Render comments
                 renderForumComments(data.comments);
 
-                // Clear comment input
                 document.getElementById('forumCommentInput').value = '';
-                document.getElementById('forumCommentStatus').className = 'comment-status';
-                document.getElementById('forumCommentStatus').textContent = '';
 
             } catch (err) {
                 console.error('openForumPost error:', err);
@@ -1639,7 +1717,7 @@
             }
         }
 
-        // ── Render Comments (forums) ──
+        // ── Render Comments ──
         function renderForumComments(comments) {
             const list = document.getElementById('forumCommentsList');
             list.innerHTML = '';
@@ -1653,37 +1731,36 @@
                 li.className = 'comment-item';
                 const isYours = comment.author.toLowerCase() === loggedUser;
                 li.innerHTML = `
-                    <div class="comment-header">
-                        <span class="comment-author">
-                            ${escapeHtml(comment.author)}
-                            ${isYours ? '<span class="you-badge">You</span>' : ''}
-                        </span>
-                        <span class="comment-date">${formatDate(comment.timestamp)}</span>
-                    </div>
-                    <div class="comment-content">${escapeHtml(comment.content)}</div>
-                `;
+                            <div class="comment-header">
+                                <span class="comment-author">
+                                    ${escapeHtml(comment.author)}
+                                    ${isYours ? '<span class="you-badge">You</span>' : ''}
+                                </span>
+                                <span class="comment-date">${formatDate(comment.timestamp)}</span>
+                            </div>
+                            <div class="comment-content">${escapeHtml(comment.content)}</div>
+                        `;
                 list.appendChild(li);
             });
         }
 
-        // ── Post Comment (forums) ──
+        // ── Post Comment (toast only — no inline status) ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
-            const statusEl = document.getElementById('forumCommentStatus');
             const btn = document.getElementById('forumCommentSubmitBtn');
 
             if (!content) {
-                statusEl.className = 'comment-status error';
-                statusEl.textContent = 'Please write a comment.';
+                showToast('Please write a comment before posting.', 'error');
                 return;
             }
-            if (!currentForumPostId) return;
+            if (!currentForumPostId) {
+                showToast('No post selected. Please try again.', 'error');
+                return;
+            }
 
             btn.disabled = true;
             btn.textContent = 'Posting...';
-            statusEl.className = 'comment-status';
-            statusEl.textContent = '';
 
             try {
                 const res = await fetch(API_BASE, {
@@ -1700,30 +1777,22 @@
 
                 if (data.status === 'success') {
                     input.value = '';
-                    statusEl.className = 'comment-status success';
-                    statusEl.textContent = 'Comment posted! ✅';
-                    setTimeout(() => {
-                        statusEl.className = 'comment-status';
-                        statusEl.textContent = '';
-                    }, 2500);
+                    showToast('💬 Your comment was posted successfully!', 'success');
 
-                    // Reload comments
+                    // Refresh comments
                     const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(
-                        currentForumPostId));
+                    currentForumPostId));
                     const postData = await postRes.json();
                     if (postData.status === 'success') {
                         renderForumComments(postData.comments);
                     }
-                    // Refresh feed count in background
                     fetchForumFeedDataset();
                 } else {
-                    statusEl.className = 'comment-status error';
-                    statusEl.textContent = data.message || 'Failed to post comment.';
+                    showToast(data.message || 'Failed to post comment.', 'error');
                 }
             } catch (err) {
                 console.error('postForumComment error:', err);
-                statusEl.className = 'comment-status error';
-                statusEl.textContent = 'Network error posting comment.';
+                showToast('Network error posting comment.', 'error');
             }
 
             btn.disabled = false;
@@ -1734,8 +1803,6 @@
         function goBackToForumFeed() {
             document.getElementById('forumPostDetailView').style.display = 'none';
             document.getElementById('forumMainFeedPanel').style.display = 'block';
-            // If we were in a sub‑tab, keep it
-            // but we also want to refresh the feed
             fetchForumFeedDataset();
         }
 
@@ -1749,10 +1816,12 @@
             const imageInput = document.getElementById('forumFormFile');
             const savedToken = localStorage.getItem('cloudspace_token') || '';
 
-            console.log('Creating post with title:', titleVal, 'image:', imageInput.files[0] ? imageInput.files[0].name : 'none');
+            console.log('Creating post with title:', titleVal, 'image:', imageInput.files[0] ? imageInput.files[0].name :
+                'none');
 
+            // Disable button and show spinner
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading files...';
+            submitBtn.innerHTML = '<span class="spinner"></span> Publishing...';
             statusMsg.className = 'comment-status';
             statusMsg.style.display = 'none';
 
@@ -1775,24 +1844,40 @@
                 if (outcome.status === 'success') {
                     console.log('Post created successfully:', outcome.post);
                     document.getElementById('newForumFormSubmitElement').reset();
-                    // Reset file input label
                     document.getElementById('fileChosen').textContent = 'No file chosen';
-                    statusMsg.className = 'comment-status success';
-                    statusMsg.textContent = '🎉 Thread uploaded securely to CloudSpacePH!';
-                    statusMsg.style.display = 'block';
-                    setTimeout(() => { toggleForumSection('feed'); }, 1200);
+
+                    // Show success toast
+                    showToast('🎉 Thread uploaded securely to CloudSpacePH!', 'success');
+
+                    // Show success state on button
+                    submitBtn.className = 'comment-submit btn-published';
+                    submitBtn.innerHTML = '✅ Published';
+
+                    // Revert button after 3 seconds
+                    setTimeout(() => {
+                        submitBtn.className = 'comment-submit';
+                        submitBtn.innerHTML = '🚀 Publish Thread';
+                        submitBtn.disabled = false;
+                    }, 3000);
+
+                    // Switch to feed after a short delay
+                    setTimeout(() => { toggleForumSection('feed'); }, 1500);
                 } else {
+                    showToast(outcome.message || 'Transaction rejected by server files.', 'error');
                     statusMsg.className = 'comment-status error';
                     statusMsg.textContent = outcome.message || 'Transaction rejected by server files.';
                     statusMsg.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '🚀 Publish Thread';
                 }
             } catch (err) {
+                showToast('Network communication interface validation failure.', 'error');
                 statusMsg.className = 'comment-status error';
                 statusMsg.textContent = 'Network communication interface validation failure.';
                 statusMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🚀 Publish Thread';
             }
-            submitBtn.disabled = false;
-            submitBtn.textContent = '🚀 Publish Thread';
         }
 
         // ── File input display helper ──
@@ -1816,7 +1901,7 @@
             }
         });
 
-        // Expose functions globally for inline onclick handlers
+        // Expose functions globally
         window.toggleForumSection = toggleForumSection;
         window.triggerDebouncedSearch = triggerDebouncedSearch;
         window.transmitNewThreadPayload = transmitNewThreadPayload;
