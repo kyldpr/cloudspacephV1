@@ -11,17 +11,15 @@ $byAuthorDir = $commentsDir . 'by_author/';
 $byCommenterDir = $commentsDir . 'by_commenter/';
 $imagesDir = __DIR__ . '/images/';
 
-// ── Ensure directories exist ──
 foreach ([$postsDir, $commentsDir, $byAuthorDir, $byCommenterDir, $imagesDir] as $dir) {
     if (!file_exists($dir)) mkdir($dir, 0755, true);
 }
 
-// ── Helper: random ID ──
+// ── Helpers (unchanged) ──
 function generateId() {
     return 'c_' . bin2hex(random_bytes(8));
 }
 
-// ── Helper: read JSON file safely ──
 function readJson($path) {
     if (!file_exists($path)) return null;
     $data = file_get_contents($path);
@@ -30,24 +28,20 @@ function readJson($path) {
     return is_array($decoded) ? $decoded : null;
 }
 
-// ── Helper: write JSON file ──
 function writeJson($path, $data) {
     return file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
 }
 
-// ── Helper: get comment file path for a post ──
 function commentFileForPost($postId) {
     global $commentsDir;
     return $commentsDir . $postId . '.json';
 }
 
-// ── Helper: get author comments file ──
 function authorCommentsFile($authorUsername) {
     global $byAuthorDir;
     return $byAuthorDir . strtolower($authorUsername) . '.json';
 }
 
-// ── Helper: get commenter comments file ──
 function commenterCommentsFile($commenterUsername) {
     global $byCommenterDir;
     return $byCommenterDir . strtolower($commenterUsername) . '.json';
@@ -55,66 +49,73 @@ function commenterCommentsFile($commenterUsername) {
 
 // ── Parse request ──
 $method = $_SERVER['REQUEST_METHOD'];
+$action = null;
 $input = [];
+
 if ($method === 'POST') {
-    // For multipart/form-data (file uploads), php://input is not available,
-    // but we still try to decode if content type is application/json.
     $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-    if (strpos($contentType, 'application/json') !== false) {
-        $input = json_decode(file_get_contents("php://input"), true);
-        if (!is_array($input)) $input = [];
+    if (strpos($contentType, 'multipart/form-data') !== false) {
+        // Multipart request – read action from $_POST
+        $action = $_POST['action'] ?? null;
+        // Other fields will be read from $_POST or $_FILES as needed
+    } else {
+        // JSON request – parse php://input
+        $raw = file_get_contents("php://input");
+        $input = json_decode($raw, true);
+        if (is_array($input)) {
+            $action = $input['action'] ?? null;
+        }
     }
 }
 
-$action = $input['action'] ?? $_GET['action'] ?? '';
+// If not found in POST, fallback to GET
+if (!$action) {
+    $action = $_GET['action'] ?? '';
+}
 
+// ─── SWITCH CASES ───
 switch ($action) {
 
-    // ────────────────────────────────────────────
-    // LIST POSTS
-    // ────────────────────────────────────────────
+    // ── LIST POSTS (with optional author filter) ──
     case 'list_posts':
+        $authorFilter = $_GET['author'] ?? '';
         $files = glob($postsDir . '*.json');
         $posts = [];
         foreach ($files as $file) {
             $post = readJson($file);
             if ($post && isset($post['id'])) {
-                // Attach comment count
+                // If author filter is set, skip posts not matching the author
+                if ($authorFilter && strtolower($post['author']) !== strtolower($authorFilter)) {
+                    continue;
+                }
                 $commentsFile = commentFileForPost($post['id']);
                 $comments = readJson($commentsFile);
                 $post['comment_count'] = is_array($comments) ? count($comments) : 0;
                 $posts[] = $post;
             }
         }
-        // Sort by timestamp descending (newest first)
         usort($posts, function($a, $b) {
             return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
         });
         echo json_encode(["status" => "success", "posts" => $posts]);
         break;
 
-    // ────────────────────────────────────────────
-    // GET SINGLE POST WITH COMMENTS
-    // ────────────────────────────────────────────
+    // ── GET SINGLE POST ──
     case 'get_post':
         $postId = $input['post_id'] ?? $_GET['post_id'] ?? '';
         if (!$postId) {
             echo json_encode(["status" => "error", "message" => "Post ID is required."]);
             exit;
         }
-
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
         if (!$post) {
             echo json_encode(["status" => "error", "message" => "Post not found."]);
             exit;
         }
-
-        // Load comments for this post
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
         if (!$comments) $comments = [];
-
         echo json_encode([
             "status" => "success",
             "post" => $post,
@@ -122,30 +123,23 @@ switch ($action) {
         ]);
         break;
 
-    // ────────────────────────────────────────────
-    // POST A COMMENT
-    // ────────────────────────────────────────────
+    // ── ADD COMMENT ──
     case 'add_comment':
         $postId    = trim($input['post_id'] ?? '');
-        $author    = trim($input['author'] ?? '');    // the person commenting
+        $author    = trim($input['author'] ?? '');
         $content   = trim($input['content'] ?? '');
-
         if (!$postId || !$author || !$content) {
             echo json_encode(["status" => "error", "message" => "post_id, author, and content are required."]);
             exit;
         }
-
-        // Verify post exists
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
         if (!$post) {
             echo json_encode(["status" => "error", "message" => "Post not found."]);
             exit;
         }
-
-        $timestamp = date('c'); // ISO 8601
+        $timestamp = date('c');
         $commentId = generateId();
-
         $comment = [
             "comment_id"  => $commentId,
             "post_id"     => $postId,
@@ -154,29 +148,25 @@ switch ($action) {
             "content"     => $content,
             "timestamp"   => $timestamp
         ];
-
-        // 1. Save to post-specific comments file
+        // Save to post comments
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
         if (!is_array($comments)) $comments = [];
         $comments[] = $comment;
         writeJson($commentsFile, $comments);
-
-        // 2. Save to author's comments file (so post author can see all comments on their posts)
+        // Save to author's comments
         $postAuthor = $post['author'];
         $authorFile = authorCommentsFile($postAuthor);
         $authorComments = readJson($authorFile);
         if (!is_array($authorComments)) $authorComments = [];
         $authorComments[] = $comment;
         writeJson($authorFile, $authorComments);
-
-        // 3. Save to commenter's comments file (so commenter can see their own comments)
+        // Save to commenter's comments
         $commenterFile = commenterCommentsFile($author);
         $commenterComments = readJson($commenterFile);
         if (!is_array($commenterComments)) $commenterComments = [];
         $commenterComments[] = $comment;
         writeJson($commenterFile, $commenterComments);
-
         echo json_encode([
             "status" => "success",
             "message" => "Comment added successfully.",
@@ -184,56 +174,41 @@ switch ($action) {
         ]);
         break;
 
-    // ────────────────────────────────────────────
-    // GET COMMENTS BY POST AUTHOR
-    // ────────────────────────────────────────────
+    // ── GET COMMENTS BY AUTHOR ──
     case 'get_comments_by_author':
         $username = $input['username'] ?? $_GET['username'] ?? '';
         if (!$username) {
             echo json_encode(["status" => "error", "message" => "Username is required."]);
             exit;
         }
-
         $authorFile = authorCommentsFile($username);
         $comments = readJson($authorFile);
         if (!is_array($comments)) $comments = [];
-
-        // Sort newest first
         usort($comments, function($a, $b) {
             return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
         });
-
         echo json_encode(["status" => "success", "comments" => $comments]);
         break;
 
-    // ────────────────────────────────────────────
-    // GET COMMENTS BY COMMENTING USER
-    // ────────────────────────────────────────────
+    // ── GET COMMENTS BY COMMENTING USER ──
     case 'get_comments_by_user':
         $username = $input['username'] ?? $_GET['username'] ?? '';
         if (!$username) {
             echo json_encode(["status" => "error", "message" => "Username is required."]);
             exit;
         }
-
         $commenterFile = commenterCommentsFile($username);
         $comments = readJson($commenterFile);
         if (!is_array($comments)) $comments = [];
-
-        // Sort newest first
         usort($comments, function($a, $b) {
             return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
         });
-
         echo json_encode(["status" => "success", "comments" => $comments]);
         break;
 
-    // ────────────────────────────────────────────
-    // CREATE A NEW POST (JWT authenticated, with image upload)
-    // ────────────────────────────────────────────
+    // ── CREATE NEW POST (multipart or JSON) ──
     case 'create_post':
-        // Authenticate via JWT (bearer token)
-        $token = null;
+        // Authenticate via JWT (Bearer token)
         $headers = [];
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
@@ -245,6 +220,7 @@ switch ($action) {
             }
         }
         $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $token = $matches[1];
         }
@@ -258,9 +234,9 @@ switch ($action) {
             exit;
         }
 
-        // Get title and content from POST (multipart form data)
-        $title = trim($_POST['title'] ?? '');
-        $content = trim($_POST['content'] ?? '');
+        // Read title and content from either $_POST (multipart) or $input (JSON)
+        $title = trim($_POST['title'] ?? $input['title'] ?? '');
+        $content = trim($_POST['content'] ?? $input['content'] ?? '');
         if (!$title || !$content) {
             echo json_encode(["status" => "error", "message" => "Title and content are required."]);
             exit;
@@ -269,12 +245,11 @@ switch ($action) {
         $postId = 'post_' . time();
         $imageFilename = null;
 
-        // Handle image upload
+        // Handle image upload (only for multipart)
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $fileTmp = $_FILES['image']['tmp_name'];
             $originalName = basename($_FILES['image']['name']);
             $ext = pathinfo($originalName, PATHINFO_EXTENSION);
-            // Only allow common image extensions
             $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
             if (in_array(strtolower($ext), $allowed)) {
                 $imageFilename = $postId . '.' . $ext;
@@ -295,7 +270,7 @@ switch ($action) {
             "content"   => $content,
             "author"    => $username,
             "timestamp" => date('c'),
-            "image"     => $imageFilename // store filename or null
+            "image"     => $imageFilename
         ];
 
         $postFile = $postsDir . $postId . '.json';
@@ -305,8 +280,6 @@ switch ($action) {
         }
 
         writeJson($postFile, $post);
-
-        // ── ADD LOGGING AFTER SUCCESSFUL POST CREATION ──
         JWTSecurity::logUserAction($username, "Created a new forum thread entry: '" . $title . "'");
 
         echo json_encode([
