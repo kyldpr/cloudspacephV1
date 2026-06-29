@@ -244,15 +244,17 @@
             font-weight: 700;
         }
 
-        /* ── SECTION TITLES ── */
+        /* ── SECTION TITLES (enhanced) ── */
         .section-title {
-            font-size: 1.1rem;
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 900;
             color: #0a0a2e;
-            margin-bottom: 0.8rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
+            letter-spacing: -0.02em;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.05);
         }
         .section-title .badge {
             background: #b2c9ab;
@@ -263,7 +265,7 @@
             box-shadow: 1px 2px 0 #8a9a7a;
         }
 
-        /* ── POST LIST – CARD STYLE ── */
+        /* ── POST LIST – CARD STYLE (enhanced contrast) ── */
         .post-list {
             list-style: none;
             padding: 0;
@@ -275,8 +277,8 @@
             background: #fff9f0;
             border-radius: 20px;
             padding: 1.2rem 1.5rem;
-            border: 2px solid #b2c9ab;
-            box-shadow: 2px 4px 0 #dbb594;
+            border: 2px solid #c4a88a;
+            box-shadow: 2px 4px 0 #dbb594, inset 0 1px 0 rgba(255,255,255,0.8);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             display: flex;
@@ -286,7 +288,7 @@
         }
         .post-item:hover {
             transform: translateY(-3px);
-            box-shadow: 2px 8px 0 #dbb594;
+            box-shadow: 2px 8px 0 #dbb594, inset 0 1px 0 rgba(255,255,255,0.9);
             background: #fcf3e8;
         }
         .post-item:active {
@@ -301,7 +303,7 @@
             border-radius: 16px;
             overflow: hidden;
             background: #f5ede4;
-            border: 2px solid #b2c9ab;
+            border: 2px solid #c4a88a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -322,14 +324,15 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem;
             min-width: 0;
         }
         .post-title {
-            font-weight: 700;
+            font-weight: 900;
             color: #0a0a2e;
-            font-size: 1.1rem;
-            line-height: 1.3;
+            font-size: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
         }
         .post-meta {
             font-size: 0.8rem;
@@ -378,7 +381,7 @@
             padding: 2rem 0;
         }
 
-        /* ── POST ACTIONS (Edit/Delete) ── */
+        /* ── POST ACTIONS (Edit/Delete) unchanged ── */
         .post-actions {
             display: flex;
             flex-direction: column;
@@ -412,7 +415,7 @@
             transform: translateY(-2px);
         }
 
-        /* ── POST DETAIL ── */
+        /* ── POST DETAIL (enhanced titles) ── */
         #forumPostDetailView {
             display: none;
         }
@@ -420,10 +423,11 @@
             margin-bottom: 1rem;
         }
         .post-detail-title {
-            font-size: 1.4rem;
+            font-size: 1.8rem;
             font-weight: 900;
             color: #0a0a2e;
-            line-height: 1.3;
+            line-height: 1.2;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
         }
         .post-detail-meta {
             font-size: 0.8rem;
@@ -442,7 +446,7 @@
             border-radius: 20px;
             padding: 1.2rem;
             margin: 0.8rem 0 1.5rem;
-            border: 2px solid #b2c9ab;
+            border: 2px solid #c4a88a;
             font-size: 0.95rem;
             color: #0a0a2e;
             line-height: 1.7;
@@ -729,125 +733,85 @@
             font-weight: 600;
         }
 
-        /* ── Custom Forum Dashboard Additions ── */
-        .forum-layout-container {
+        /* ── Themed Search Bar ── */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            z-index: 1000;
+        }
+        .search-input-container {
             display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-        .search-wrapper-box {
-            width: 100%;
-        }
-        .search-wrapper-box input {
-            width: 100%;
-            padding: 0.8rem 1.2rem;
-            border: 2px solid #b2c9ab;
-            border-radius: 40px;
+            align-items: center;
             background: #fff9f0;
-            font-size: 0.95rem;
-            outline: none;
-            box-shadow: 2px 3px 0 #dbb594;
-        }
-        .search-wrapper-box input:focus {
-            border-color: #f4c2c2;
-            background: #ffffff;
-        }
-
-        /* ── Centered image in post detail ── */
-        .forum-image-preview-card {
-            display: block;
-            margin: 1rem auto;
-            max-width: 100%;
-            max-height: 320px;
-            border-radius: 16px;
             border: 2px solid #b2c9ab;
-            object-fit: contain;
-            background: #f5ede4;
+            border-radius: 24px;
+            padding: 8px 16px;
+            box-shadow: 2px 3px 0 #dbb594;
+            transition: box-shadow 0.2s, border-color 0.2s;
         }
-
-        /* ── Custom file input button ── */
-        .custom-file-upload {
-            display: inline-block;
-            padding: 0.6rem 1.5rem;
-            background: #b2c9ab;
-            color: #0a0a2e;
+        .search-input-container:focus-within {
+            border-color: #f4c2c2;
+            box-shadow: 0 0 0 4px rgba(244,194,194,0.2), 2px 3px 0 #dbb594;
+        }
+        .search-wrapper.active .search-input-container {
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 4px 6px rgba(32,33,36,0.28), 2px 3px 0 #dbb594;
+            border-bottom-color: transparent;
+        }
+        .search-input-container input {
             border: none;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 2px 4px 0 #8a9a7a;
-            transition: all 0.2s ease;
-            font-family: inherit;
+            outline: none;
+            width: 100%;
+            font-size: 16px;
+            background: transparent;
+            color: #0a0a2e;
+            font-family: 'Open Sans', sans-serif;
         }
-        .custom-file-upload:hover {
-            background: #9fb89a;
-            transform: translateY(-2px);
-            box-shadow: 2px 6px 0 #8a9a7a;
+        .search-input-container input::placeholder {
+            color: #4a6a8a;
+            font-weight: 400;
         }
-        .custom-file-upload input[type="file"] {
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff9f0;
+            border: 2px solid #b2c9ab;
+            border-top: none;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 4px 6px rgba(32,33,36,0.28), 2px 3px 0 #dbb594;
+            overflow-y: auto;
+            max-height: 300px;
+            display: none;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .search-results-dropdown::-webkit-scrollbar {
             display: none;
         }
-
-        /* ── Publish Button with Spinner ── */
-        #forumSubmitBtn,
-        .comment-submit {
-            background: #1a2a5e;
-            color: #fcf8f0;
-            border: 2px solid #1a2a5e;
-            padding: 0.75rem 1.8rem;
-            font-size: 0.95rem;
-            font-weight: 700;
-            border-radius: 12px;
+        .search-item {
+            padding: 10px 16px;
             cursor: pointer;
-            box-shadow: 3px 3px 0 #b2c9ab;
-            transition: all 0.2s ease;
-            font-family: inherit;
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-        #forumSubmitBtn:hover,
-        .comment-submit:hover {
-            background: #b2c9ab;
+            font-size: 15px;
             color: #0a0a2e;
-            border-color: #0a0a2e;
-            box-shadow: 1px 1px 0 #0a0a2e;
-            transform: translate(2px, 2px);
+            border-bottom: 1px solid #e8d5c4;
         }
-        #forumSubmitBtn:disabled {
-            background: #cccccc;
-            border-color: #bbbbbb;
-            color: #666666;
-            box-shadow: none;
-            cursor: not-allowed;
-            transform: none;
+        .search-item:last-child {
+            border-bottom: none;
         }
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 0.8s ease-in-out infinite;
+        .search-item.selected,
+        .search-item:hover {
+            background: #f4c2c2;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .search-item .icon {
+            margin-right: 12px;
+            color: #4a6a8a;
         }
-        .btn-published {
-            background: #2e7d32 !important;
-            border-color: #2e7d32 !important;
-            color: #fff !important;
-            box-shadow: 3px 3px 0 #1b5e20 !important;
-        }
-        .btn-published:hover {
-            background: #1b5e20 !important;
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0 #1b5e20 !important;
+        .search-item.recent .icon::before {
+            content: "🕒";
         }
 
         /* ── Forum Navigation Tabs ── */
@@ -1094,6 +1058,103 @@
                 height: 60px;
             }
         }
+
+        /* ── Centered image in post detail ── */
+        .forum-image-preview-card {
+            display: block;
+            margin: 1rem auto;
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 16px;
+            border: 2px solid #b2c9ab;
+            object-fit: contain;
+            background: #f5ede4;
+        }
+
+        /* ── Custom file input button ── */
+        .custom-file-upload {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: #b2c9ab;
+            color: #0a0a2e;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 2px 4px 0 #8a9a7a;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .custom-file-upload:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+            box-shadow: 2px 6px 0 #8a9a7a;
+        }
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
+
+        /* ── Publish Button with Spinner ── */
+        #forumSubmitBtn,
+        .comment-submit {
+            background: #1a2a5e;
+            color: #fcf8f0;
+            border: 2px solid #1a2a5e;
+            padding: 0.75rem 1.8rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #b2c9ab;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        #forumSubmitBtn:hover,
+        .comment-submit:hover {
+            background: #b2c9ab;
+            color: #0a0a2e;
+            border-color: #0a0a2e;
+            box-shadow: 1px 1px 0 #0a0a2e;
+            transform: translate(2px, 2px);
+        }
+        #forumSubmitBtn:disabled {
+            background: #cccccc;
+            border-color: #bbbbbb;
+            color: #666666;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .btn-published {
+            background: #2e7d32 !important;
+            border-color: #2e7d32 !important;
+            color: #fff !important;
+            box-shadow: 3px 3px 0 #1b5e20 !important;
+        }
+        .btn-published:hover {
+            background: #1b5e20 !important;
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #1b5e20 !important;
+        }
     </style>
 </head>
 <body>
@@ -1200,7 +1261,7 @@
                     </div>
                 </div>
 
-                <!-- Navigation tabs (onclick removed, handled by JS) -->
+                <!-- Navigation tabs -->
                 <div class="forum-nav-container">
                     <button class="forum-nav-btn active" id="forumFeedTabBtn">
                         <span>🌐</span> Public Feed
@@ -1216,11 +1277,16 @@
                 <div class="forum-layout-container">
                     <!-- Feed Panel -->
                     <div id="forumMainFeedPanel">
-                        <div class="form-group search-wrapper-box" id="searchBarUIElement">
-                            <input type="text" id="forumSearchTextElement" placeholder="🔍 Search existing threads by title or content matching..." />
+                        <!-- Themed Search Bar -->
+                        <div class="search-wrapper" id="searchWrapper">
+                            <div class="search-input-container">
+                                <input type="text" id="searchInput" placeholder="🔍 Search threads (fuzzy)..." autocomplete="off">
+                            </div>
+                            <div class="search-results-dropdown" id="searchResultsDropdown"></div>
                         </div>
                         <div class="section-title" style="margin-top:1.2rem;">
                             <span id="forumFeedHeadingText">Latest Public Records</span>
+                            <span class="badge" id="resultCount"></span>
                         </div>
                         <ul class="post-list" id="globalForumsListElement">
                             <li class="empty-state">⏳ Querying dataset files...</li>
@@ -1300,6 +1366,8 @@
         let currentForumPostId = null;
         let currentForumSubView = 'feed';
         let searchDebounceTimer = null;
+        let allPosts = [];
+        let filteredPosts = [];
 
         // ── UI references ──
         const pageDashboard = document.getElementById('page-dashboard');
@@ -1309,20 +1377,23 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const toastContainer = document.getElementById('toastContainer');
 
+        // New search UI elements
+        const searchWrapper = document.getElementById('searchWrapper');
+        const searchInput = document.getElementById('searchInput');
+        const searchDropdown = document.getElementById('searchResultsDropdown');
+        const resultCountSpan = document.getElementById('resultCount');
+
+        let currentFocus = -1;
+        const RECENT_SEARCHES_KEY = 'cloudspace_recent_searches';
+
         // ── Toast Helper ──
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             const icon = type === 'success' ? '✅' : '❌';
-            toast.innerHTML = `
-                <span class="toast-icon">${icon}</span>
-                <span class="toast-message">${escapeHtml(message)}</span>
-            `;
+            toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${escapeHtml(message)}</span>`;
             toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('hide');
-                setTimeout(() => toast.remove(), 400);
-            }, 4000);
+            setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 4000);
         }
 
         // ── Navigation switching ──
@@ -1330,30 +1401,19 @@
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             const targetPage = document.getElementById('page-' + pageId);
             if (targetPage) targetPage.classList.remove('hidden');
-
-            navLinks.forEach(link => {
-                link.classList.toggle('active', link.dataset.page === pageId);
-            });
-
-            if (pageId === 'settings') {
-                showSettingsTab('change-password');
-            } else if (pageId === 'forums') {
+            navLinks.forEach(link => link.classList.toggle('active', link.dataset.page === pageId));
+            if (pageId === 'settings') showSettingsTab('change-password');
+            else if (pageId === 'forums') {
                 document.getElementById('forumPostDetailView').style.display = 'none';
                 document.getElementById('forumMainFeedPanel').style.display = 'block';
                 document.getElementById('forumThreadCreationPanel').style.display = 'none';
                 toggleForumSection('feed');
             }
         }
-
         navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', e => {
                 e.preventDefault();
-                const page = link.dataset.page;
-                if (page === 'dashboard') {
-                    showPage('dashboard');
-                } else {
-                    showPage(page);
-                }
+                showPage(link.dataset.page === 'dashboard' ? 'dashboard' : link.dataset.page);
             });
         });
 
@@ -1364,191 +1424,100 @@
             'account-logs': document.getElementById('settings-account-logs'),
             'report-bug': document.getElementById('settings-report-bug')
         };
-
         function showSettingsTab(tabId) {
-            settingsTabs.forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.tab === tabId);
-            });
-            Object.entries(settingsPanels).forEach(([id, panel]) => {
-                panel.classList.toggle('active', id === tabId);
-            });
+            settingsTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === tabId));
+            Object.entries(settingsPanels).forEach(([id, panel]) => panel.classList.toggle('active', id === tabId));
             document.getElementById('passwordMessage').className = 'settings-message';
             document.getElementById('passwordMessage').textContent = '';
             document.getElementById('bugMessage').className = 'settings-message';
             document.getElementById('bugMessage').textContent = '';
-
-            if (tabId === 'account-logs') {
-                loadLogs();
-            }
+            if (tabId === 'account-logs') loadLogs();
         }
+        settingsTabs.forEach(tab => tab.addEventListener('click', () => showSettingsTab(tab.dataset.tab)));
 
-        settingsTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                showSettingsTab(tab.dataset.tab);
-            });
-        });
-
-        // ── Format date ──
+        // ── Format & escape ──
         function formatDate(dateStr) {
             if (!dateStr) return '—';
             const d = new Date(dateStr);
             if (isNaN(d.getTime())) return dateStr;
-            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
-                ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         }
-
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
-
-        // ── Helper to get secure image URL ──
         function getSecureImageUrl(filename) {
             const token = localStorage.getItem('cloudspace_token');
             if (!token || !filename) return null;
             return `api/forums/image.php?file=${encodeURIComponent(filename)}&token=${encodeURIComponent(token)}`;
         }
 
-        // ── Load profile ──
+        // ── Load profile, logout, etc. (unchanged) ──
         async function loadProfile() {
             const token = localStorage.getItem('cloudspace_token');
-            if (!token) {
-                window.location.href = 'login';
-                return;
-            }
+            if (!token) { window.location.href = 'login'; return; }
             try {
-                const res = await fetch('auth-api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({ action: 'get_profile' })
-                });
+                const res = await fetch('auth-api.php', { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({action:'get_profile'}) });
                 const data = await res.json();
-                if (data.status !== 'success' || !data.user) {
-                    throw new Error(data.message || 'Profile fetch failed');
-                }
+                if (data.status !== 'success' || !data.user) throw new Error(data.message || 'Profile fetch failed');
                 const user = data.user;
-                document.getElementById('userAvatar').textContent =
-                    (user.username || username).charAt(0).toUpperCase();
+                document.getElementById('userAvatar').textContent = (user.username || username).charAt(0).toUpperCase();
                 document.getElementById('userName').textContent = user.username || username;
-                document.getElementById('userDetail').innerHTML =
-                    `📧 <span>${escapeHtml(user.email || '—')}</span>`;
-                document.getElementById('userSince').textContent =
-                    '📅 Joined: ' + (user.date_created || '—');
+                document.getElementById('userDetail').innerHTML = `📧 <span>${escapeHtml(user.email || '—')}</span>`;
+                document.getElementById('userSince').textContent = '📅 Joined: ' + (user.date_created || '—');
             } catch (error) {
                 console.warn('Profile load error:', error);
                 document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
                 document.getElementById('userName').textContent = username;
-                document.getElementById('userDetail').innerHTML =
-                    `<span class="warning">⚠️ Profile data unavailable</span>`;
+                document.getElementById('userDetail').innerHTML = `<span class="warning">⚠️ Profile data unavailable</span>`;
                 document.getElementById('userSince').textContent = '📅 Joined: —';
             }
         }
-
-        // ── Logout ──
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('cloudspace_username');
             localStorage.removeItem('cloudspace_token');
             window.location.href = 'login';
         });
-
-        // ── Change Password (with Authorization header) ──
-        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+        document.getElementById('changePasswordForm').addEventListener('submit', async e => {
             e.preventDefault();
             const msg = document.getElementById('passwordMessage');
-            msg.className = 'settings-message';
-            msg.textContent = '';
+            msg.className = 'settings-message'; msg.textContent = '';
             const current = document.getElementById('currentPassword').value;
             const newPass = document.getElementById('newPassword').value;
             const confirm = document.getElementById('confirmNewPassword').value;
-            if (newPass.length < 8) {
-                msg.classList.add('error');
-                msg.textContent = 'New password must be at least 8 characters.';
-                return;
-            }
-            if (newPass !== confirm) {
-                msg.classList.add('error');
-                msg.textContent = 'Passwords do not match.';
-                return;
-            }
+            if (newPass.length < 8) { msg.classList.add('error'); msg.textContent = 'New password must be at least 8 characters.'; return; }
+            if (newPass !== confirm) { msg.classList.add('error'); msg.textContent = 'Passwords do not match.'; return; }
             try {
                 const token = localStorage.getItem('cloudspace_token');
-                const res = await fetch(AUTH_API, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        action: 'change_password',
-                        username: username,
-                        current_password: current,
-                        new_password: newPass
-                    })
-                });
+                const res = await fetch(AUTH_API, { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({ action:'change_password', username, current_password:current, new_password:newPass }) });
                 const data = await res.json();
-                if (data.status === 'success') {
-                    msg.classList.add('success');
-                    msg.textContent = '✅ Password updated successfully.';
-                    document.getElementById('changePasswordForm').reset();
-                } else {
-                    msg.classList.add('error');
-                    msg.textContent = data.message || 'Failed to update password.';
-                }
-            } catch (err) {
-                msg.classList.add('error');
-                msg.textContent = 'Network error.';
-            }
+                if (data.status === 'success') { msg.classList.add('success'); msg.textContent = '✅ Password updated successfully.'; document.getElementById('changePasswordForm').reset(); }
+                else { msg.classList.add('error'); msg.textContent = data.message || 'Failed to update password.'; }
+            } catch (err) { msg.classList.add('error'); msg.textContent = 'Network error.'; }
         });
-
-        // ── Bug Report ──
-        document.getElementById('bugReportForm').addEventListener('submit', async (e) => {
+        document.getElementById('bugReportForm').addEventListener('submit', async e => {
             e.preventDefault();
             const msg = document.getElementById('bugMessage');
-            msg.className = 'settings-message';
-            msg.textContent = '';
+            msg.className = 'settings-message'; msg.textContent = '';
             const title = document.getElementById('bugTitle').value.trim();
             const desc = document.getElementById('bugDescription').value.trim();
-            if (!title || !desc) {
-                msg.classList.add('error');
-                msg.textContent = 'Please fill in all fields.';
-                return;
-            }
-            // TODO: send to backend
-            msg.classList.add('success');
-            msg.textContent = '✅ Thank you! Your report has been submitted.';
+            if (!title || !desc) { msg.classList.add('error'); msg.textContent = 'Please fill in all fields.'; return; }
+            msg.classList.add('success'); msg.textContent = '✅ Thank you! Your report has been submitted.';
             document.getElementById('bugReportForm').reset();
         });
-
-        // ── Account Logs ──
         async function loadLogs() {
             const token = localStorage.getItem('cloudspace_token');
             const list = document.getElementById('logList');
             list.innerHTML = '<li class="empty-state">Loading logs...</li>';
-            if (!token) {
-                list.innerHTML = '<li class="empty-state">Not authenticated.</li>';
-                return;
-            }
+            if (!token) { list.innerHTML = '<li class="empty-state">Not authenticated.</li>'; return; }
             try {
-                const res = await fetch('auth-api.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'get_logs', token: token })
-                });
+                const res = await fetch('auth-api.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'get_logs',token}) });
                 const data = await res.json();
-                if (data.status !== 'success') {
-                    list.innerHTML = `<li class="empty-state">${data.message || 'Failed to load logs.'}</li>`;
-                    return;
-                }
+                if (data.status !== 'success') { list.innerHTML = `<li class="empty-state">${data.message || 'Failed to load logs.'}</li>`; return; }
                 const logs = data.logs || [];
-                if (logs.length === 0) {
-                    list.innerHTML = '<li class="empty-state">No recent logs available. (Old logs are auto-purged after 3 days)</li>';
-                    return;
-                }
+                if (logs.length === 0) { list.innerHTML = '<li class="empty-state">No recent logs available.</li>'; return; }
                 const groups = {};
                 logs.forEach(log => {
                     const date = new Date(log.timestamp);
@@ -1556,28 +1525,15 @@
                     if (!groups[key]) groups[key] = [];
                     groups[key].push(log);
                 });
-                const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+                const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
                 let html = '';
                 sortedDates.forEach(dateKey => {
                     const dateObj = new Date(dateKey + 'T00:00:00');
-                    const displayDate = dateObj.toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
+                    const displayDate = dateObj.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
                     html += `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
                     groups[dateKey].forEach(log => {
-                        const time = new Date(log.timestamp).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        html += `
-                            <li class="log-item">
-                                <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
-                                <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
-                            </li>
-                        `;
+                        const time = new Date(log.timestamp).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+                        html += `<li class="log-item"><span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span><span class="log-time">IP: ${escapeHtml(log.ip_address)}</span></li>`;
                     });
                 });
                 list.innerHTML = html;
@@ -1591,345 +1547,323 @@
         // ── FORUMS FEATURE ──
         // ============================================================
 
+        function fuzzyMatch(searchTerm, target) {
+            if (!searchTerm) return true;
+            const s = searchTerm.toLowerCase().trim();
+            const t = target.toLowerCase();
+            let i = 0;
+            for (let ch of s) {
+                i = t.indexOf(ch, i);
+                if (i === -1) return false;
+                i++;
+            }
+            return true;
+        }
+
+        async function fetchAllPosts() {
+            const savedToken = localStorage.getItem('cloudspace_token') || '';
+            try {
+                const response = await fetch(`api/forums/forums-api.php?action=list_posts`, { method:'GET', headers:{ 'Authorization':`Bearer ${savedToken}` } });
+                const dataset = await response.json();
+                if (dataset.status !== 'success') throw new Error(dataset.message || 'Failed');
+                allPosts = dataset.posts || [];
+                allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                return allPosts;
+            } catch (err) { console.error('fetchAllPosts error:', err); return []; }
+        }
+
+        function renderPosts(posts) {
+            const listElement = document.getElementById('globalForumsListElement');
+            if (!posts || posts.length === 0) {
+                listElement.innerHTML = '<li class="empty-state">No threads match your search.</li>';
+                resultCountSpan.textContent = '0 results';
+                return;
+            }
+            resultCountSpan.textContent = posts.length + ' result' + (posts.length > 1 ? 's' : '');
+            listElement.innerHTML = '';
+            posts.forEach(post => {
+                const li = document.createElement('li');
+                li.className = 'post-item';
+                const thumbDiv = document.createElement('div');
+                thumbDiv.className = 'post-thumb';
+                if (post.image) {
+                    const imgUrl = getSecureImageUrl(post.image);
+                    if (imgUrl) {
+                        const img = document.createElement('img');
+                        img.src = imgUrl; img.alt = 'Thumbnail';
+                        thumbDiv.appendChild(img);
+                    } else {
+                        const noImg = document.createElement('span');
+                        noImg.className = 'no-image'; noImg.textContent = '📄';
+                        thumbDiv.appendChild(noImg);
+                    }
+                } else {
+                    const noImg = document.createElement('span');
+                    noImg.className = 'no-image'; noImg.textContent = '📄';
+                    thumbDiv.appendChild(noImg);
+                }
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'post-content';
+                const titleSpan = document.createElement('div');
+                titleSpan.className = 'post-title';
+                titleSpan.textContent = post.title;
+                const metaSpan = document.createElement('div');
+                metaSpan.className = 'post-meta';
+                const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : '?';
+                metaSpan.innerHTML = `<span class="author"><span class="post-author-avatar">${escapeHtml(authorInitial)}</span>${escapeHtml(post.author)}</span><span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span><span class="comments-count">💬 ${post.comment_count || 0}</span>`;
+                contentDiv.appendChild(titleSpan);
+                contentDiv.appendChild(metaSpan);
+                const isOwner = post.author.toLowerCase() === username.toLowerCase();
+                if (isOwner) {
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'post-actions';
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'edit-btn'; editBtn.innerHTML = '✎'; editBtn.title = 'Edit Thread';
+                    editBtn.addEventListener('click', e => { e.stopPropagation(); editThread(post.id, post.title, post.content); });
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn'; deleteBtn.innerHTML = '🗑'; deleteBtn.title = 'Delete Thread';
+                    deleteBtn.addEventListener('click', e => { e.stopPropagation(); deleteThread(post.id); });
+                    actionsDiv.appendChild(editBtn); actionsDiv.appendChild(deleteBtn);
+                    li.appendChild(thumbDiv); li.appendChild(contentDiv); li.appendChild(actionsDiv);
+                } else { li.appendChild(thumbDiv); li.appendChild(contentDiv); }
+                li.addEventListener('click', () => openForumPost(post.id));
+                listElement.appendChild(li);
+            });
+        }
+
+        function applySearchFilter(searchTerm) {
+            if (!searchTerm || searchTerm.trim() === '') filteredPosts = allPosts;
+            else {
+                const term = searchTerm.trim();
+                filteredPosts = allPosts.filter(post => fuzzyMatch(term, post.title) || fuzzyMatch(term, post.content));
+            }
+            renderPosts(filteredPosts);
+        }
+
+        // ── Search dropdown helpers ──
+        function getRecentSearches() {
+            try { return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY)) || []; } catch { return []; }
+        }
+        function saveRecentSearch(query) {
+            if (!query.trim()) return;
+            let searches = getRecentSearches();
+            searches = searches.filter(item => item.toLowerCase() !== query.toLowerCase());
+            searches.unshift(query);
+            searches = searches.slice(0, 5);
+            localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+        }
+        function executeSearch(query) {
+            if (!query.trim()) return;
+            saveRecentSearch(query);
+            searchDropdown.style.display = 'none';
+            searchWrapper.classList.remove('active');
+            applySearchFilter(query);
+        }
+
+        function renderDropdown(items, isRecent = false) {
+            searchDropdown.innerHTML = '';
+            if (items.length === 0) {
+                if (isRecent) {
+                    searchDropdown.style.display = 'none';
+                    searchWrapper.classList.remove('active');
+                    return;
+                }
+                const noResult = document.createElement('div');
+                noResult.className = 'search-item';
+                noResult.innerText = 'No results found';
+                searchDropdown.appendChild(noResult);
+            } else {
+                items.forEach((itemText, index) => {
+                    const div = document.createElement('div');
+                    div.className = `search-item ${isRecent ? 'recent' : ''}`;
+                    div.innerHTML = `<span class="icon"></span>${itemText}`;
+                    div.addEventListener('click', () => {
+                        searchInput.value = itemText;
+                        executeSearch(itemText);
+                    });
+                    searchDropdown.appendChild(div);
+                });
+            }
+            searchDropdown.style.display = 'block';
+            searchWrapper.classList.add('active');
+            currentFocus = -1;
+        }
+
+        function addActive(items) {
+            if (!items) return false;
+            removeActive(items);
+            if (currentFocus >= items.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = items.length - 1;
+            items[currentFocus].classList.add('selected');
+        }
+        function removeActive(items) {
+            for (let i = 0; i < items.length; i++) items[i].classList.remove('selected');
+        }
+        function ensureVisible(element) {
+            if (!element) return;
+            const parent = searchDropdown;
+            if (element.offsetTop < parent.scrollTop) parent.scrollTop = element.offsetTop;
+            else if ((element.offsetTop + element.clientHeight) > (parent.scrollTop + parent.clientHeight))
+                parent.scrollTop = element.offsetTop + element.clientHeight - parent.clientHeight;
+        }
+
+        // ── Search input events ──
+        searchInput.addEventListener('input', function() {
+            const val = this.value;
+            if (!val) { renderDropdown(getRecentSearches(), true); return; }
+            // Simulated suggestions – replace with actual database query if needed
+            const mockDatabase = ['Dashboard analytics', 'User settings', 'Forum threads', 'System log history', 'Cloud storage file space'];
+            const filteredResults = mockDatabase.filter(item => item.toLowerCase().includes(val.toLowerCase()));
+            renderDropdown(filteredResults, false);
+        });
+        searchInput.addEventListener('focus', function() {
+            if (!this.value) renderDropdown(getRecentSearches(), true);
+        });
+        searchInput.addEventListener('keydown', function(e) {
+            let items = searchDropdown.getElementsByClassName('search-item');
+            if (items.length === 0) return;
+            if (e.key === 'ArrowDown') { e.preventDefault(); currentFocus++; addActive(items); ensureVisible(items[currentFocus]); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); currentFocus--; addActive(items); ensureVisible(items[currentFocus]); }
+            else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) items[currentFocus].click();
+                else executeSearch(this.value);
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!searchWrapper.contains(e.target)) {
+                searchDropdown.style.display = 'none';
+                searchWrapper.classList.remove('active');
+            }
+        });
+
+        // ── Toggle forum sections ──
         function toggleForumSection(targetSection) {
             currentForumSubView = targetSection;
             document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
             document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
             document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
-
             const feedPanel = document.getElementById('forumMainFeedPanel');
             const createPanel = document.getElementById('forumThreadCreationPanel');
-            const searchBar = document.getElementById('searchBarUIElement');
             const heading = document.getElementById('forumFeedHeadingText');
-
-            if (targetSection === 'create') {
-                feedPanel.style.display = 'none';
-                createPanel.style.display = 'block';
-            } else {
-                createPanel.style.display = 'none';
-                feedPanel.style.display = 'block';
-                searchBar.style.display = 'block';
+            if (targetSection === 'create') { feedPanel.style.display = 'none'; createPanel.style.display = 'block'; }
+            else {
+                createPanel.style.display = 'none'; feedPanel.style.display = 'block';
                 heading.textContent = targetSection === 'my-posts' ? '👤 My Thread Uploads' : 'Latest Public Records';
-                fetchForumFeedDataset();
+                fetchAndRenderPosts(targetSection === 'my-posts');
             }
         }
 
-        function triggerDebouncedSearch() {
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = setTimeout(() => {
-                fetchForumFeedDataset();
-            }, 300);
-        }
-
-        // ── Fetch Feed (with Edit/Delete buttons) ──
-        async function fetchForumFeedDataset() {
+        async function fetchAndRenderPosts(myPostsOnly = false) {
             const listElement = document.getElementById('globalForumsListElement');
-            const searchVal = encodeURIComponent(document.getElementById('forumSearchTextElement').value.trim());
+            listElement.innerHTML = '<li class="empty-state">Loading...</li>';
             const savedToken = localStorage.getItem('cloudspace_token') || '';
-
-            let requestURL = `api/forums/forums-api.php?action=list_posts&search=${searchVal}`;
-            if (currentForumSubView === 'my-posts') {
-                requestURL += `&author=${encodeURIComponent(username)}`;
-            }
-
             try {
-                const response = await fetch(requestURL, {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${savedToken}` }
-                });
+                let requestURL = `api/forums/forums-api.php?action=list_posts`;
+                if (myPostsOnly) requestURL += `&author=${encodeURIComponent(username)}`;
+                const response = await fetch(requestURL, { method:'GET', headers:{ 'Authorization':`Bearer ${savedToken}` } });
                 const dataset = await response.json();
-
-                if (dataset.status !== 'success') {
-                    listElement.innerHTML = `<li class="empty-state">❌ Unauthorized: ${dataset.message || 'Verification rejected.'}</li>`;
-                    return;
-                }
-
-                listElement.innerHTML = '';
-                if (dataset.posts.length === 0) {
-                    listElement.innerHTML = '<li class="empty-state">No forum threads matching criteria found.</li>';
-                    return;
-                }
-
-                dataset.posts.forEach(post => {
-                    const li = document.createElement('li');
-                    li.className = 'post-item';
-
-                    // ── Thumbnail ──
-                    const thumbDiv = document.createElement('div');
-                    thumbDiv.className = 'post-thumb';
-                    if (post.image) {
-                        const imgUrl = getSecureImageUrl(post.image);
-                        if (imgUrl) {
-                            const img = document.createElement('img');
-                            img.src = imgUrl;
-                            img.alt = 'Thumbnail';
-                            thumbDiv.appendChild(img);
-                        } else {
-                            const noImg = document.createElement('span');
-                            noImg.className = 'no-image';
-                            noImg.textContent = '📄';
-                            thumbDiv.appendChild(noImg);
-                        }
-                    } else {
-                        const noImg = document.createElement('span');
-                        noImg.className = 'no-image';
-                        noImg.textContent = '📄';
-                        thumbDiv.appendChild(noImg);
-                    }
-
-                    // Content
-                    const contentDiv = document.createElement('div');
-                    contentDiv.className = 'post-content';
-                    const titleSpan = document.createElement('div');
-                    titleSpan.className = 'post-title';
-                    titleSpan.textContent = post.title;
-                    const metaSpan = document.createElement('div');
-                    metaSpan.className = 'post-meta';
-                    const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : '?';
-                    metaSpan.innerHTML = `
-                        <span class="author">
-                            <span class="post-author-avatar">${escapeHtml(authorInitial)}</span>
-                            ${escapeHtml(post.author)}
-                        </span>
-                        <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
-                        <span class="comments-count">💬 ${post.comment_count || 0}</span>
-                    `;
-                    contentDiv.appendChild(titleSpan);
-                    contentDiv.appendChild(metaSpan);
-
-                    // Action buttons (only if the logged-in user is the author)
-                    const isOwner = post.author.toLowerCase() === username.toLowerCase();
-                    if (isOwner) {
-                        const actionsDiv = document.createElement('div');
-                        actionsDiv.className = 'post-actions';
-                        // Edit button
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'edit-btn';
-                        editBtn.innerHTML = '✎';
-                        editBtn.title = 'Edit Thread';
-                        editBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            editThread(post.id, post.title, post.content);
-                        });
-                        // Delete button
-                        const deleteBtn = document.createElement('button');
-                        deleteBtn.className = 'delete-btn';
-                        deleteBtn.innerHTML = '🗑';
-                        deleteBtn.title = 'Delete Thread';
-                        deleteBtn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            deleteThread(post.id);
-                        });
-                        actionsDiv.appendChild(editBtn);
-                        actionsDiv.appendChild(deleteBtn);
-                        li.appendChild(thumbDiv);
-                        li.appendChild(contentDiv);
-                        li.appendChild(actionsDiv);
-                    } else {
-                        li.appendChild(thumbDiv);
-                        li.appendChild(contentDiv);
-                    }
-
-                    li.addEventListener('click', () => openForumPost(post.id));
-                    listElement.appendChild(li);
-                });
-            } catch (err) {
-                listElement.innerHTML = '<li class="empty-state">Error connecting to the authenticated security layer.</li>';
-            }
+                if (dataset.status !== 'success') { listElement.innerHTML = `<li class="empty-state">❌ ${dataset.message}</li>`; return; }
+                allPosts = dataset.posts || [];
+                allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                const searchVal = searchInput.value.trim();
+                if (searchVal) filteredPosts = allPosts.filter(post => fuzzyMatch(searchVal, post.title) || fuzzyMatch(searchVal, post.content));
+                else filteredPosts = allPosts;
+                renderPosts(filteredPosts);
+            } catch (err) { listElement.innerHTML = '<li class="empty-state">Network error.</li>'; }
         }
 
-        // ── Edit Thread ──
         async function editThread(postId, oldTitle, oldContent) {
             const newTitle = prompt('Enter new title:', oldTitle);
             if (newTitle === null) return;
             const newContent = prompt('Enter new content:', oldContent);
             if (newContent === null) return;
-
             const token = localStorage.getItem('cloudspace_token');
             try {
-                const response = await fetch('api/forums/forums-api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        action: 'update_post',
-                        post_id: postId,
-                        title: newTitle,
-                        content: newContent
-                    })
-                });
+                const response = await fetch('api/forums/forums-api.php', { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({ action:'update_post', post_id:postId, title:newTitle, content:newContent }) });
                 const data = await response.json();
-                if (data.status === 'success') {
-                    showToast('Thread updated successfully!', 'success');
-                    fetchForumFeedDataset();
-                } else {
-                    showToast('Error: ' + data.message, 'error');
-                }
-            } catch (err) {
-                showToast('Network error updating thread.', 'error');
-            }
+                if (data.status === 'success') { showToast('Thread updated!', 'success'); fetchAndRenderPosts(currentForumSubView==='my-posts'); }
+                else showToast('Error: ' + data.message, 'error');
+            } catch (err) { showToast('Network error.', 'error'); }
         }
 
-        // ── Delete Thread ──
         async function deleteThread(postId) {
             if (!confirm('Delete this thread permanently?')) return;
             const token = localStorage.getItem('cloudspace_token');
             try {
-                const response = await fetch('api/forums/forums-api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: JSON.stringify({
-                        action: 'delete_post',
-                        post_id: postId
-                    })
-                });
+                const response = await fetch('api/forums/forums-api.php', { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({ action:'delete_post', post_id:postId }) });
                 const data = await response.json();
-                if (data.status === 'success') {
-                    showToast('Thread deleted.', 'success');
-                    fetchForumFeedDataset();
-                } else {
-                    showToast('Error: ' + data.message, 'error');
-                }
-            } catch (err) {
-                showToast('Network error deleting thread.', 'error');
-            }
+                if (data.status === 'success') { showToast('Thread deleted.', 'success'); fetchAndRenderPosts(currentForumSubView==='my-posts'); }
+                else showToast('Error: ' + data.message, 'error');
+            } catch (err) { showToast('Network error.', 'error'); }
         }
 
-        // ── Open Post Detail ──
         async function openForumPost(postId) {
             currentForumPostId = postId;
             try {
                 const res = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(postId));
                 const data = await res.json();
-                if (data.status !== 'success') {
-                    alert('Could not load post.');
-                    return;
-                }
-
+                if (data.status !== 'success') { alert('Could not load post.'); return; }
                 document.getElementById('forumMainFeedPanel').style.display = 'none';
                 document.getElementById('forumThreadCreationPanel').style.display = 'none';
-                const detailView = document.getElementById('forumPostDetailView');
-                detailView.style.display = 'block';
-
+                document.getElementById('forumPostDetailView').style.display = 'block';
                 document.getElementById('forumDetailTitle').textContent = data.post.title;
                 document.getElementById('forumDetailAuthor').textContent = data.post.author;
                 document.getElementById('forumDetailDate').textContent = formatDate(data.post.timestamp);
-
                 const bodyEl = document.getElementById('forumDetailBody');
-                const bodyText = data.post.content;
-                let bodyHtml = `<div style="white-space:pre-wrap;">${escapeHtml(bodyText)}</div>`;
+                let bodyHtml = `<div style="white-space:pre-wrap;">${escapeHtml(data.post.content)}</div>`;
                 if (data.post.image) {
                     const imgUrl = getSecureImageUrl(data.post.image);
-                    if (imgUrl) {
-                        bodyHtml += `<hr style="border:2px solid #b2c9ab; margin:1rem 0;" />`;
-                        bodyHtml += `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
-                    }
+                    if (imgUrl) bodyHtml += `<hr style="border:2px solid #b2c9ab;margin:1rem 0;"><img src="${imgUrl}" alt="Post image" class="forum-image-preview-card">`;
                 }
                 bodyEl.innerHTML = bodyHtml;
-
                 renderForumComments(data.comments);
-
                 document.getElementById('forumCommentInput').value = '';
-
-            } catch (err) {
-                console.error('openForumPost error:', err);
-                alert('Network error loading post.');
-            }
+            } catch (err) { alert('Network error loading post.'); }
         }
 
-        // ── Render Comments ──
         function renderForumComments(comments) {
             const list = document.getElementById('forumCommentsList');
             list.innerHTML = '';
-            if (!comments || comments.length === 0) {
-                list.innerHTML = '<li class="empty-state">No comments yet. Be the first! 😊</li>';
-                return;
-            }
+            if (!comments || comments.length === 0) { list.innerHTML = '<li class="empty-state">No comments yet. 😊</li>'; return; }
             const loggedUser = username.toLowerCase();
             comments.forEach(comment => {
                 const li = document.createElement('li');
                 li.className = 'comment-item';
                 const isYours = comment.author.toLowerCase() === loggedUser;
-                li.innerHTML = `
-                    <div class="comment-header">
-                        <span class="comment-author">
-                            ${escapeHtml(comment.author)}
-                            ${isYours ? '<span class="you-badge">You</span>' : ''}
-                        </span>
-                        <span class="comment-date">${formatDate(comment.timestamp)}</span>
-                    </div>
-                    <div class="comment-content">${escapeHtml(comment.content)}</div>
-                `;
+                li.innerHTML = `<div class="comment-header"><span class="comment-author">${escapeHtml(comment.author)}${isYours?'<span class="you-badge">You</span>':''}</span><span class="comment-date">${formatDate(comment.timestamp)}</span></div><div class="comment-content">${escapeHtml(comment.content)}</div>`;
                 list.appendChild(li);
             });
         }
 
-        // ── Post Comment ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
             const btn = document.getElementById('forumCommentSubmitBtn');
-
-            if (!content) {
-                showToast('Please write a comment before posting.', 'error');
-                return;
-            }
-            if (!currentForumPostId) {
-                showToast('No post selected. Please try again.', 'error');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'Posting...';
-
+            if (!content) { showToast('Please write a comment.', 'error'); return; }
+            if (!currentForumPostId) { showToast('No post selected.', 'error'); return; }
+            btn.disabled = true; btn.textContent = 'Posting...';
             try {
-                const res = await fetch(API_BASE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'add_comment',
-                        post_id: currentForumPostId,
-                        author: username,
-                        content: content
-                    })
-                });
+                const res = await fetch(API_BASE, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'add_comment',post_id:currentForumPostId,author:username,content}) });
                 const data = await res.json();
-
                 if (data.status === 'success') {
                     input.value = '';
-                    showToast('💬 Your comment was posted successfully!', 'success');
-
+                    showToast('💬 Comment posted!', 'success');
                     const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentForumPostId));
                     const postData = await postRes.json();
-                    if (postData.status === 'success') {
-                        renderForumComments(postData.comments);
-                    }
-                    fetchForumFeedDataset();
-                } else {
-                    showToast(data.message || 'Failed to post comment.', 'error');
-                }
-            } catch (err) {
-                console.error('postForumComment error:', err);
-                showToast('Network error posting comment.', 'error');
-            }
-
-            btn.disabled = false;
-            btn.textContent = '📤 Post Comment';
+                    if (postData.status === 'success') renderForumComments(postData.comments);
+                    fetchAndRenderPosts(currentForumSubView==='my-posts');
+                } else showToast(data.message || 'Failed to post comment.', 'error');
+            } catch (err) { showToast('Network error.', 'error'); }
+            btn.disabled = false; btn.textContent = '📤 Post Comment';
         }
 
-        // ── Back to Feed ──
         function goBackToForumFeed() {
             document.getElementById('forumPostDetailView').style.display = 'none';
             document.getElementById('forumMainFeedPanel').style.display = 'block';
-            fetchForumFeedDataset();
+            fetchAndRenderPosts(currentForumSubView==='my-posts');
         }
 
-        // ── Create Thread ──
         async function transmitNewThreadPayload(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('forumSubmitBtn');
@@ -1938,120 +1872,69 @@
             const bodyVal = document.getElementById('forumFormBody').value.trim();
             const imageInput = document.getElementById('forumFormFile');
             const savedToken = localStorage.getItem('cloudspace_token') || '';
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner"></span> Publishing...';
-            statusMsg.className = 'comment-status';
-            statusMsg.style.display = 'none';
-
+            submitBtn.disabled = true; submitBtn.innerHTML = '<span class="spinner"></span> Publishing...';
+            statusMsg.className = 'comment-status'; statusMsg.style.display = 'none';
             const packetBody = new FormData();
-            packetBody.append('action', 'create_post');
-            packetBody.append('title', titleVal);
-            packetBody.append('content', bodyVal);
-            if (imageInput.files[0]) {
-                packetBody.append('image', imageInput.files[0]);
-            }
-
+            packetBody.append('action','create_post'); packetBody.append('title',titleVal); packetBody.append('content',bodyVal);
+            if (imageInput.files[0]) packetBody.append('image',imageInput.files[0]);
             try {
-                const response = await fetch('api/forums/forums-api.php', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${savedToken}` },
-                    body: packetBody
-                });
+                const response = await fetch('api/forums/forums-api.php', { method:'POST', headers:{'Authorization':`Bearer ${savedToken}`}, body:packetBody });
                 const outcome = await response.json();
-
                 if (outcome.status === 'success') {
                     document.getElementById('newForumFormSubmitElement').reset();
                     document.getElementById('fileChosen').textContent = 'No file chosen';
-
-                    showToast('🎉 Thread uploaded securely to CloudSpacePH!', 'success');
-
-                    submitBtn.className = 'comment-submit btn-published';
-                    submitBtn.innerHTML = '✅ Published';
-
-                    setTimeout(() => {
-                        submitBtn.className = 'comment-submit';
-                        submitBtn.innerHTML = '🚀 Publish Thread';
-                        submitBtn.disabled = false;
-                    }, 3000);
-
-                    setTimeout(() => { toggleForumSection('feed'); }, 1500);
+                    showToast('🎉 Thread uploaded!', 'success');
+                    submitBtn.className = 'comment-submit btn-published'; submitBtn.innerHTML = '✅ Published';
+                    setTimeout(() => { submitBtn.className = 'comment-submit'; submitBtn.innerHTML = '🚀 Publish Thread'; submitBtn.disabled = false; }, 3000);
+                    setTimeout(() => toggleForumSection('feed'), 1500);
                 } else {
-                    showToast(outcome.message || 'Transaction rejected by server files.', 'error');
-                    statusMsg.className = 'comment-status error';
-                    statusMsg.textContent = outcome.message || 'Transaction rejected by server files.';
-                    statusMsg.style.display = 'block';
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = '🚀 Publish Thread';
+                    showToast(outcome.message || 'Error.', 'error');
+                    statusMsg.className = 'comment-status error'; statusMsg.textContent = outcome.message; statusMsg.style.display = 'block';
+                    submitBtn.disabled = false; submitBtn.innerHTML = '🚀 Publish Thread';
                 }
             } catch (err) {
-                showToast('Network communication interface validation failure.', 'error');
-                statusMsg.className = 'comment-status error';
-                statusMsg.textContent = 'Network communication interface validation failure.';
-                statusMsg.style.display = 'block';
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '🚀 Publish Thread';
+                showToast('Network error.', 'error');
+                statusMsg.className = 'comment-status error'; statusMsg.textContent = 'Network error.'; statusMsg.style.display = 'block';
+                submitBtn.disabled = false; submitBtn.innerHTML = '🚀 Publish Thread';
             }
         }
 
-        // ── File input display helper ──
         document.getElementById('forumFormFile').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
-            document.getElementById('fileChosen').textContent = fileName;
+            document.getElementById('fileChosen').textContent = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
         });
 
-        // ── Attach forum tab event listeners (instead of inline onclick) ──
         document.getElementById('forumFeedTabBtn').addEventListener('click', () => toggleForumSection('feed'));
         document.getElementById('forumMyTabBtn').addEventListener('click', () => toggleForumSection('my-posts'));
         document.getElementById('forumCreateTabBtn').addEventListener('click', () => toggleForumSection('create'));
-
-        // ── Attach search input listener (instead of inline oninput) ──
-        document.getElementById('forumSearchTextElement').addEventListener('input', triggerDebouncedSearch);
-
-        // ── Attach create thread form listener (instead of inline onsubmit) ──
         document.getElementById('newForumFormSubmitElement').addEventListener('submit', transmitNewThreadPayload);
 
-        // ── Session idle timeout (15 minutes) ──
+        // ── Session idle timeout ──
         let idleTimer;
-        const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 minutes
-
         function resetIdleTimer() {
             clearTimeout(idleTimer);
             idleTimer = setTimeout(() => {
-                alert('Session expired due to inactivity. You will be logged out.');
-                localStorage.removeItem('cloudspace_username');
-                localStorage.removeItem('cloudspace_token');
+                alert('Session expired due to inactivity.');
+                localStorage.removeItem('cloudspace_username'); localStorage.removeItem('cloudspace_token');
                 window.location.href = 'login';
-            }, IDLE_TIMEOUT);
+            }, 15 * 60 * 1000);
         }
-
-        // Reset timer on any user activity
-        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
-            document.addEventListener(event, resetIdleTimer);
-        });
-        resetIdleTimer(); // start immediately
+        ['click','mousemove','keydown','scroll','touchstart'].forEach(e => document.addEventListener(e, resetIdleTimer));
+        resetIdleTimer();
 
         // ── Init ──
         loadProfile();
         loadLogs();
         showPage('dashboard');
 
-        // Event listeners for forums detail
         document.getElementById('forumBackBtn').addEventListener('click', goBackToForumFeed);
         document.getElementById('forumCommentSubmitBtn').addEventListener('click', postForumComment);
-        document.getElementById('forumCommentInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                postForumComment();
-            }
+        document.getElementById('forumCommentInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); postForumComment(); }
         });
 
-        // Expose functions globally
         window.toggleForumSection = toggleForumSection;
-        window.triggerDebouncedSearch = triggerDebouncedSearch;
         window.transmitNewThreadPayload = transmitNewThreadPayload;
         window.openForumPost = openForumPost;
     </script>
-
 </body>
 </html>
