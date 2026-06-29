@@ -66,6 +66,27 @@ function getDbConnection() {
     }
 }
 
+// ── Rate limiting helper ──
+function checkRateLimit($key, $maxAttempts = 5, $timeWindow = 60) {
+    $rateFile = sys_get_temp_dir() . '/rate_' . md5($key) . '.json';
+    $data = [];
+    if (file_exists($rateFile)) {
+        $data = json_decode(file_get_contents($rateFile), true);
+        if (!is_array($data)) $data = [];
+    }
+    $now = time();
+    // Clean old attempts
+    $data = array_filter($data, function($t) use ($now, $timeWindow) {
+        return ($now - $t) < $timeWindow;
+    });
+    if (count($data) >= $maxAttempts) {
+        return false;
+    }
+    $data[] = $now;
+    file_put_contents($rateFile, json_encode($data));
+    return true;
+}
+
 // ─── SWITCH CASES ───
 switch ($action) {
     case 'register':
@@ -80,6 +101,8 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Username and Password are required variables."]);
             exit;
         }
+
+        // Rate limit on registration? (optional – not requested, so skip)
 
         try {
             $pdo = getDbConnection(); // connect only for this action
@@ -141,6 +164,13 @@ switch ($action) {
             exit;
         }
 
+        // Rate limiting for login
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!checkRateLimit($ip . '_login', 5, 60)) {
+            echo json_encode(["status" => "error", "message" => "Too many attempts. Please wait a minute."]);
+            exit;
+        }
+
         try {
             $pdo = getDbConnection(); // connect only for this action
 
@@ -175,26 +205,34 @@ switch ($action) {
         }
         break;
 
-    // ─── CHANGE PASSWORD ───
+    // ─── CHANGE PASSWORD (secured with JWT + rate limit) ───
     case 'change_password':
-        $username = trim($inputData['username'] ?? '');
-        $current  = trim($inputData['current_password'] ?? '');
-        $new      = trim($inputData['new_password'] ?? '');
+        // 1. Authenticate via token (same as get_profile)
+        $username = JWTSecurity::authenticate(); // returns username or exits with 401
 
-        if (empty($username) || empty($current) || empty($new)) {
-            echo json_encode(["status" => "error", "message" => "All fields are required."]);
+        // Rate limiting for password change
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!checkRateLimit($ip . '_change_password', 5, 60)) {
+            echo json_encode(["status" => "error", "message" => "Too many attempts. Please wait a minute."]);
             exit;
         }
 
-        // Enforce minimum length (optional)
+        // 2. Read input (now we know the token user is valid)
+        $current = trim($inputData['current_password'] ?? '');
+        $new     = trim($inputData['new_password'] ?? '');
+        // (do not use $inputData['username'] – use $username from token)
+
+        if (empty($current) || empty($new)) {
+            echo json_encode(["status" => "error", "message" => "Current and new password are required."]);
+            exit;
+        }
         if (strlen($new) < 8) {
             echo json_encode(["status" => "error", "message" => "New password must be at least 8 characters."]);
             exit;
         }
 
         try {
-            $pdo = getDbConnection(); // connect only for this action
-
+            $pdo = getDbConnection();
             $stmt = $pdo->prepare("SELECT passoword FROM cloudspaceph_users WHERE LOWER(username) = LOWER(?)");
             $stmt->execute([$username]);
             $row = $stmt->fetch();

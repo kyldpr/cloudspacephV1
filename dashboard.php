@@ -6,6 +6,7 @@
     <title>CloudSpacePH • Dashboard</title>
     <!-- Google Font: Open Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' https:; style-src 'unsafe-inline' https:; img-src 'self' data:; font-src https:; connect-src 'self';">
     <style>
         /* ── Reset & Base ── */
         * {
@@ -751,13 +752,16 @@
             border-color: #f4c2c2;
             background: #ffffff;
         }
+
+        /* ── Centered image in post detail ── */
         .forum-image-preview-card {
+            display: block;
+            margin: 1rem auto;
             max-width: 100%;
             max-height: 320px;
             border-radius: 16px;
             border: 2px solid #b2c9ab;
             object-fit: contain;
-            margin: 0.5rem 0;
             background: #f5ede4;
         }
 
@@ -1196,15 +1200,15 @@
                     </div>
                 </div>
 
-                <!-- Navigation tabs -->
+                <!-- Navigation tabs (onclick removed, handled by JS) -->
                 <div class="forum-nav-container">
-                    <button class="forum-nav-btn active" id="forumFeedTabBtn" onclick="toggleForumSection('feed')">
+                    <button class="forum-nav-btn active" id="forumFeedTabBtn">
                         <span>🌐</span> Public Feed
                     </button>
-                    <button class="forum-nav-btn" id="forumMyTabBtn" onclick="toggleForumSection('my-posts')">
+                    <button class="forum-nav-btn" id="forumMyTabBtn">
                         <span>👤</span> My Forums
                     </button>
-                    <button class="forum-nav-btn" id="forumCreateTabBtn" onclick="toggleForumSection('create')">
+                    <button class="forum-nav-btn" id="forumCreateTabBtn">
                         <span>📝</span> Create Thread
                     </button>
                 </div>
@@ -1284,9 +1288,9 @@
             window.location.href = 'login';
         }
 
-        // ── Token handling ──
+        // ── Token must be set by server after login
         if (!localStorage.getItem('cloudspace_token')) {
-            localStorage.setItem('cloudspace_token', 'dummy-token-' + Date.now());
+            window.location.href = 'login';
         }
 
         const API_BASE = 'api/forums/forums-api.php';
@@ -1452,7 +1456,7 @@
             window.location.href = 'login';
         });
 
-        // ── Change Password ──
+        // ── Change Password (with Authorization header) ──
         document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msg = document.getElementById('passwordMessage');
@@ -1472,9 +1476,13 @@
                 return;
             }
             try {
+                const token = localStorage.getItem('cloudspace_token');
                 const res = await fetch(AUTH_API, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
                     body: JSON.stringify({
                         action: 'change_password',
                         username: username,
@@ -1624,8 +1632,6 @@
                 requestURL += `&author=${encodeURIComponent(username)}`;
             }
 
-            console.log('Fetching posts, view:', currentForumSubView, 'search:', searchVal);
-
             try {
                 const response = await fetch(requestURL, {
                     method: 'GET',
@@ -1638,7 +1644,6 @@
                     return;
                 }
 
-                console.log('Posts fetched:', dataset.posts.length);
                 listElement.innerHTML = '';
                 if (dataset.posts.length === 0) {
                     listElement.innerHTML = '<li class="empty-state">No forum threads matching criteria found.</li>';
@@ -1646,7 +1651,6 @@
                 }
 
                 dataset.posts.forEach(post => {
-                    console.log(`Post ${post.id} image: ${post.image || 'none'}`);
                     const li = document.createElement('li');
                     li.className = 'post-item';
 
@@ -1696,7 +1700,7 @@
                         editBtn.innerHTML = '✎';
                         editBtn.title = 'Edit Thread';
                         editBtn.addEventListener('click', (e) => {
-                            e.stopPropagation(); // prevent opening post detail
+                            e.stopPropagation();
                             editThread(post.id, post.title, post.content);
                         });
                         // Delete button
@@ -1718,7 +1722,6 @@
                         li.appendChild(contentDiv);
                     }
 
-                    // The whole item still opens post detail (except when clicking action buttons)
                     li.addEventListener('click', () => openForumPost(post.id));
                     listElement.appendChild(li);
                 });
@@ -1752,7 +1755,7 @@
                 const data = await response.json();
                 if (data.status === 'success') {
                     showToast('Thread updated successfully!', 'success');
-                    fetchForumFeedDataset(); // refresh list
+                    fetchForumFeedDataset();
                 } else {
                     showToast('Error: ' + data.message, 'error');
                 }
@@ -1926,8 +1929,6 @@
             const imageInput = document.getElementById('forumFormFile');
             const savedToken = localStorage.getItem('cloudspace_token') || '';
 
-            console.log('Creating post with title:', titleVal, 'image:', imageInput.files[0] ? imageInput.files[0].name : 'none');
-
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Publishing...';
             statusMsg.className = 'comment-status';
@@ -1950,7 +1951,6 @@
                 const outcome = await response.json();
 
                 if (outcome.status === 'success') {
-                    console.log('Post created successfully:', outcome.post);
                     document.getElementById('newForumFormSubmitElement').reset();
                     document.getElementById('fileChosen').textContent = 'No file chosen';
 
@@ -1989,6 +1989,31 @@
             const fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
             document.getElementById('fileChosen').textContent = fileName;
         });
+
+        // ── Attach forum tab event listeners (instead of inline onclick) ──
+        document.getElementById('forumFeedTabBtn').addEventListener('click', () => toggleForumSection('feed'));
+        document.getElementById('forumMyTabBtn').addEventListener('click', () => toggleForumSection('my-posts'));
+        document.getElementById('forumCreateTabBtn').addEventListener('click', () => toggleForumSection('create'));
+
+        // ── Session idle timeout (15 minutes) ──
+        let idleTimer;
+        const IDLE_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                alert('Session expired due to inactivity. You will be logged out.');
+                localStorage.removeItem('cloudspace_username');
+                localStorage.removeItem('cloudspace_token');
+                window.location.href = 'login';
+            }, IDLE_TIMEOUT);
+        }
+
+        // Reset timer on any user activity
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetIdleTimer);
+        });
+        resetIdleTimer(); // start immediately
 
         // ── Init ──
         loadProfile();
