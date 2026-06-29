@@ -114,6 +114,14 @@ switch ($action) {
                 exit;
             }
 
+            // Check if email already exists
+            $emailStmt = $pdo->prepare("SELECT id FROM cloudspaceph_users WHERE LOWER(email) = LOWER(?)");
+            $emailStmt->execute([$emailIn]);
+            if ($emailStmt->fetch()) {
+                echo json_encode(["status" => "error", "message" => "Email already registered."]);
+                exit;
+            }
+
             $hashedPassword = password_hash($passIn, PASSWORD_BCRYPT);
             $currentDate = date("Y-m-d");
 

@@ -4,6 +4,26 @@ header("Content-Type: application/json");
 // ── Include JWT helper for logging ──
 require_once __DIR__ . '/../jwt-helper.php';
 
+// ── Rate limiting helper ──
+function checkRateLimit($key, $maxAttempts = 10, $timeWindow = 60) {
+    $rateFile = sys_get_temp_dir() . '/rate_' . md5($key) . '.json';
+    $data = [];
+    if (file_exists($rateFile)) {
+        $data = json_decode(file_get_contents($rateFile), true);
+        if (!is_array($data)) $data = [];
+    }
+    $now = time();
+    $data = array_filter($data, function($t) use ($now, $timeWindow) {
+        return ($now - $t) < $timeWindow;
+    });
+    if (count($data) >= $maxAttempts) {
+        return false;
+    }
+    $data[] = $now;
+    file_put_contents($rateFile, json_encode($data));
+    return true;
+}
+
 // ── Config ──
 $postsDir  = __DIR__ . '/post/';
 $commentsDir = __DIR__ . '/commnents/';
@@ -123,50 +143,89 @@ switch ($action) {
         ]);
         break;
 
-    // ── ADD COMMENT ──
+    // ── ADD COMMENT (authenticated, rate-limited) ──
     case 'add_comment':
-        $postId    = trim($input['post_id'] ?? '');
-        $author    = trim($input['author'] ?? '');
-        $content   = trim($input['content'] ?? '');
-        if (!$postId || !$author || !$content) {
-            echo json_encode(["status" => "error", "message" => "post_id, author, and content are required."]);
+        // ── 1. Authenticate via Bearer token ──
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
             exit;
         }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        // Rate limit check
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!checkRateLimit($ip . '_write', 10, 60)) {
+            echo json_encode(["status" => "error", "message" => "Too many write attempts. Please wait a minute."]);
+            exit;
+        }
+
+        // ── 2. Read input; author is taken from token ──
+        $postId    = trim($input['post_id'] ?? '');
+        $content   = trim($input['content'] ?? '');
+        if (!$postId || !$content) {
+            echo json_encode(["status" => "error", "message" => "post_id and content are required."]);
+            exit;
+        }
+
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
         if (!$post) {
             echo json_encode(["status" => "error", "message" => "Post not found."]);
             exit;
         }
+
         $timestamp = date('c');
         $commentId = generateId();
         $comment = [
             "comment_id"  => $commentId,
             "post_id"     => $postId,
             "post_title"  => $post['title'],
-            "author"      => $author,
+            "author"      => $username,          // ← derived from token
             "content"     => $content,
             "timestamp"   => $timestamp
         ];
+
         // Save to post comments
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
         if (!is_array($comments)) $comments = [];
         $comments[] = $comment;
         writeJson($commentsFile, $comments);
-        // Save to author's comments
+
+        // Save to post author's comment index
         $postAuthor = $post['author'];
         $authorFile = authorCommentsFile($postAuthor);
         $authorComments = readJson($authorFile);
         if (!is_array($authorComments)) $authorComments = [];
         $authorComments[] = $comment;
         writeJson($authorFile, $authorComments);
-        // Save to commenter's comments
-        $commenterFile = commenterCommentsFile($author);
+
+        // Save to commenter's own index
+        $commenterFile = commenterCommentsFile($username);
         $commenterComments = readJson($commenterFile);
         if (!is_array($commenterComments)) $commenterComments = [];
         $commenterComments[] = $comment;
         writeJson($commenterFile, $commenterComments);
+
         echo json_encode([
             "status" => "success",
             "message" => "Comment added successfully.",
@@ -234,6 +293,13 @@ switch ($action) {
             exit;
         }
 
+        // Rate limit check for write operations
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!checkRateLimit($ip . '_write', 10, 60)) {
+            echo json_encode(["status" => "error", "message" => "Too many write attempts. Please wait a minute."]);
+            exit;
+        }
+
         // Read title and content from either $_POST (multipart) or $input (JSON)
         $title = trim($_POST['title'] ?? $input['title'] ?? '');
         $content = trim($_POST['content'] ?? $input['content'] ?? '');
@@ -275,9 +341,9 @@ switch ($action) {
                 exit;
             }
 
-            // Use a secure new filename
-            $newExt = $extMap[$mimeType][0] ?? 'jpg';
-            $imageFilename = $postId . '.' . $newExt;
+            // Use a secure new filename (random)
+            $random = bin2hex(random_bytes(16));
+            $imageFilename = $random . '.' . $extMap[$mimeType][0]; // e.g., a1b2c3.jpg
             $targetPath = $imagesDir . $imageFilename;
 
             if (move_uploaded_file($fileTmp, $targetPath)) {
