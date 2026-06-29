@@ -9,7 +9,7 @@ $postsDir  = __DIR__ . '/post/';
 $commentsDir = __DIR__ . '/commnents/';
 $byAuthorDir = $commentsDir . 'by_author/';
 $byCommenterDir = $commentsDir . 'by_commenter/';
-$imagesDir = __DIR__ . '/images/';
+$imagesDir = __DIR__ . '/../../storage/images/';
 
 foreach ([$postsDir, $commentsDir, $byAuthorDir, $byCommenterDir, $imagesDir] as $dir) {
     if (!file_exists($dir)) mkdir($dir, 0755, true);
@@ -245,22 +245,47 @@ switch ($action) {
         $postId = 'post_' . time();
         $imageFilename = null;
 
-        // Handle image upload (only for multipart)
+        // Handle image upload (only for multipart) – with magic byte validation
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $fileTmp = $_FILES['image']['tmp_name'];
             $originalName = basename($_FILES['image']['name']);
-            $ext = pathinfo($originalName, PATHINFO_EXTENSION);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
             $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-            if (in_array(strtolower($ext), $allowed)) {
-                $imageFilename = $postId . '.' . $ext;
-                $targetPath = $imagesDir . $imageFilename;
-                if (move_uploaded_file($fileTmp, $targetPath)) {
-                    error_log("Image uploaded: " . $imageFilename);
-                } else {
-                    error_log("Failed to move uploaded file.");
-                }
+
+            // Magic byte validation
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $fileTmp);
+            finfo_close($finfo);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($mimeType, $allowedMimes)) {
+                error_log("Invalid MIME type: " . $mimeType);
+                echo json_encode(["status" => "error", "message" => "Invalid image type."]);
+                exit;
+            }
+
+            // Verify extension matches MIME
+            $extMap = [
+                'image/jpeg' => ['jpg', 'jpeg'],
+                'image/png'  => ['png'],
+                'image/gif'  => ['gif'],
+                'image/webp' => ['webp']
+            ];
+            if (!in_array($ext, $extMap[$mimeType] ?? [])) {
+                echo json_encode(["status" => "error", "message" => "File extension does not match image type."]);
+                exit;
+            }
+
+            // Use a secure new filename
+            $newExt = $extMap[$mimeType][0] ?? 'jpg';
+            $imageFilename = $postId . '.' . $newExt;
+            $targetPath = $imagesDir . $imageFilename;
+
+            if (move_uploaded_file($fileTmp, $targetPath)) {
+                error_log("Image uploaded securely: " . $imageFilename);
             } else {
-                error_log("Invalid image type: " . $ext);
+                error_log("Failed to move uploaded file.");
+                echo json_encode(["status" => "error", "message" => "Failed to save image."]);
+                exit;
             }
         }
 
@@ -287,6 +312,133 @@ switch ($action) {
             "message" => "Post created successfully.",
             "post" => $post
         ]);
+        break;
+
+    // ── UPDATE POST (edit) ──
+    case 'update_post':
+        // Authenticate
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        $newTitle = trim($input['title'] ?? '');
+        $newContent = trim($input['content'] ?? '');
+        if (!$postId || !$newTitle || !$newContent) {
+            echo json_encode(["status" => "error", "message" => "post_id, title, and content are required."]);
+            exit;
+        }
+
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+        // Verify ownership
+        if (strtolower($post['author']) !== strtolower($username)) {
+            echo json_encode(["status" => "error", "message" => "You are not the author of this post."]);
+            exit;
+        }
+
+        $post['title'] = $newTitle;
+        $post['content'] = $newContent;
+        // Optionally update timestamp
+        $post['timestamp'] = date('c');
+
+        writeJson($postFile, $post);
+        JWTSecurity::logUserAction($username, "Updated forum thread: '" . $newTitle . "'");
+        echo json_encode(["status" => "success", "message" => "Post updated.", "post" => $post]);
+        break;
+
+    // ── DELETE POST ──
+    case 'delete_post':
+        // Authenticate
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        if (!$postId) {
+            echo json_encode(["status" => "error", "message" => "post_id is required."]);
+            exit;
+        }
+
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+        if (strtolower($post['author']) !== strtolower($username)) {
+            echo json_encode(["status" => "error", "message" => "You are not the author of this post."]);
+            exit;
+        }
+
+        // Delete the post JSON
+        if (!unlink($postFile)) {
+            echo json_encode(["status" => "error", "message" => "Failed to delete post."]);
+            exit;
+        }
+
+        // Optionally delete associated image
+        if (!empty($post['image'])) {
+            $imagePath = $imagesDir . $post['image'];
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Delete all comments for this post
+        $commentsFile = commentFileForPost($postId);
+        if (file_exists($commentsFile)) {
+            unlink($commentsFile);
+        }
+
+        JWTSecurity::logUserAction($username, "Deleted forum thread: '" . $post['title'] . "'");
+        echo json_encode(["status" => "success", "message" => "Post deleted."]);
         break;
 
     default:
