@@ -377,6 +377,40 @@
             padding: 2rem 0;
         }
 
+        /* ── POST ACTIONS (Edit/Delete) ── */
+        .post-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        .edit-btn, .delete-btn {
+            background: transparent;
+            border: 2px solid #b2c9ab;
+            border-radius: 30px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1a2a5e;
+            font-size: 1rem;
+            box-shadow: 1px 2px 0 #dbb594;
+        }
+        .edit-btn:hover {
+            background: #b2c9ab;
+            transform: translateY(-2px);
+        }
+        .delete-btn:hover {
+            background: #f4c2c2;
+            border-color: #d32f2f;
+            color: #d32f2f;
+            transform: translateY(-2px);
+        }
+
         /* ── POST DETAIL ── */
         #forumPostDetailView {
             display: none;
@@ -786,7 +820,6 @@
             cursor: not-allowed;
             transform: none;
         }
-        /* Spinner animation */
         .spinner {
             display: inline-block;
             width: 20px;
@@ -801,7 +834,6 @@
                 transform: rotate(360deg);
             }
         }
-        /* Published state */
         .btn-published {
             background: #2e7d32 !important;
             border-color: #2e7d32 !important;
@@ -1009,6 +1041,11 @@
                 flex: 0 0 80px;
                 height: 80px;
                 width: 100%;
+            }
+            .post-actions {
+                flex-direction: row;
+                margin-left: 0;
+                margin-top: 0.5rem;
             }
             .settings-tabs {
                 gap: 0.4rem;
@@ -1229,7 +1266,6 @@
                         <div class="comment-form">
                             <textarea id="forumCommentInput" placeholder="Write a comment..." maxlength="1000"></textarea>
                             <button class="comment-submit" id="forumCommentSubmitBtn">📤 Post Comment</button>
-                            <!-- Inline status removed — toasts used instead -->
                         </div>
                     </div>
                 </div>
@@ -1275,12 +1311,10 @@
             toast.className = `toast ${type}`;
             const icon = type === 'success' ? '✅' : '❌';
             toast.innerHTML = `
-                        <span class="toast-icon">${icon}</span>
-                        <span class="toast-message">${escapeHtml(message)}</span>
-                    `;
+                <span class="toast-icon">${icon}</span>
+                <span class="toast-message">${escapeHtml(message)}</span>
+            `;
             toastContainer.appendChild(toast);
-
-            // Auto-remove after 4 seconds
             setTimeout(() => {
                 toast.classList.add('hide');
                 setTimeout(() => toast.remove(), 400);
@@ -1380,7 +1414,6 @@
                 window.location.href = 'login';
                 return;
             }
-
             try {
                 const res = await fetch('auth-api.php', {
                     method: 'POST',
@@ -1391,11 +1424,9 @@
                     body: JSON.stringify({ action: 'get_profile' })
                 });
                 const data = await res.json();
-
                 if (data.status !== 'success' || !data.user) {
                     throw new Error(data.message || 'Profile fetch failed');
                 }
-
                 const user = data.user;
                 document.getElementById('userAvatar').textContent =
                     (user.username || username).charAt(0).toUpperCase();
@@ -1406,8 +1437,7 @@
                     '📅 Joined: ' + (user.date_created || '—');
             } catch (error) {
                 console.warn('Profile load error:', error);
-                document.getElementById('userAvatar').textContent =
-                    username.charAt(0).toUpperCase();
+                document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
                 document.getElementById('userName').textContent = username;
                 document.getElementById('userDetail').innerHTML =
                     `<span class="warning">⚠️ Profile data unavailable</span>`;
@@ -1491,12 +1521,10 @@
             const token = localStorage.getItem('cloudspace_token');
             const list = document.getElementById('logList');
             list.innerHTML = '<li class="empty-state">Loading logs...</li>';
-
             if (!token) {
                 list.innerHTML = '<li class="empty-state">Not authenticated.</li>';
                 return;
             }
-
             try {
                 const res = await fetch('auth-api.php', {
                     method: 'POST',
@@ -1504,18 +1532,15 @@
                     body: JSON.stringify({ action: 'get_logs', token: token })
                 });
                 const data = await res.json();
-
                 if (data.status !== 'success') {
                     list.innerHTML = `<li class="empty-state">${data.message || 'Failed to load logs.'}</li>`;
                     return;
                 }
-
                 const logs = data.logs || [];
                 if (logs.length === 0) {
                     list.innerHTML = '<li class="empty-state">No recent logs available. (Old logs are auto-purged after 3 days)</li>';
                     return;
                 }
-
                 const groups = {};
                 logs.forEach(log => {
                     const date = new Date(log.timestamp);
@@ -1523,7 +1548,6 @@
                     if (!groups[key]) groups[key] = [];
                     groups[key].push(log);
                 });
-
                 const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
                 let html = '';
                 sortedDates.forEach(dateKey => {
@@ -1534,23 +1558,21 @@
                         day: 'numeric',
                         year: 'numeric'
                     });
-                    html +=
-                        `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
+                    html += `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
                     groups[dateKey].forEach(log => {
                         const time = new Date(log.timestamp).toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit'
                         });
                         html += `
-                                    <li class="log-item">
-                                        <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
-                                        <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
-                                    </li>
-                                `;
+                            <li class="log-item">
+                                <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
+                                <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
+                            </li>
+                        `;
                     });
                 });
                 list.innerHTML = html;
-
             } catch (err) {
                 console.warn('loadLogs error:', err);
                 list.innerHTML = '<li class="empty-state">Network error loading logs.</li>';
@@ -1563,7 +1585,6 @@
 
         function toggleForumSection(targetSection) {
             currentForumSubView = targetSection;
-
             document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
             document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
             document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
@@ -1592,7 +1613,7 @@
             }, 300);
         }
 
-        // ── Fetch Feed ──
+        // ── Fetch Feed (with Edit/Delete buttons) ──
         async function fetchForumFeedDataset() {
             const listElement = document.getElementById('globalForumsListElement');
             const searchVal = encodeURIComponent(document.getElementById('forumSearchTextElement').value.trim());
@@ -1613,13 +1634,11 @@
                 const dataset = await response.json();
 
                 if (dataset.status !== 'success') {
-                    listElement.innerHTML =
-                        `<li class="empty-state">❌ Unauthorized: ${dataset.message || 'Verification rejected.'}</li>`;
+                    listElement.innerHTML = `<li class="empty-state">❌ Unauthorized: ${dataset.message || 'Verification rejected.'}</li>`;
                     return;
                 }
 
                 console.log('Posts fetched:', dataset.posts.length);
-
                 listElement.innerHTML = '';
                 if (dataset.posts.length === 0) {
                     listElement.innerHTML = '<li class="empty-state">No forum threads matching criteria found.</li>';
@@ -1656,23 +1675,117 @@
                     metaSpan.className = 'post-meta';
                     const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : '?';
                     metaSpan.innerHTML = `
-                                <span class="author">
-                                    <span class="post-author-avatar">${escapeHtml(authorInitial)}</span>
-                                    ${escapeHtml(post.author)}
-                                </span>
-                                <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
-                                <span class="comments-count">💬 ${post.comment_count || 0}</span>
-                            `;
+                        <span class="author">
+                            <span class="post-author-avatar">${escapeHtml(authorInitial)}</span>
+                            ${escapeHtml(post.author)}
+                        </span>
+                        <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
+                        <span class="comments-count">💬 ${post.comment_count || 0}</span>
+                    `;
                     contentDiv.appendChild(titleSpan);
                     contentDiv.appendChild(metaSpan);
 
-                    li.appendChild(thumbDiv);
-                    li.appendChild(contentDiv);
-                    li.onclick = () => openForumPost(post.id);
+                    // Action buttons (only if the logged-in user is the author)
+                    const isOwner = post.author.toLowerCase() === username.toLowerCase();
+                    if (isOwner) {
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'post-actions';
+                        // Edit button
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'edit-btn';
+                        editBtn.innerHTML = '✎';
+                        editBtn.title = 'Edit Thread';
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // prevent opening post detail
+                            editThread(post.id, post.title, post.content);
+                        });
+                        // Delete button
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.className = 'delete-btn';
+                        deleteBtn.innerHTML = '🗑';
+                        deleteBtn.title = 'Delete Thread';
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteThread(post.id);
+                        });
+                        actionsDiv.appendChild(editBtn);
+                        actionsDiv.appendChild(deleteBtn);
+                        li.appendChild(thumbDiv);
+                        li.appendChild(contentDiv);
+                        li.appendChild(actionsDiv);
+                    } else {
+                        li.appendChild(thumbDiv);
+                        li.appendChild(contentDiv);
+                    }
+
+                    // The whole item still opens post detail (except when clicking action buttons)
+                    li.addEventListener('click', () => openForumPost(post.id));
                     listElement.appendChild(li);
                 });
             } catch (err) {
                 listElement.innerHTML = '<li class="empty-state">Error connecting to the authenticated security layer.</li>';
+            }
+        }
+
+        // ── Edit Thread ──
+        async function editThread(postId, oldTitle, oldContent) {
+            const newTitle = prompt('Enter new title:', oldTitle);
+            if (newTitle === null) return;
+            const newContent = prompt('Enter new content:', oldContent);
+            if (newContent === null) return;
+
+            const token = localStorage.getItem('cloudspace_token');
+            try {
+                const response = await fetch('api/forums/forums-api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        action: 'update_post',
+                        post_id: postId,
+                        title: newTitle,
+                        content: newContent
+                    })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast('Thread updated successfully!', 'success');
+                    fetchForumFeedDataset(); // refresh list
+                } else {
+                    showToast('Error: ' + data.message, 'error');
+                }
+            } catch (err) {
+                showToast('Network error updating thread.', 'error');
+            }
+        }
+
+        // ── Delete Thread ──
+        async function deleteThread(postId) {
+            if (!confirm('Delete this thread permanently?')) return;
+            const token = localStorage.getItem('cloudspace_token');
+            try {
+                const response = await fetch('api/forums/forums-api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        action: 'delete_post',
+                        post_id: postId
+                    })
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast('Thread deleted.', 'success');
+                    fetchForumFeedDataset();
+                } else {
+                    showToast('Error: ' + data.message, 'error');
+                }
+            } catch (err) {
+                showToast('Network error deleting thread.', 'error');
             }
         }
 
@@ -1702,8 +1815,7 @@
                 if (data.post.image) {
                     const imgUrl = getSecureImageUrl(data.post.image);
                     bodyHtml += `<hr style="border:2px solid #b2c9ab; margin:1rem 0;" />`;
-                    bodyHtml +=
-                        `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
+                    bodyHtml += `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
                 }
                 bodyEl.innerHTML = bodyHtml;
 
@@ -1731,20 +1843,20 @@
                 li.className = 'comment-item';
                 const isYours = comment.author.toLowerCase() === loggedUser;
                 li.innerHTML = `
-                            <div class="comment-header">
-                                <span class="comment-author">
-                                    ${escapeHtml(comment.author)}
-                                    ${isYours ? '<span class="you-badge">You</span>' : ''}
-                                </span>
-                                <span class="comment-date">${formatDate(comment.timestamp)}</span>
-                            </div>
-                            <div class="comment-content">${escapeHtml(comment.content)}</div>
-                        `;
+                    <div class="comment-header">
+                        <span class="comment-author">
+                            ${escapeHtml(comment.author)}
+                            ${isYours ? '<span class="you-badge">You</span>' : ''}
+                        </span>
+                        <span class="comment-date">${formatDate(comment.timestamp)}</span>
+                    </div>
+                    <div class="comment-content">${escapeHtml(comment.content)}</div>
+                `;
                 list.appendChild(li);
             });
         }
 
-        // ── Post Comment (toast only — no inline status) ──
+        // ── Post Comment ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
@@ -1779,9 +1891,7 @@
                     input.value = '';
                     showToast('💬 Your comment was posted successfully!', 'success');
 
-                    // Refresh comments
-                    const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(
-                    currentForumPostId));
+                    const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentForumPostId));
                     const postData = await postRes.json();
                     if (postData.status === 'success') {
                         renderForumComments(postData.comments);
@@ -1816,10 +1926,8 @@
             const imageInput = document.getElementById('forumFormFile');
             const savedToken = localStorage.getItem('cloudspace_token') || '';
 
-            console.log('Creating post with title:', titleVal, 'image:', imageInput.files[0] ? imageInput.files[0].name :
-                'none');
+            console.log('Creating post with title:', titleVal, 'image:', imageInput.files[0] ? imageInput.files[0].name : 'none');
 
-            // Disable button and show spinner
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Publishing...';
             statusMsg.className = 'comment-status';
@@ -1846,21 +1954,17 @@
                     document.getElementById('newForumFormSubmitElement').reset();
                     document.getElementById('fileChosen').textContent = 'No file chosen';
 
-                    // Show success toast
                     showToast('🎉 Thread uploaded securely to CloudSpacePH!', 'success');
 
-                    // Show success state on button
                     submitBtn.className = 'comment-submit btn-published';
                     submitBtn.innerHTML = '✅ Published';
 
-                    // Revert button after 3 seconds
                     setTimeout(() => {
                         submitBtn.className = 'comment-submit';
                         submitBtn.innerHTML = '🚀 Publish Thread';
                         submitBtn.disabled = false;
                     }, 3000);
 
-                    // Switch to feed after a short delay
                     setTimeout(() => { toggleForumSection('feed'); }, 1500);
                 } else {
                     showToast(outcome.message || 'Transaction rejected by server files.', 'error');
