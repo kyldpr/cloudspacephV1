@@ -87,6 +87,11 @@ function checkRateLimit($key, $maxAttempts = 5, $timeWindow = 60) {
     return true;
 }
 
+// ── Username validation helper ──
+function isValidUsername($name) {
+    return preg_match('/^[a-zA-Z0-9._@-]+$/', $name) === 1;
+}
+
 // ─── SWITCH CASES ───
 switch ($action) {
     case 'register':
@@ -102,7 +107,10 @@ switch ($action) {
             exit;
         }
 
-        // Rate limit on registration? (optional – not requested, so skip)
+        if (!isValidUsername($userIn)) {
+            echo json_encode(["status" => "error", "message" => "Username contains invalid characters."]);
+            exit;
+        }
 
         try {
             $pdo = getDbConnection(); // connect only for this action
@@ -172,6 +180,11 @@ switch ($action) {
             exit;
         }
 
+        if (!isValidUsername($userIn)) {
+            echo json_encode(["status" => "error", "message" => "Invalid username format."]);
+            exit;
+        }
+
         // Rate limiting for login
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         if (!checkRateLimit($ip . '_login', 5, 60)) {
@@ -217,6 +230,12 @@ switch ($action) {
     case 'change_password':
         // 1. Authenticate via token (same as get_profile)
         $username = JWTSecurity::authenticate(); // returns username or exits with 401
+
+        if (!isValidUsername($username)) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Invalid username in token."]);
+            exit;
+        }
 
         // Rate limiting for password change
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
@@ -265,6 +284,12 @@ switch ($action) {
         // Authenticate via JWT – returns username or exits with 401
         $username = JWTSecurity::authenticate();
 
+        if (!isValidUsername($username)) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Invalid username in token."]);
+            exit;
+        }
+
         $profileFile = $baseDir . strtolower($username) . '.json';
         if (!file_exists($profileFile)) {
             echo json_encode(["status" => "error", "message" => "Profile not found."]);
@@ -301,6 +326,11 @@ switch ($action) {
         $username = JWTSecurity::validateToken($token);
         if (!$username) {
             echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        if (!isValidUsername($username)) {
+            echo json_encode(["status" => "error", "message" => "Invalid username in token."]);
             exit;
         }
 

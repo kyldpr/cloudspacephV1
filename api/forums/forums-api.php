@@ -24,6 +24,20 @@ function checkRateLimit($key, $maxAttempts = 10, $timeWindow = 60) {
     return true;
 }
 
+// ── Validation helpers ──
+function isValidPostId($id) {
+    return preg_match('/^post_\d+$/', $id) === 1;
+}
+
+function isValidUsername($name) {
+    return preg_match('/^[a-zA-Z0-9._@-]+$/', $name) === 1;
+}
+
+// ── Output sanitization helper ──
+function safe($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
 // ── Config ──
 $postsDir  = __DIR__ . '/post/';
 $commentsDir = __DIR__ . '/commnents/';
@@ -99,6 +113,10 @@ switch ($action) {
     // ── LIST POSTS (with optional author filter) ──
     case 'list_posts':
         $authorFilter = $_GET['author'] ?? '';
+        if ($authorFilter && !isValidUsername($authorFilter)) {
+            echo json_encode(["status" => "error", "message" => "Invalid author filter."]);
+            exit;
+        }
         $files = glob($postsDir . '*.json');
         $posts = [];
         foreach ($files as $file) {
@@ -108,6 +126,9 @@ switch ($action) {
                 if ($authorFilter && strtolower($post['author']) !== strtolower($authorFilter)) {
                     continue;
                 }
+                // Sanitize output fields to prevent XSS
+                $post['title'] = safe($post['title']);
+                $post['content'] = safe($post['content']);
                 $commentsFile = commentFileForPost($post['id']);
                 $comments = readJson($commentsFile);
                 $post['comment_count'] = is_array($comments) ? count($comments) : 0;
@@ -127,15 +148,31 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Post ID is required."]);
             exit;
         }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
+            exit;
+        }
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
         if (!$post) {
             echo json_encode(["status" => "error", "message" => "Post not found."]);
             exit;
         }
+        // Sanitize post title and content
+        $post['title'] = safe($post['title']);
+        $post['content'] = safe($post['content']);
+
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
         if (!$comments) $comments = [];
+
+        // Sanitize comments
+        foreach ($comments as &$c) {
+            $c['content'] = safe($c['content']);
+            $c['post_title'] = safe($c['post_title']);
+        }
+        unset($c);
+
         echo json_encode([
             "status" => "success",
             "post" => $post,
@@ -185,6 +222,10 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "post_id and content are required."]);
             exit;
         }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
+            exit;
+        }
 
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
@@ -198,8 +239,8 @@ switch ($action) {
         $comment = [
             "comment_id"  => $commentId,
             "post_id"     => $postId,
-            "post_title"  => $post['title'],
-            "author"      => $username,          // ← derived from token
+            "post_title"  => $post['title'],   // raw title stored as is (will be escaped on output)
+            "author"      => $username,
             "content"     => $content,
             "timestamp"   => $timestamp
         ];
@@ -240,9 +281,19 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Username is required."]);
             exit;
         }
+        if (!isValidUsername($username)) {
+            echo json_encode(["status" => "error", "message" => "Invalid username format."]);
+            exit;
+        }
         $authorFile = authorCommentsFile($username);
         $comments = readJson($authorFile);
         if (!is_array($comments)) $comments = [];
+        // Sanitize comments output
+        foreach ($comments as &$c) {
+            $c['content'] = safe($c['content']);
+            $c['post_title'] = safe($c['post_title']);
+        }
+        unset($c);
         usort($comments, function($a, $b) {
             return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
         });
@@ -256,9 +307,18 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Username is required."]);
             exit;
         }
+        if (!isValidUsername($username)) {
+            echo json_encode(["status" => "error", "message" => "Invalid username format."]);
+            exit;
+        }
         $commenterFile = commenterCommentsFile($username);
         $comments = readJson($commenterFile);
         if (!is_array($comments)) $comments = [];
+        foreach ($comments as &$c) {
+            $c['content'] = safe($c['content']);
+            $c['post_title'] = safe($c['post_title']);
+        }
+        unset($c);
         usort($comments, function($a, $b) {
             return strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? '');
         });
@@ -357,7 +417,7 @@ switch ($action) {
 
         $post = [
             "id"        => $postId,
-            "title"     => $title,
+            "title"     => $title,      // raw stored
             "content"   => $content,
             "author"    => $username,
             "timestamp" => date('c'),
@@ -415,6 +475,10 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "post_id, title, and content are required."]);
             exit;
         }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
+            exit;
+        }
 
         $postFile = $postsDir . $postId . '.json';
         $post = readJson($postFile);
@@ -469,6 +533,10 @@ switch ($action) {
         $postId = trim($input['post_id'] ?? '');
         if (!$postId) {
             echo json_encode(["status" => "error", "message" => "post_id is required."]);
+            exit;
+        }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
             exit;
         }
 

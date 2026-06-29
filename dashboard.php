@@ -6,7 +6,7 @@
     <title>CloudSpacePH • Dashboard</title>
     <!-- Google Font: Open Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' https:; style-src 'unsafe-inline' https:; img-src 'self' data:; font-src https:; connect-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' https:; style-src 'unsafe-inline' https:; img-src 'self' data: https:; font-src https:; connect-src 'self';">
     <style>
         /* ── Reset & Base ── */
         * {
@@ -1217,7 +1217,7 @@
                     <!-- Feed Panel -->
                     <div id="forumMainFeedPanel">
                         <div class="form-group search-wrapper-box" id="searchBarUIElement">
-                            <input type="text" id="forumSearchTextElement" placeholder="🔍 Search existing threads by title or content matching..." oninput="triggerDebouncedSearch()" />
+                            <input type="text" id="forumSearchTextElement" placeholder="🔍 Search existing threads by title or content matching..." />
                         </div>
                         <div class="section-title" style="margin-top:1.2rem;">
                             <span id="forumFeedHeadingText">Latest Public Records</span>
@@ -1230,7 +1230,7 @@
                     <!-- Create Thread Panel -->
                     <div id="forumThreadCreationPanel" style="display: none;">
                         <div class="section-title">✨ Create a New Forum Post</div>
-                        <form id="newForumFormSubmitElement" onsubmit="transmitNewThreadPayload(event)" style="background:#fff9f0; padding:1.5rem; border-radius:24px; border:2px solid #b2c9ab; box-shadow:3px 4px 0 #dbb594;">
+                        <form id="newForumFormSubmitElement" style="background:#fff9f0; padding:1.5rem; border-radius:24px; border:2px solid #b2c9ab; box-shadow:3px 4px 0 #dbb594;">
                             <div class="form-group">
                                 <label>📌 Thread Subject Title</label>
                                 <input type="text" id="forumFormTitle" required placeholder="Enter your subject line topic heading..." />
@@ -1654,14 +1654,22 @@
                     const li = document.createElement('li');
                     li.className = 'post-item';
 
-                    // Thumbnail
+                    // ── Thumbnail ──
                     const thumbDiv = document.createElement('div');
                     thumbDiv.className = 'post-thumb';
                     if (post.image) {
-                        const img = document.createElement('img');
-                        img.src = getSecureImageUrl(post.image);
-                        img.alt = 'Thumbnail';
-                        thumbDiv.appendChild(img);
+                        const imgUrl = getSecureImageUrl(post.image);
+                        if (imgUrl) {
+                            const img = document.createElement('img');
+                            img.src = imgUrl;
+                            img.alt = 'Thumbnail';
+                            thumbDiv.appendChild(img);
+                        } else {
+                            const noImg = document.createElement('span');
+                            noImg.className = 'no-image';
+                            noImg.textContent = '📄';
+                            thumbDiv.appendChild(noImg);
+                        }
                     } else {
                         const noImg = document.createElement('span');
                         noImg.className = 'no-image';
@@ -1817,8 +1825,10 @@
                 let bodyHtml = `<div style="white-space:pre-wrap;">${escapeHtml(bodyText)}</div>`;
                 if (data.post.image) {
                     const imgUrl = getSecureImageUrl(data.post.image);
-                    bodyHtml += `<hr style="border:2px solid #b2c9ab; margin:1rem 0;" />`;
-                    bodyHtml += `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
+                    if (imgUrl) {
+                        bodyHtml += `<hr style="border:2px solid #b2c9ab; margin:1rem 0;" />`;
+                        bodyHtml += `<img src="${imgUrl}" alt="Post image" class="forum-image-preview-card" style="max-width:100%; margin-top:0.5rem;" />`;
+                    }
                 }
                 bodyEl.innerHTML = bodyHtml;
 
@@ -1994,6 +2004,12 @@
         document.getElementById('forumFeedTabBtn').addEventListener('click', () => toggleForumSection('feed'));
         document.getElementById('forumMyTabBtn').addEventListener('click', () => toggleForumSection('my-posts'));
         document.getElementById('forumCreateTabBtn').addEventListener('click', () => toggleForumSection('create'));
+
+        // ── Attach search input listener (instead of inline oninput) ──
+        document.getElementById('forumSearchTextElement').addEventListener('input', triggerDebouncedSearch);
+
+        // ── Attach create thread form listener (instead of inline onsubmit) ──
+        document.getElementById('newForumFormSubmitElement').addEventListener('submit', transmitNewThreadPayload);
 
         // ── Session idle timeout (15 minutes) ──
         let idleTimer;
