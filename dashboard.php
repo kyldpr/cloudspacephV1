@@ -1836,26 +1836,57 @@
             });
         }
 
+        // ── Post Comment (updated with Authorization header) ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
             const btn = document.getElementById('forumCommentSubmitBtn');
             if (!content) { showToast('Please write a comment.', 'error'); return; }
             if (!currentForumPostId) { showToast('No post selected.', 'error'); return; }
-            btn.disabled = true; btn.textContent = 'Posting...';
+
+            const token = localStorage.getItem('cloudspace_token');
+            if (!token) {
+                showToast('Authentication token missing. Please log in again.', 'error');
+                window.location.href = 'login';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Posting...';
+
             try {
-                const res = await fetch(API_BASE, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'add_comment',post_id:currentForumPostId,author:username,content}) });
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token   // ← Added token
+                    },
+                    body: JSON.stringify({
+                        action: 'add_comment',
+                        post_id: currentForumPostId,
+                        content: content
+                        // author: username,  // No longer needed – backend uses token
+                    })
+                });
                 const data = await res.json();
+
                 if (data.status === 'success') {
                     input.value = '';
                     showToast('💬 Comment posted!', 'success');
+
                     const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentForumPostId));
                     const postData = await postRes.json();
                     if (postData.status === 'success') renderForumComments(postData.comments);
-                    fetchAndRenderPosts(currentForumSubView==='my-posts');
-                } else showToast(data.message || 'Failed to post comment.', 'error');
-            } catch (err) { showToast('Network error.', 'error'); }
-            btn.disabled = false; btn.textContent = '📤 Post Comment';
+                    fetchAndRenderPosts(currentForumSubView === 'my-posts');
+                } else {
+                    showToast(data.message || 'Failed to post comment.', 'error');
+                }
+            } catch (err) {
+                showToast('Network error.', 'error');
+            }
+
+            btn.disabled = false;
+            btn.textContent = '📤 Post Comment';
         }
 
         function goBackToForumFeed() {
@@ -1936,5 +1967,6 @@
         window.transmitNewThreadPayload = transmitNewThreadPayload;
         window.openForumPost = openForumPost;
     </script>
+
 </body>
 </html>
