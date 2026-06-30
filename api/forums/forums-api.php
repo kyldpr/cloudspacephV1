@@ -117,6 +117,28 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Invalid author filter."]);
             exit;
         }
+
+        // Get current user from token (if any) for liked status
+        $currentUser = null;
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if ($token) {
+            $currentUser = JWTSecurity::validateToken($token);
+        }
+
         $files = glob($postsDir . '*.json');
         $posts = [];
         foreach ($files as $file) {
@@ -129,6 +151,14 @@ switch ($action) {
                 // Sanitize output fields to prevent XSS
                 $post['title'] = safe($post['title']);
                 $post['content'] = safe($post['content']);
+
+                // Ensure views, likes exist
+                if (!isset($post['views'])) $post['views'] = 0;
+                if (!isset($post['likes'])) $post['likes'] = 0;
+                if (!isset($post['liked_by'])) $post['liked_by'] = [];
+                $post['liked'] = $currentUser ? in_array(strtolower($currentUser), array_map('strtolower', $post['liked_by'])) : false;
+                unset($post['liked_by']); // not needed in output
+
                 $commentsFile = commentFileForPost($post['id']);
                 $comments = readJson($commentsFile);
                 $post['comment_count'] = is_array($comments) ? count($comments) : 0;
@@ -161,6 +191,37 @@ switch ($action) {
         // Sanitize post title and content
         $post['title'] = safe($post['title']);
         $post['content'] = safe($post['content']);
+
+        // Add views & likes
+        if (!isset($post['views'])) $post['views'] = 0;
+        if (!isset($post['likes'])) $post['likes'] = 0;
+        if (!isset($post['liked_by'])) $post['liked_by'] = [];
+
+        // Check if current user liked (if token provided)
+        $liked = false;
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if ($token) {
+            $user = JWTSecurity::validateToken($token);
+            if ($user) {
+                $liked = in_array(strtolower($user), array_map('strtolower', $post['liked_by']));
+            }
+        }
+        $post['liked'] = $liked;
+        unset($post['liked_by']); // remove list, only keep count
 
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
@@ -417,11 +478,14 @@ switch ($action) {
 
         $post = [
             "id"        => $postId,
-            "title"     => $title,      // raw stored
+            "title"     => $title,
             "content"   => $content,
             "author"    => $username,
             "timestamp" => date('c'),
-            "image"     => $imageFilename
+            "image"     => $imageFilename,
+            "views"     => 0,
+            "likes"     => 0,
+            "liked_by"  => []
         ];
 
         $postFile = $postsDir . $postId . '.json';
@@ -468,9 +532,10 @@ switch ($action) {
             exit;
         }
 
-        $postId = trim($input['post_id'] ?? '');
-        $newTitle = trim($input['title'] ?? '');
-        $newContent = trim($input['content'] ?? '');
+        // Read from both $_POST and $input for multipart/JSON compatibility
+        $postId = trim($_POST['post_id'] ?? $input['post_id'] ?? '');
+        $newTitle = trim($_POST['title'] ?? $input['title'] ?? '');
+        $newContent = trim($_POST['content'] ?? $input['content'] ?? '');
         if (!$postId || !$newTitle || !$newContent) {
             echo json_encode(["status" => "error", "message" => "post_id, title, and content are required."]);
             exit;
@@ -492,9 +557,54 @@ switch ($action) {
             exit;
         }
 
+        // ── Handle optional image upload ──
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $fileTmp = $_FILES['image']['tmp_name'];
+            $originalName = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            // Magic byte validation (same as create_post)
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $fileTmp);
+            finfo_close($finfo);
+            $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($mimeType, $allowedMimes)) {
+                echo json_encode(["status" => "error", "message" => "Invalid image type."]);
+                exit;
+            }
+            $extMap = [
+                'image/jpeg' => ['jpg', 'jpeg'],
+                'image/png'  => ['png'],
+                'image/gif'  => ['gif'],
+                'image/webp' => ['webp']
+            ];
+            if (!in_array($ext, $extMap[$mimeType] ?? [])) {
+                echo json_encode(["status" => "error", "message" => "File extension does not match image type."]);
+                exit;
+            }
+
+            // Delete old image if exists
+            if (!empty($post['image'])) {
+                $oldImage = $imagesDir . $post['image'];
+                if (file_exists($oldImage)) {
+                    unlink($oldImage);
+                }
+            }
+
+            // Generate new random filename
+            $random = bin2hex(random_bytes(16));
+            $newImageFilename = $random . '.' . $extMap[$mimeType][0];
+            $targetPath = $imagesDir . $newImageFilename;
+            if (move_uploaded_file($fileTmp, $targetPath)) {
+                $post['image'] = $newImageFilename;
+            } else {
+                echo json_encode(["status" => "error", "message" => "Failed to save new image."]);
+                exit;
+            }
+        }
+
+        // Update fields
         $post['title'] = $newTitle;
         $post['content'] = $newContent;
-        // Optionally update timestamp
         $post['timestamp'] = date('c');
 
         writeJson($postFile, $post);
@@ -573,6 +683,109 @@ switch ($action) {
 
         JWTSecurity::logUserAction($username, "Deleted forum thread: '" . $post['title'] . "'");
         echo json_encode(["status" => "success", "message" => "Post deleted."]);
+        break;
+
+    // ── VIEW POST (increment view count) ──
+    case 'view_post':
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        if (!$postId || !isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID."]);
+            exit;
+        }
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+        // Increment views
+        $post['views'] = isset($post['views']) ? $post['views'] + 1 : 1;
+        writeJson($postFile, $post);
+        echo json_encode(["status" => "success", "views" => $post['views']]);
+        break;
+
+    // ── LIKE / UNLIKE POST ──
+    case 'like_post':
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        if (!$postId || !isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID."]);
+            exit;
+        }
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+        // Initialize like fields if not exist
+        if (!isset($post['likes'])) $post['likes'] = 0;
+        if (!isset($post['liked_by'])) $post['liked_by'] = [];
+
+        // Toggle like
+        $user = strtolower($username);
+        if (in_array($user, $post['liked_by'])) {
+            // Unlike
+            $post['liked_by'] = array_values(array_filter($post['liked_by'], function($u) use ($user) { return strtolower($u) !== $user; }));
+            $post['likes'] = max(0, $post['likes'] - 1);
+            $liked = false;
+        } else {
+            // Like
+            $post['liked_by'][] = $user;
+            $post['likes']++;
+            $liked = true;
+        }
+        writeJson($postFile, $post);
+        echo json_encode(["status" => "success", "likes" => $post['likes'], "liked" => $liked]);
         break;
 
     default:

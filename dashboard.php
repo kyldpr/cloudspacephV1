@@ -356,6 +356,10 @@
             color: #1a2a5e;
             font-weight: 800;
         }
+        .post-meta .views-count {
+            margin-left: 0.5rem;
+            color: #4a6a8a;
+        }
 
         /* Author avatar (circle with initial) */
         .post-author-avatar {
@@ -413,6 +417,26 @@
             border-color: #d32f2f;
             color: #d32f2f;
             transform: translateY(-2px);
+        }
+
+        /* ── Like Button Styles ── */
+        .like-btn, .like-btn-detail {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 30px;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: #1a2a5e;
+        }
+        .like-btn:hover, .like-btn-detail:hover {
+            background: #f4c2c2;
+            transform: scale(1.05);
+        }
+        .like-btn:active, .like-btn-detail:active {
+            transform: scale(0.95);
         }
 
         /* ── POST DETAIL (enhanced titles) ── */
@@ -575,7 +599,7 @@
             box-shadow: 1px 2px 0 #dbb594;
         }
 
-        /* ── SETTINGS TABS (unchanged) ── */
+        /* ── SETTINGS TABS (full width) ── */
         .settings-tabs {
             display: flex;
             gap: 0.6rem;
@@ -583,6 +607,8 @@
             margin-bottom: 1.8rem;
         }
         .settings-tab {
+            flex: 1 1 0;
+            min-width: 0;
             padding: 0.6rem 1.5rem;
             background: #b2c9ab;
             color: #0a0a2e;
@@ -813,8 +839,25 @@
         .search-item.recent .icon::before {
             content: "🕒";
         }
+        /* ── Recent search remove button ── */
+        .search-item .remove-recent {
+            margin-left: auto;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #4a6a8a;
+            padding: 0 0.2rem;
+            border-radius: 50%;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1;
+        }
+        .search-item .remove-recent:hover {
+            background: #f4c2c2;
+            color: #c62828;
+        }
 
-        /* ── Forum Navigation Tabs ── */
+        /* ── Forum Navigation Tabs (full width) ── */
         .forum-nav-container {
             display: flex;
             gap: 0.6rem;
@@ -822,6 +865,8 @@
             margin-bottom: 1.8rem;
         }
         .forum-nav-btn {
+            flex: 1 1 0;
+            min-width: 0;
             padding: 0.6rem 1.5rem;
             background: #b2c9ab;
             color: #0a0a2e;
@@ -838,7 +883,6 @@
             justify-content: center;
             gap: 0.5rem;
             white-space: nowrap;
-            flex: 0 1 auto;
         }
         .forum-nav-btn:hover {
             background: #9fb89a;
@@ -904,6 +948,21 @@
             color: #0a0a2e;
             flex: 1;
         }
+        /* ── Toast close button ── */
+        .toast .toast-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4a6a8a;
+            padding: 0 0.2rem;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+        .toast .toast-close:hover {
+            color: #c62828;
+        }
         @keyframes toastSlide {
             from {
                 opacity: 0;
@@ -917,6 +976,207 @@
         .toast.hide {
             opacity: 0;
             transform: translateX(60px);
+        }
+
+        /* ── Delete Confirmation Modal (smooth, no glow) ── */
+        .delete-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 200ms ease;
+            will-change: opacity;
+        }
+        .delete-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+            transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .delete-modal {
+            background: #fcf8f0;
+            border: 2px solid #b2c9ab;
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 6px 8px 0 #dbb594;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 200ms ease, opacity 200ms ease;
+            will-change: transform, opacity;
+        }
+        .delete-modal-overlay.active .delete-modal {
+            transform: scale(1);
+            opacity: 1;
+            transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .delete-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #1a2a5e;
+            margin-bottom: 0.5rem;
+        }
+        .delete-modal p {
+            color: #1a2a5e;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        .delete-modal .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .delete-modal .modal-actions button {
+            padding: 0.6rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: 2px 3px 0 #8a9a7a;
+        }
+        .delete-modal .modal-actions .cancel-btn {
+            background: #b2c9ab;
+            color: #0a0a2e;
+        }
+        .delete-modal .modal-actions .cancel-btn:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+        }
+        .delete-modal .modal-actions .confirm-btn {
+            background: #c62828;
+            color: #fff;
+            box-shadow: 2px 3px 0 #8b1a1a;
+        }
+        .delete-modal .modal-actions .confirm-btn:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        /* ── Edit Modal ── */
+        .edit-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 200ms ease;
+            will-change: opacity;
+        }
+        .edit-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+            transition: opacity 300ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .edit-modal {
+            background: #fcf8f0;
+            border: 2px solid #b2c9ab;
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 6px 8px 0 #dbb594;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 200ms ease, opacity 200ms ease;
+            will-change: transform, opacity;
+        }
+        .edit-modal-overlay.active .edit-modal {
+            transform: scale(1);
+            opacity: 1;
+            transition: transform 300ms cubic-bezier(0.4,0,0.2,1),
+                        opacity 300ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .edit-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #1a2a5e;
+            margin-bottom: 0.5rem;
+        }
+        .edit-modal .form-group {
+            margin-bottom: 1rem;
+        }
+        .edit-modal .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #0a0a2e;
+            margin-bottom: 0.25rem;
+        }
+        .edit-modal .form-group input,
+        .edit-modal .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 2px solid #b2c9ab;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #0a0a2e;
+            background: #fff9f0;
+            outline: none;
+            font-family: inherit;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02), 1px 2px 0 #dbb594;
+        }
+        .edit-modal .form-group input:focus,
+        .edit-modal .form-group textarea:focus {
+            border-color: #f4c2c2;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(244,194,194,0.2), 1px 2px 0 #dbb594;
+        }
+        .edit-modal .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+        .edit-modal .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .edit-modal .modal-actions button {
+            padding: 0.6rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: 2px 3px 0 #8a9a7a;
+        }
+        .edit-modal .modal-actions .cancel-btn {
+            background: #b2c9ab;
+            color: #0a0a2e;
+        }
+        .edit-modal .modal-actions .cancel-btn:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+        }
+        .edit-modal .modal-actions .submit-btn {
+            background: #1a2a5e;
+            color: #fcf8f0;
+            box-shadow: 2px 3px 0 #0a0a2e;
+        }
+        .edit-modal .modal-actions .submit-btn:hover {
+            background: #0f1a3a;
+            transform: translateY(-2px);
         }
 
         /* ── Mobile Responsive ── */
@@ -1347,6 +1607,47 @@
     <!-- ─── TOAST CONTAINER ─── -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ─── DELETE CONFIRMATION MODAL ─── -->
+    <div class="delete-modal-overlay" id="deleteModal">
+        <div class="delete-modal">
+            <h3>⚠️ Delete Thread</h3>
+            <p>Are you sure you want to permanently delete this thread? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="deleteCancelBtn">Cancel</button>
+                <button class="confirm-btn" id="deleteConfirmBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── EDIT THREAD MODAL ─── -->
+    <div class="edit-modal-overlay" id="editModal">
+        <div class="edit-modal">
+            <h3>✏️ Edit Thread</h3>
+            <form id="editThreadForm" style="margin-top:0.5rem;">
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" id="editTitle" required />
+                </div>
+                <div class="form-group">
+                    <label for="editContent">Content</label>
+                    <textarea id="editContent" rows="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editImage">Update Image <span style="font-weight:normal;font-size:0.8rem;color:#4a6a8a;">(optional – leave empty to keep current)</span></label>
+                    <label class="custom-file-upload">
+                        <input type="file" id="editImage" accept="image/*" />
+                        📁 Choose Image
+                    </label>
+                    <span id="editFileChosen" style="margin-left:0.8rem;font-size:0.85rem;color:#4a6a8a;">No file chosen</span>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn" id="editCancelBtn">Cancel</button>
+                    <button type="submit" class="submit-btn" id="editConfirmBtn">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ── Check authentication ──
         const username = localStorage.getItem('cloudspace_username');
@@ -1361,6 +1662,36 @@
 
         const API_BASE = 'api/forums/forums-api.php';
         const AUTH_API = 'auth-api.php';
+
+        // ── Cache helpers ──
+        const CACHE_KEY = 'cloudspace_threads_cache';
+        const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
+
+        function getCachedThreads() {
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (!cached) return null;
+                const data = JSON.parse(cached);
+                if (Date.now() - data.timestamp > CACHE_EXPIRY) {
+                    localStorage.removeItem(CACHE_KEY);
+                    return null;
+                }
+                return data.posts;
+            } catch {
+                return null;
+            }
+        }
+
+        function setCachedThreads(posts) {
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                timestamp: Date.now(),
+                posts: posts
+            }));
+        }
+
+        function clearThreadCache() {
+            localStorage.removeItem(CACHE_KEY);
+        }
 
         // ── State ──
         let currentForumPostId = null;
@@ -1386,14 +1717,32 @@
         let currentFocus = -1;
         const RECENT_SEARCHES_KEY = 'cloudspace_recent_searches';
 
-        // ── Toast Helper ──
+        // ── Toast Helper with dismiss button ──
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             const icon = type === 'success' ? '✅' : '❌';
             toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${escapeHtml(message)}</span>`;
+
+            // ── Dismiss button ──
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'toast-close';
+            closeBtn.textContent = '×';
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            });
+            toast.appendChild(closeBtn);
+
             toastContainer.appendChild(toast);
-            setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 400); }, 4000);
+            // Auto-dismiss after 4 seconds
+            const timer = setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }, 4000);
+            // Clear timer if manually dismissed
+            closeBtn.addEventListener('click', () => clearTimeout(timer));
         }
 
         // ── Navigation switching ──
@@ -1610,7 +1959,15 @@
                 const metaSpan = document.createElement('div');
                 metaSpan.className = 'post-meta';
                 const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : '?';
-                metaSpan.innerHTML = `<span class="author"><span class="post-author-avatar">${escapeHtml(authorInitial)}</span>${escapeHtml(post.author)}</span><span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span><span class="comments-count">💬 ${post.comment_count || 0}</span>`;
+                const viewIcon = '👁️';
+                const likeIcon = post.liked ? '❤️' : '🤍';
+                metaSpan.innerHTML = `
+                    <span class="author"><span class="post-author-avatar">${escapeHtml(authorInitial)}</span>${escapeHtml(post.author)}</span>
+                    <span class="date">${post.timestamp ? post.timestamp.split('T')[0] : ''}</span>
+                    <span class="comments-count">💬 ${post.comment_count || 0}</span>
+                    <span class="views-count">${viewIcon} ${post.views || 0}</span>
+                    <button class="like-btn" data-id="${post.id}" data-liked="${post.liked ? 'true' : 'false'}">${likeIcon} ${post.likes || 0}</button>
+                `;
                 contentDiv.appendChild(titleSpan);
                 contentDiv.appendChild(metaSpan);
                 const isOwner = post.author.toLowerCase() === username.toLowerCase();
@@ -1619,7 +1976,10 @@
                     actionsDiv.className = 'post-actions';
                     const editBtn = document.createElement('button');
                     editBtn.className = 'edit-btn'; editBtn.innerHTML = '✎'; editBtn.title = 'Edit Thread';
-                    editBtn.addEventListener('click', e => { e.stopPropagation(); editThread(post.id, post.title, post.content); });
+                    editBtn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        openEditModal(post.id, post.title, post.content);
+                    });
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'delete-btn'; deleteBtn.innerHTML = '🗑'; deleteBtn.title = 'Delete Thread';
                     deleteBtn.addEventListener('click', e => { e.stopPropagation(); deleteThread(post.id); });
@@ -1630,6 +1990,60 @@
                 listElement.appendChild(li);
             });
         }
+
+        // ── Event delegation for like buttons in post list ──
+        document.getElementById('globalForumsListElement').addEventListener('click', async function(e) {
+            const btn = e.target.closest('.like-btn');
+            if (!btn) return;
+            e.stopPropagation();
+            const postId = btn.dataset.id;
+            const token = localStorage.getItem('cloudspace_token');
+            if (!token) { showToast('Please log in to like.', 'error'); return; }
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ action: 'like_post', post_id: postId })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const newIcon = data.liked ? '❤️' : '🤍';
+                    btn.innerHTML = `${newIcon} ${data.likes}`;
+                    btn.dataset.liked = data.liked ? 'true' : 'false';
+                    const post = allPosts.find(p => p.id === postId);
+                    if (post) { post.liked = data.liked; post.likes = data.likes; }
+                } else { showToast(data.message || 'Failed to like.', 'error'); }
+            } catch (err) { showToast('Network error.', 'error'); }
+        });
+
+        // ── Event delegation for like buttons in post detail ──
+        document.getElementById('forumPostDetailView').addEventListener('click', async function(e) {
+            const btn = e.target.closest('.like-btn-detail');
+            if (!btn) return;
+            const postId = btn.dataset.id;
+            const token = localStorage.getItem('cloudspace_token');
+            if (!token) { showToast('Please log in to like.', 'error'); return; }
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ action: 'like_post', post_id: postId })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    const newIcon = data.liked ? '❤️' : '🤍';
+                    btn.innerHTML = `${newIcon} ${data.likes}`;
+                    btn.dataset.liked = data.liked ? 'true' : 'false';
+                    const post = allPosts.find(p => p.id === postId);
+                    if (post) { post.liked = data.liked; post.likes = data.likes; }
+                    const listBtn = document.querySelector(`.like-btn[data-id="${postId}"]`);
+                    if (listBtn) {
+                        listBtn.innerHTML = `${newIcon} ${data.likes}`;
+                        listBtn.dataset.liked = data.liked ? 'true' : 'false';
+                    }
+                } else { showToast(data.message || 'Failed to like.', 'error'); }
+            } catch (err) { showToast('Network error.', 'error'); }
+        });
 
         function applySearchFilter(searchTerm) {
             if (!searchTerm || searchTerm.trim() === '') filteredPosts = allPosts;
@@ -1663,21 +2077,34 @@
         function renderDropdown(items, isRecent = false) {
             searchDropdown.innerHTML = '';
             if (items.length === 0) {
-                if (isRecent) {
-                    searchDropdown.style.display = 'none';
-                    searchWrapper.classList.remove('active');
-                    return;
-                }
+                if (isRecent) { searchDropdown.style.display = 'none'; searchWrapper.classList.remove('active'); return; }
                 const noResult = document.createElement('div');
-                noResult.className = 'search-item';
-                noResult.innerText = 'No results found';
+                noResult.className = 'search-item'; noResult.innerText = 'No results found';
                 searchDropdown.appendChild(noResult);
             } else {
-                items.forEach((itemText, index) => {
+                items.forEach((itemText) => {
                     const div = document.createElement('div');
                     div.className = `search-item ${isRecent ? 'recent' : ''}`;
-                    div.innerHTML = `<span class="icon"></span>${itemText}`;
-                    div.addEventListener('click', () => {
+
+                    // ── Text content ──
+                    const textSpan = document.createElement('span');
+                    textSpan.textContent = itemText;
+                    div.appendChild(textSpan);
+
+                    // ── Remove button for recent items only ──
+                    if (isRecent) {
+                        const removeBtn = document.createElement('button');
+                        removeBtn.className = 'remove-recent';
+                        removeBtn.textContent = '×';
+                        removeBtn.title = 'Remove from recent searches';
+                        removeBtn.dataset.term = itemText;
+                        div.appendChild(removeBtn);
+                    }
+
+                    // ── Click on item itself to execute search ──
+                    div.addEventListener('click', (e) => {
+                        // Ignore if click is on remove button
+                        if (e.target.closest('.remove-recent')) return;
                         searchInput.value = itemText;
                         executeSearch(itemText);
                     });
@@ -1689,6 +2116,28 @@
             currentFocus = -1;
         }
 
+        function showSearchDropdown(val) {
+            if (!val) { renderDropdown(getRecentSearches(), true); return; }
+            const mockDatabase = ['Dashboard analytics', 'User settings', 'Forum threads', 'System log history', 'Cloud storage file space'];
+            const filteredResults = mockDatabase.filter(item => item.toLowerCase().includes(val.toLowerCase()));
+            renderDropdown(filteredResults, false);
+        }
+
+        // ── Remove recent search on button click (using event delegation on the static parent) ──
+        document.getElementById('searchResultsDropdown').addEventListener('click', function(e) {
+            const btn = e.target.closest('.remove-recent');
+            if (!btn) return;
+            e.stopPropagation();
+            const term = btn.dataset.term;
+            if (term) {
+                let searches = getRecentSearches();
+                searches = searches.filter(s => s.toLowerCase() !== term.toLowerCase());
+                localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+                const currentVal = searchInput.value;
+                showSearchDropdown(currentVal);
+            }
+        });
+
         function addActive(items) {
             if (!items) return false;
             removeActive(items);
@@ -1696,9 +2145,7 @@
             if (currentFocus < 0) currentFocus = items.length - 1;
             items[currentFocus].classList.add('selected');
         }
-        function removeActive(items) {
-            for (let i = 0; i < items.length; i++) items[i].classList.remove('selected');
-        }
+        function removeActive(items) { for (let i = 0; i < items.length; i++) items[i].classList.remove('selected'); }
         function ensureVisible(element) {
             if (!element) return;
             const parent = searchDropdown;
@@ -1707,18 +2154,14 @@
                 parent.scrollTop = element.offsetTop + element.clientHeight - parent.clientHeight;
         }
 
-        // ── Search input events ──
         searchInput.addEventListener('input', function() {
             const val = this.value;
             if (!val) { renderDropdown(getRecentSearches(), true); return; }
-            // Simulated suggestions – replace with actual database query if needed
             const mockDatabase = ['Dashboard analytics', 'User settings', 'Forum threads', 'System log history', 'Cloud storage file space'];
             const filteredResults = mockDatabase.filter(item => item.toLowerCase().includes(val.toLowerCase()));
             renderDropdown(filteredResults, false);
         });
-        searchInput.addEventListener('focus', function() {
-            if (!this.value) renderDropdown(getRecentSearches(), true);
-        });
+        searchInput.addEventListener('focus', function() { if (!this.value) renderDropdown(getRecentSearches(), true); });
         searchInput.addEventListener('keydown', function(e) {
             let items = searchDropdown.getElementsByClassName('search-item');
             if (items.length === 0) return;
@@ -1731,71 +2174,238 @@
             }
         });
         document.addEventListener('click', function(e) {
-            if (!searchWrapper.contains(e.target)) {
-                searchDropdown.style.display = 'none';
-                searchWrapper.classList.remove('active');
-            }
+            if (!searchWrapper.contains(e.target)) { searchDropdown.style.display = 'none'; searchWrapper.classList.remove('active'); }
         });
 
-        // ── Toggle forum sections ──
+        // ── Updated toggleForumSection ──
         function toggleForumSection(targetSection) {
             currentForumSubView = targetSection;
+
+            // ── Always hide the detail view when switching tabs ──
+            document.getElementById('forumPostDetailView').style.display = 'none';
+
+            // Update tab button states
             document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
             document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
             document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
+
             const feedPanel = document.getElementById('forumMainFeedPanel');
             const createPanel = document.getElementById('forumThreadCreationPanel');
             const heading = document.getElementById('forumFeedHeadingText');
-            if (targetSection === 'create') { feedPanel.style.display = 'none'; createPanel.style.display = 'block'; }
-            else {
-                createPanel.style.display = 'none'; feedPanel.style.display = 'block';
+
+            if (targetSection === 'create') {
+                feedPanel.style.display = 'none';
+                createPanel.style.display = 'block';
+            } else {
+                // Show feed panel, hide create panel
+                createPanel.style.display = 'none';
+                feedPanel.style.display = 'block';
                 heading.textContent = targetSection === 'my-posts' ? '👤 My Thread Uploads' : 'Latest Public Records';
                 fetchAndRenderPosts(targetSection === 'my-posts');
             }
         }
 
+        // ── Caching-aware fetch ──
         async function fetchAndRenderPosts(myPostsOnly = false) {
             const listElement = document.getElementById('globalForumsListElement');
             listElement.innerHTML = '<li class="empty-state">Loading...</li>';
+
+            // 1. Try cache (only if not filtering by author)
+            if (!myPostsOnly) {
+                const cached = getCachedThreads();
+                if (cached && cached.length > 0) {
+                    allPosts = cached;
+                    allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    const searchVal = searchInput.value.trim();
+                    if (searchVal) {
+                        filteredPosts = allPosts.filter(post => fuzzyMatch(searchVal, post.title) || fuzzyMatch(searchVal, post.content));
+                    } else {
+                        filteredPosts = allPosts;
+                    }
+                    renderPosts(filteredPosts);
+                    // Still fetch in background to refresh cache silently
+                    fetchFreshThreads(myPostsOnly);
+                    return;
+                }
+            }
+
+            // 2. No cache – fetch fresh
+            await fetchFreshThreads(myPostsOnly);
+        }
+
+        async function fetchFreshThreads(myPostsOnly = false) {
             const savedToken = localStorage.getItem('cloudspace_token') || '';
             try {
                 let requestURL = `api/forums/forums-api.php?action=list_posts`;
-                if (myPostsOnly) requestURL += `&author=${encodeURIComponent(username)}`;
-                const response = await fetch(requestURL, { method:'GET', headers:{ 'Authorization':`Bearer ${savedToken}` } });
+                if (myPostsOnly) {
+                    requestURL += `&author=${encodeURIComponent(username)}`;
+                }
+                const response = await fetch(requestURL, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${savedToken}` }
+                });
                 const dataset = await response.json();
-                if (dataset.status !== 'success') { listElement.innerHTML = `<li class="empty-state">❌ ${dataset.message}</li>`; return; }
+                if (dataset.status !== 'success') {
+                    document.getElementById('globalForumsListElement').innerHTML =
+                        `<li class="empty-state">❌ ${dataset.message}</li>`;
+                    return;
+                }
                 allPosts = dataset.posts || [];
                 allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                // Cache only if not myPostsOnly
+                if (!myPostsOnly) {
+                    setCachedThreads(allPosts);
+                }
+
                 const searchVal = searchInput.value.trim();
-                if (searchVal) filteredPosts = allPosts.filter(post => fuzzyMatch(searchVal, post.title) || fuzzyMatch(searchVal, post.content));
-                else filteredPosts = allPosts;
+                if (searchVal) {
+                    filteredPosts = allPosts.filter(post => fuzzyMatch(searchVal, post.title) || fuzzyMatch(searchVal, post.content));
+                } else {
+                    filteredPosts = allPosts;
+                }
                 renderPosts(filteredPosts);
-            } catch (err) { listElement.innerHTML = '<li class="empty-state">Network error.</li>'; }
+            } catch (err) {
+                document.getElementById('globalForumsListElement').innerHTML =
+                    '<li class="empty-state">Network error.</li>';
+            }
         }
 
-        async function editThread(postId, oldTitle, oldContent) {
-            const newTitle = prompt('Enter new title:', oldTitle);
-            if (newTitle === null) return;
-            const newContent = prompt('Enter new content:', oldContent);
-            if (newContent === null) return;
+        // ── Edit Thread with Modal ──
+        let editPostId = null; // store the post ID being edited
+
+        function openEditModal(postId, currentTitle, currentContent) {
+            editPostId = postId;
+            document.getElementById('editTitle').value = currentTitle;
+            document.getElementById('editContent').value = currentContent;
+            document.getElementById('editFileChosen').textContent = 'No file chosen';
+            document.getElementById('editImage').value = ''; // reset file input
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        async function submitEditForm(e) {
+            e.preventDefault();
+            const title = document.getElementById('editTitle').value.trim();
+            const content = document.getElementById('editContent').value.trim();
+            if (!title || !content) {
+                showToast('Title and content are required.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('action', 'update_post');
+            formData.append('post_id', editPostId);
+            formData.append('title', title);
+            formData.append('content', content);
+
+            const imageInput = document.getElementById('editImage');
+            if (imageInput.files[0]) {
+                formData.append('image', imageInput.files[0]);
+            }
+
             const token = localStorage.getItem('cloudspace_token');
             try {
-                const response = await fetch('api/forums/forums-api.php', { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({ action:'update_post', post_id:postId, title:newTitle, content:newContent }) });
+                const response = await fetch('api/forums/forums-api.php', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token },
+                    body: formData   // multipart/form-data
+                });
                 const data = await response.json();
-                if (data.status === 'success') { showToast('Thread updated!', 'success'); fetchAndRenderPosts(currentForumSubView==='my-posts'); }
-                else showToast('Error: ' + data.message, 'error');
-            } catch (err) { showToast('Network error.', 'error'); }
+                if (data.status === 'success') {
+                    showToast('Thread updated successfully!', 'success');
+                    clearThreadCache(); // invalidate cache
+                    document.getElementById('editModal').classList.remove('active');
+                    fetchAndRenderPosts(currentForumSubView === 'my-posts');
+                } else {
+                    showToast('Error: ' + data.message, 'error');
+                }
+            } catch (err) {
+                showToast('Network error.', 'error');
+            }
         }
 
+        // ── Attach event listeners for edit modal ──
+        document.getElementById('editCancelBtn').addEventListener('click', function() {
+            document.getElementById('editModal').classList.remove('active');
+        });
+        document.getElementById('editThreadForm').addEventListener('submit', submitEditForm);
+        document.getElementById('editImage').addEventListener('change', function(e) {
+            document.getElementById('editFileChosen').textContent = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+        });
+
+        // ── Delete Thread with custom modal (optimized, timing updated) ──
         async function deleteThread(postId) {
-            if (!confirm('Delete this thread permanently?')) return;
-            const token = localStorage.getItem('cloudspace_token');
-            try {
-                const response = await fetch('api/forums/forums-api.php', { method:'POST', headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+token }, body:JSON.stringify({ action:'delete_post', post_id:postId }) });
-                const data = await response.json();
-                if (data.status === 'success') { showToast('Thread deleted.', 'success'); fetchAndRenderPosts(currentForumSubView==='my-posts'); }
-                else showToast('Error: ' + data.message, 'error');
-            } catch (err) { showToast('Network error.', 'error'); }
+            const modal = document.getElementById('deleteModal');
+            const confirmBtn = document.getElementById('deleteConfirmBtn');
+            const cancelBtn = document.getElementById('deleteCancelBtn');
+
+            // Set postId as data attribute for reference
+            modal.dataset.postId = postId;
+            modal.classList.add('active');
+
+            // Return a promise that resolves when user chooses
+            return new Promise((resolve) => {
+                const handleConfirm = () => {
+                    closeModal(() => resolve(true));
+                };
+                const handleCancel = () => {
+                    closeModal(() => resolve(false));
+                };
+                const handleOutside = (e) => {
+                    if (e.target === modal) {
+                        closeModal(() => resolve(false));
+                    }
+                };
+
+                const closeModal = (callback) => {
+                    // Remove the 'active' class to trigger fade-out (200ms)
+                    modal.classList.remove('active');
+                    // Wait for the transition to finish (200ms) then call callback
+                    setTimeout(() => {
+                        callback();
+                        // Clean up event listeners
+                        confirmBtn.removeEventListener('click', handleConfirm);
+                        cancelBtn.removeEventListener('click', handleCancel);
+                        modal.removeEventListener('click', handleOutside);
+                    }, 200);
+                };
+
+                confirmBtn.addEventListener('click', handleConfirm);
+                cancelBtn.addEventListener('click', handleCancel);
+                modal.addEventListener('click', handleOutside);
+            }).then((confirmed) => {
+                if (!confirmed) return;
+
+                // ── Actual deletion ──
+                const token = localStorage.getItem('cloudspace_token');
+                if (!token) {
+                    showToast('Authentication token missing.', 'error');
+                    window.location.href = 'login';
+                    return;
+                }
+                (async () => {
+                    try {
+                        const response = await fetch('api/forums/forums-api.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            },
+                            body: JSON.stringify({ action: 'delete_post', post_id: postId })
+                        });
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            showToast('Thread deleted.', 'success');
+                            clearThreadCache();
+                            fetchAndRenderPosts(currentForumSubView === 'my-posts');
+                        } else {
+                            showToast('Error: ' + data.message, 'error');
+                        }
+                    } catch (err) {
+                        showToast('Network error.', 'error');
+                    }
+                })();
+            });
         }
 
         async function openForumPost(postId) {
@@ -1810,6 +2420,21 @@
                 document.getElementById('forumDetailTitle').textContent = data.post.title;
                 document.getElementById('forumDetailAuthor').textContent = data.post.author;
                 document.getElementById('forumDetailDate').textContent = formatDate(data.post.timestamp);
+
+                // Add views and likes to detail meta
+                const meta = document.querySelector('.post-detail-meta');
+                // Remove any previously added extra spans
+                meta.querySelectorAll('.views-count, .likes-count').forEach(el => el.remove());
+                const viewSpan = document.createElement('span');
+                viewSpan.className = 'views-count';
+                viewSpan.textContent = `👁️ ${data.post.views || 0}`;
+                const likeSpan = document.createElement('span');
+                likeSpan.className = 'likes-count';
+                const heartIcon = data.post.liked ? '❤️' : '🤍';
+                likeSpan.innerHTML = `<button class="like-btn-detail" data-id="${data.post.id}" data-liked="${data.post.liked ? 'true' : 'false'}">${heartIcon} ${data.post.likes || 0}</button>`;
+                meta.appendChild(viewSpan);
+                meta.appendChild(likeSpan);
+
                 const bodyEl = document.getElementById('forumDetailBody');
                 let bodyHtml = `<div style="white-space:pre-wrap;">${escapeHtml(data.post.content)}</div>`;
                 if (data.post.image) {
@@ -1819,6 +2444,23 @@
                 bodyEl.innerHTML = bodyHtml;
                 renderForumComments(data.comments);
                 document.getElementById('forumCommentInput').value = '';
+
+                // Call view_post to increment views
+                (async () => {
+                    const token = localStorage.getItem('cloudspace_token');
+                    if (token) {
+                        try {
+                            await fetch(API_BASE, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                                body: JSON.stringify({ action: 'view_post', post_id: postId })
+                            });
+                            const current = parseInt(viewSpan.textContent.match(/\d+/)?.[0] || 0);
+                            viewSpan.textContent = `👁️ ${current + 1}`;
+                        } catch (e) {}
+                    }
+                })();
+
             } catch (err) { alert('Network error loading post.'); }
         }
 
@@ -1836,57 +2478,32 @@
             });
         }
 
-        // ── Post Comment (updated with Authorization header) ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
             const btn = document.getElementById('forumCommentSubmitBtn');
             if (!content) { showToast('Please write a comment.', 'error'); return; }
             if (!currentForumPostId) { showToast('No post selected.', 'error'); return; }
-
             const token = localStorage.getItem('cloudspace_token');
-            if (!token) {
-                showToast('Authentication token missing. Please log in again.', 'error');
-                window.location.href = 'login';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'Posting...';
-
+            if (!token) { showToast('Authentication token missing.', 'error'); window.location.href = 'login'; return; }
+            btn.disabled = true; btn.textContent = 'Posting...';
             try {
                 const res = await fetch(API_BASE, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token   // ← Added token
-                    },
-                    body: JSON.stringify({
-                        action: 'add_comment',
-                        post_id: currentForumPostId,
-                        content: content
-                        // author: username,  // No longer needed – backend uses token
-                    })
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ action: 'add_comment', post_id: currentForumPostId, content: content })
                 });
                 const data = await res.json();
-
                 if (data.status === 'success') {
                     input.value = '';
                     showToast('💬 Comment posted!', 'success');
-
                     const postRes = await fetch(API_BASE + '?action=get_post&post_id=' + encodeURIComponent(currentForumPostId));
                     const postData = await postRes.json();
                     if (postData.status === 'success') renderForumComments(postData.comments);
                     fetchAndRenderPosts(currentForumSubView === 'my-posts');
-                } else {
-                    showToast(data.message || 'Failed to post comment.', 'error');
-                }
-            } catch (err) {
-                showToast('Network error.', 'error');
-            }
-
-            btn.disabled = false;
-            btn.textContent = '📤 Post Comment';
+                } else showToast(data.message || 'Failed to post comment.', 'error');
+            } catch (err) { showToast('Network error.', 'error'); }
+            btn.disabled = false; btn.textContent = '📤 Post Comment';
         }
 
         function goBackToForumFeed() {
@@ -1915,6 +2532,7 @@
                     document.getElementById('newForumFormSubmitElement').reset();
                     document.getElementById('fileChosen').textContent = 'No file chosen';
                     showToast('🎉 Thread uploaded!', 'success');
+                    clearThreadCache();
                     submitBtn.className = 'comment-submit btn-published'; submitBtn.innerHTML = '✅ Published';
                     setTimeout(() => { submitBtn.className = 'comment-submit'; submitBtn.innerHTML = '🚀 Publish Thread'; submitBtn.disabled = false; }, 3000);
                     setTimeout(() => toggleForumSection('feed'), 1500);
