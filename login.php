@@ -7,6 +7,81 @@
     <!-- Google Font: Open Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
     <style>
+        /* ── CSS Variables for Theming ── */
+        :root {
+            /* Background */
+            --bg-gradient: linear-gradient(135deg, #0a0a2e 0%, #0b0b1a 100%);
+
+            /* Stars */
+            --star-color: #fff;
+            --star-glow: 0 0 8px rgba(255, 255, 255, 0.9);
+
+            /* Planet 1 (Bottom-left) */
+            --planet-1-bg: radial-gradient(circle at 30% 30%, #f4c2c2, #d4a0a0);
+            --planet-1-shadow: 0 0 80px rgba(244, 194, 194, 0.8);
+            --planet-1-border: rgba(255, 200, 200, 0.5);
+            --ring-1-border: rgba(255, 200, 200, 0.4);
+            --ring-1-bg: rgba(255, 200, 200, 0.1);
+
+            /* Planet 2 (Top-right) */
+            --planet-2-bg: radial-gradient(circle at 30% 30%, #b2c9ab, #8a9a7a);
+            --planet-2-shadow: 0 0 70px rgba(178, 201, 171, 0.7);
+            --planet-2-border: rgba(178, 201, 171, 0.4);
+            --ring-2-border: rgba(178, 201, 171, 0.3);
+            --ring-2-bg: rgba(178, 201, 171, 0.1);
+
+            /* Planet 4 (Bottom-right) - kept */
+            --planet-4-bg: radial-gradient(circle at 30% 30%, #f5a623, #d4a0a0);
+            --planet-4-shadow: 0 0 75px rgba(245, 166, 35, 0.7);
+            --planet-4-border: rgba(245, 166, 35, 0.4);
+            --ring-4-border: rgba(245, 166, 35, 0.3);
+            --ring-4-bg: rgba(245, 166, 35, 0.1);
+
+            /* Card */
+            --card-bg: #fcf8f0;
+            --card-border: #1a2a5e;
+            --card-shadow: 6px 12px 0 #b2c9ab, 8px 20px 40px rgba(0, 0, 0, 0.6);
+
+            /* Animation speed */
+            --float-duration: 8s;
+            --twinkle-duration: 2.5s;
+        }
+
+        /* ── Light Theme Overrides ── */
+        body.light-theme {
+            --bg-gradient: linear-gradient(135deg, #e0d6c8 0%, #f5ede4 100%);
+
+            --star-color: #a0a0a0;
+            --star-glow: 0 0 4px rgba(0, 0, 0, 0.1);
+
+            --planet-1-bg: radial-gradient(circle at 30% 30%, #d4c4b0, #c0b0a0);
+            --planet-1-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            --planet-1-border: rgba(180, 160, 140, 0.3);
+            --ring-1-border: rgba(180, 160, 140, 0.2);
+            --ring-1-bg: rgba(180, 160, 140, 0.05);
+
+            --planet-2-bg: radial-gradient(circle at 30% 30%, #a0b8b0, #809090);
+            --planet-2-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            --planet-2-border: rgba(160, 180, 170, 0.3);
+            --ring-2-border: rgba(160, 180, 170, 0.2);
+            --ring-2-bg: rgba(160, 180, 170, 0.05);
+
+            --planet-4-bg: radial-gradient(circle at 30% 30%, #d4c0a0, #b0a080);
+            --planet-4-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            --planet-4-border: rgba(180, 160, 140, 0.3);
+            --ring-4-border: rgba(180, 160, 140, 0.2);
+            --ring-4-bg: rgba(180, 160, 140, 0.05);
+
+            --card-bg: #fff9f0;
+            --card-border: #b2c9ab;
+            --card-shadow: 6px 12px 0 #dbb594, 8px 20px 40px rgba(0, 0, 0, 0.1);
+
+            /* Hide some stars and planets in light mode */
+            --star-hide: none;
+            --planet-3-opacity: 0;
+            --planet-5-opacity: 0;
+        }
+
         /* ── Reset & Base ── */
         * {
             box-sizing: border-box;
@@ -17,7 +92,7 @@
 
         body {
             font-family: 'Open Sans', sans-serif;
-            background: #f5ede4; /* warm beige */
+            background: var(--bg-gradient);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -25,48 +100,203 @@
             padding: 1rem;
             margin: 0;
             position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
         }
 
-        /* ── Planet decoration (minimal) ── */
-        .planet-bg {
+        /* ── Theme Toggle Button ── */
+        .theme-toggle {
             position: fixed;
-            bottom: 5%;
-            right: 5%;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #f4c2c2, #b2c9ab);
-            box-shadow: 0 0 30px rgba(244, 194, 194, 0.2);
-            z-index: 0;
-            pointer-events: none;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 10;
         }
-        .planet-bg::before {
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .toggle-btn {
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.15);
+            color: #1a2a5e;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ── Background Elements Container ── */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* ── Stars (optimized: 8 stars with GPU-friendly properties) ── */
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--star-color);
+            box-shadow: var(--star-glow);
+            animation: twinkle var(--twinkle-duration) ease-in-out infinite alternate;
+            transition: background 0.5s, box-shadow 0.5s;
+            will-change: opacity, transform;
+        }
+        .star:nth-child(1) { top: 10%; left: 5%; width: 6px; height: 6px; animation-duration: 2.2s; animation-delay: 0s; }
+        .star:nth-child(2) { top: 20%; left: 85%; width: 3px; height: 3px; animation-duration: 2.8s; animation-delay: 0.6s; }
+        .star:nth-child(3) { top: 40%; left: 10%; width: 5px; height: 5px; animation-duration: 1.8s; animation-delay: 1.2s; }
+        .star:nth-child(4) { top: 70%; left: 90%; width: 4px; height: 4px; animation-duration: 3s; animation-delay: 0.3s; }
+        .star:nth-child(5) { top: 85%; left: 20%; width: 3px; height: 3px; animation-duration: 2.4s; animation-delay: 0.9s; }
+        .star:nth-child(6) { top: 15%; left: 50%; width: 5px; height: 5px; animation-duration: 2s; animation-delay: 1.5s; }
+        .star:nth-child(7) { top: 60%; left: 30%; width: 4px; height: 4px; animation-duration: 2.6s; animation-delay: 0.2s; }
+        .star:nth-child(8) { top: 45%; left: 70%; width: 6px; height: 6px; animation-duration: 2.0s; animation-delay: 0.8s; }
+
+        /* Hide extra stars in light mode (nth-child beyond 8 are hidden) */
+        body.light-theme .star:nth-child(n+7) {
+            display: none;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* ── Planets (reduced to 3: planet-1, planet-2, planet-4) ── */
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            animation: float var(--float-duration) ease-in-out infinite alternate;
+            transition: background 0.5s, box-shadow 0.5s, opacity 0.8s, border-color 0.5s;
+            will-change: transform;
+        }
+        .planet::before {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 180%;
-            height: 16px;
-            background: rgba(178, 201, 171, 0.3);
-            border-radius: 50%;
             transform: translate(-50%, -50%) rotate(-20deg);
-            border: 2px solid rgba(244, 194, 194, 0.4);
+            border-radius: 50%;
+            border: 2px solid var(--planet-1-border);
+            transition: border-color 0.5s;
+        }
+        .planet.ring::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160%;
+            height: 12px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotate(-25deg);
+            border: 2px solid var(--ring-1-border);
+            background: var(--ring-1-bg);
+            box-shadow: 0 0 30px rgba(255,255,255,0.05);
+            transition: border-color 0.5s, background 0.5s;
+        }
+
+        /* Planet 1 */
+        .planet-1 {
+            width: 120px;
+            height: 120px;
+            bottom: 5%;
+            left: 3%;
+            background: var(--planet-1-bg);
+            box-shadow: var(--planet-1-shadow);
+            animation-duration: 10s;
+        }
+        .planet-1::before {
+            width: 130%;
+            height: 14px;
+            border-color: var(--planet-1-border);
+        }
+        .planet-1.ring::after {
+            border-color: var(--ring-1-border);
+            background: var(--ring-1-bg);
+        }
+
+        /* Planet 2 */
+        .planet-2 {
+            width: 80px;
+            height: 80px;
+            top: 8%;
+            right: 5%;
+            background: var(--planet-2-bg);
+            box-shadow: var(--planet-2-shadow);
+            animation-duration: 11s;
+            animation-delay: 0.5s;
+        }
+        .planet-2::before {
+            width: 140%;
+            height: 10px;
+            border-color: var(--planet-2-border);
+        }
+        .planet-2.ring::after {
+            border-color: var(--ring-2-border);
+            background: var(--ring-2-bg);
+        }
+
+        /* Planet 4 (Bottom-right) */
+        .planet-4 {
+            width: 90px;
+            height: 90px;
+            bottom: 10%;
+            right: 8%;
+            background: var(--planet-4-bg);
+            box-shadow: var(--planet-4-shadow);
+            animation-duration: 12s;
+            animation-delay: 0.3s;
+        }
+        .planet-4::before {
+            width: 150%;
+            height: 12px;
+            border-color: var(--planet-4-border);
+        }
+        .planet-4.ring::after {
+            border-color: var(--ring-4-border);
+            background: var(--ring-4-bg);
+        }
+
+        /* Removed planet-3 and planet-5 for performance */
+
+        /* Floating animation - slower and smoother */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-15px) rotate(3deg); }
         }
 
         /* ── Card Container ── */
         .container {
-            background: #fcf8f0; /* light beige */
+            background: var(--card-bg);
             border-radius: 30px;
-            box-shadow: 
-                6px 12px 0 #b2c9ab,
-                8px 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--card-shadow);
             width: 100%;
             max-width: 440px;
             padding: 1.8rem 2rem 1.5rem;
             animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-            border: 3px solid #1a2a5e; /* navy */
+            border: 3px solid var(--card-border);
             position: relative;
             z-index: 1;
+            transition: background 0.5s, border-color 0.5s, box-shadow 0.5s;
         }
 
         @keyframes fadeInUp {
@@ -86,7 +316,7 @@
             color: #1a2a5e;
             text-transform: uppercase;
             letter-spacing: -0.02em;
-            text-shadow: 2px 2px 0 #f4c2c2, 4px 4px 0 rgba(0,0,0,0.05);
+            text-shadow: 2px 2px 0 #f4c2c2, 0 0 20px rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -222,7 +452,7 @@
             font-size: 0.85rem;
         }
 
-        /* ── Password Strength (Register) ── */
+        /* ── Password Strength ── */
         .strength-container {
             margin-top: 0.35rem;
         }
@@ -417,16 +647,10 @@
             .checklist-item {
                 font-size: 0.7rem;
             }
-            .planet-bg {
-                width: 70px;
-                height: 70px;
-                bottom: 3%;
-                right: 3%;
-            }
-            .planet-bg::before {
-                height: 12px;
-                width: 160%;
-            }
+            .planet-1 { width: 80px; height: 80px; }
+            .planet-2 { width: 60px; height: 60px; }
+            .planet-4 { width: 70px; height: 70px; }
+            .toggle-btn { width: 40px; height: 40px; font-size: 1.2rem; top: 1rem; right: 1rem; }
         }
 
         @media (max-width: 380px) {
@@ -444,8 +668,28 @@
 </head>
 <body>
 
-    <!-- ─── Background Planet ─── -->
-    <div class="planet-bg"></div>
+    <!-- ─── THEME TOGGLE ─── -->
+    <div class="theme-toggle">
+        <button class="toggle-btn" id="themeToggleBtn" aria-label="Toggle theme">🌙</button>
+    </div>
+
+    <!-- ─── Background Elements ─── -->
+    <div class="bg-elements">
+        <!-- Stars (8) -->
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+
+        <!-- Planets (3) -->
+        <div class="planet planet-1 ring"></div>
+        <div class="planet planet-2 ring"></div>
+        <div class="planet planet-4 ring"></div>
+    </div>
 
     <div class="container">
 
@@ -524,6 +768,29 @@
     </div>
 
     <script>
+        // ───────────────────────────────────────────────
+        // 0. THEME TOGGLE with localStorage caching
+        // ───────────────────────────────────────────────
+        const toggleBtn = document.getElementById('themeToggleBtn');
+        const STORAGE_KEY = 'cloudspace_theme';
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem(STORAGE_KEY);
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            toggleBtn.textContent = '☀️';
+        } else {
+            // default dark
+            toggleBtn.textContent = '🌙';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            toggleBtn.textContent = isLight ? '☀️' : '🌙';
+            localStorage.setItem(STORAGE_KEY, isLight ? 'light' : 'dark');
+        });
+
         // ───────────────────────────────────────────────
         // 1. TAB SWITCHING
         // ───────────────────────────────────────────────
@@ -637,12 +904,10 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    // Store username and token
                     localStorage.setItem('cloudspace_username', username);
                     if (data.token) {
                         localStorage.setItem('cloudspace_token', data.token);
                     }
-                    // Redirect to dashboard
                     window.location.href = 'dashboard.php';
                 } else {
                     msg.classList.add('error');
@@ -693,7 +958,6 @@
                     msg.classList.add('success');
                     msg.textContent = data.message || 'Registration successful! You can now sign in.';
 
-                    // Reset form
                     document.getElementById('regUsername').value = '';
                     document.getElementById('regEmail').value = '';
                     regPassword.value = '';

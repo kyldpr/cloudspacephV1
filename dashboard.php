@@ -34,7 +34,7 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* ── Sidebar (unchanged) ── */
+        /* ── Sidebar ── */
         .sidebar {
             flex: 0 0 auto;
             width: fit-content;
@@ -110,15 +110,17 @@
             color: #0a0a2e;
             box-shadow: none;
         }
+
+        /* ── Logout Button ── */
         .sidebar .logout-btn {
             margin-top: auto;
-            background: #f4c2c2;
+            background: #c62828;
+            color: #fff;
             border: none;
-            padding: 0.7rem 1rem;
-            border-radius: 40px;
-            font-weight: 700;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 800;
             font-size: 0.95rem;
-            color: #1a2a5e;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
@@ -127,14 +129,19 @@
             align-items: center;
             gap: 0.75rem;
             font-family: inherit;
-            box-shadow: 2px 4px 0 #d4a0a0;
+            box-shadow: 2px 3px 0 #8b1a1a;
             white-space: nowrap;
         }
         .sidebar .logout-btn:hover {
-            background: #e8b4b8;
-            transform: translateX(4px);
-            box-shadow: 2px 4px 0 #c09090;
+            background: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 2px 5px 0 #8b1a1a;
         }
+        .sidebar .logout-btn:active {
+            transform: translateY(2px);
+            box-shadow: 2px 1px 0 #8b1a1a;
+        }
+
         .icon-planet {
             display: inline-block;
             width: 24px;
@@ -183,17 +190,11 @@
             display: none;
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── USER CARD (unchanged) ── */
+        /* ── USER CARD ── */
         .user-card {
             background: #fff9f0;
             border-radius: 28px;
@@ -244,7 +245,7 @@
             font-weight: 700;
         }
 
-        /* ── SECTION TITLES (enhanced) ── */
+        /* ── SECTION TITLES ── */
         .section-title {
             font-size: 1.3rem;
             font-weight: 900;
@@ -265,7 +266,7 @@
             box-shadow: 1px 2px 0 #8a9a7a;
         }
 
-        /* ── POST LIST – CARD STYLE (enhanced contrast) ── */
+        /* ── POST LIST ── */
         .post-list {
             list-style: none;
             padding: 0;
@@ -296,7 +297,7 @@
             box-shadow: 2px 2px 0 #dbb594;
         }
 
-        /* ── Thumbnail (enlarged & clickable) ── */
+        /* ── Thumbnail ── */
         .post-thumb {
             flex: 0 0 160px;
             height: 160px;
@@ -325,7 +326,6 @@
             font-weight: 700;
         }
 
-        /* Content area */
         .post-content {
             flex: 1;
             display: flex;
@@ -367,7 +367,6 @@
             color: #4a6a8a;
         }
 
-        /* Author avatar (circle with initial) */
         .post-author-avatar {
             width: 32px;
             height: 32px;
@@ -391,7 +390,48 @@
             padding: 2rem 0;
         }
 
-        /* ── POST ACTIONS (Edit/Delete) unchanged ── */
+        /* ── Custom empty state for My Forums ── */
+        .empty-state-custom {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        .empty-state-custom h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1a2a5e;
+            margin-bottom: 0.5rem;
+        }
+        .empty-state-custom p {
+            font-size: 1rem;
+            color: #4a6a8a;
+            margin-bottom: 1.5rem;
+        }
+        .empty-state-btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            background: #b2c9ab;
+            color: #0a0a2e;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 2px 4px 0 #8a9a7a;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .empty-state-btn:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+            box-shadow: 2px 6px 0 #8a9a7a;
+        }
+        .empty-state-btn:active {
+            transform: translateY(2px);
+            box-shadow: 2px 1px 0 #8a9a7a;
+        }
+
+        /* ── POST ACTIONS ── */
         .post-actions {
             display: flex;
             flex-direction: column;
@@ -425,7 +465,7 @@
             transform: translateY(-2px);
         }
 
-        /* ── Like Button Styles ── */
+        /* ── Like Buttons ── */
         .like-btn, .like-btn-detail {
             background: transparent;
             border: none;
@@ -445,7 +485,7 @@
             transform: scale(0.95);
         }
 
-        /* ── POST DETAIL (enhanced titles) ── */
+        /* ── POST DETAIL ── */
         #forumPostDetailView {
             display: none;
         }
@@ -605,7 +645,7 @@
             box-shadow: 1px 2px 0 #dbb594;
         }
 
-        /* ── SETTINGS TABS (full width) ── */
+        /* ── SETTINGS TABS ── */
         .settings-tabs {
             display: flex;
             gap: 0.6rem;
@@ -656,14 +696,8 @@
             display: block;
         }
         @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-group {
@@ -845,7 +879,6 @@
         .search-item.recent .icon::before {
             content: "🕒";
         }
-        /* ── Recent search remove button ── */
         .search-item .remove-recent {
             margin-left: auto;
             background: transparent;
@@ -863,7 +896,7 @@
             color: #c62828;
         }
 
-        /* ── Forum Navigation Tabs (full width) ── */
+        /* ── Forum Navigation Tabs ── */
         .forum-nav-container {
             display: flex;
             gap: 0.6rem;
@@ -954,7 +987,6 @@
             color: #0a0a2e;
             flex: 1;
         }
-        /* ── Toast close button ── */
         .toast .toast-close {
             background: transparent;
             border: none;
@@ -970,21 +1002,15 @@
             color: #c62828;
         }
         @keyframes toastSlide {
-            from {
-                opacity: 0;
-                transform: translateX(60px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         .toast.hide {
             opacity: 0;
             transform: translateX(60px);
         }
 
-        /* ── Delete Confirmation Modal (smooth, no glow) ── */
+        /* ── Delete Confirmation Modal ── */
         .delete-modal-overlay {
             position: fixed;
             top: 0;
@@ -1246,6 +1272,8 @@
             justify-content: flex-end;
         }
         .log-modal .modal-actions button {
+            flex: 1;
+            min-width: 80px;
             padding: 0.6rem 1.8rem;
             border: none;
             border-radius: 50px;
@@ -1264,19 +1292,10 @@
             background: #9fb89a;
             transform: translateY(-2px);
         }
-        /* ── Delete button in log modal (matching delete confirm style) ── */
         .log-modal .modal-actions .delete-btn {
             background: #c62828;
             color: #fff;
             box-shadow: 2px 3px 0 #8b1a1a;
-            border: none;
-            padding: 0.6rem 1.8rem;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: inherit;
         }
         .log-modal .modal-actions .delete-btn:hover {
             background: #b71c1c;
@@ -1348,6 +1367,34 @@
             background: #f4c2c2;
             color: #1a2a5e;
             transform: rotate(90deg);
+        }
+
+        /* ── Comment Edit/Delete Buttons ── */
+        .edit-comment-btn, .delete-comment-btn {
+            background: transparent;
+            border: 2px solid #b2c9ab;
+            border-radius: 30px;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1a2a5e;
+            font-size: 0.9rem;
+            box-shadow: 1px 2px 0 #dbb594;
+            margin-left: 0.2rem;
+        }
+        .edit-comment-btn:hover {
+            background: #b2c9ab;
+            transform: translateY(-2px);
+        }
+        .delete-comment-btn:hover {
+            background: #f4c2c2;
+            border-color: #d32f2f;
+            color: #d32f2f;
+            transform: translateY(-2px);
         }
 
         /* ── Mobile Responsive ── */
@@ -1502,7 +1549,6 @@
             background: #f5ede4;
         }
 
-        /* ── Custom file input button ── */
         .custom-file-upload {
             display: inline-block;
             padding: 0.6rem 1.5rem;
@@ -1526,7 +1572,6 @@
             display: none;
         }
 
-        /* ── Publish Button with Spinner ── */
         #forumSubmitBtn,
         .comment-submit {
             background: #1a2a5e;
@@ -1571,9 +1616,7 @@
             animation: spin 0.8s ease-in-out infinite;
         }
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
         .btn-published {
             background: #2e7d32 !important;
@@ -1830,7 +1873,7 @@
             <div class="log-detail-item"><strong>Action:</strong> <span id="logAction"></span></div>
             <div class="modal-actions" style="margin-top:1.5rem;">
                 <button class="cancel-btn" id="logCloseBtn">Close</button>
-                <button class="delete-btn" id="logDeleteBtn">🗑 Delete This Log</button>
+                <button class="delete-btn" id="logDeleteBtn">Delete</button>
             </div>
         </div>
     </div>
@@ -1843,14 +1886,41 @@
         </div>
     </div>
 
+    <!-- ─── EDIT COMMENT MODAL ─── -->
+    <div class="edit-modal-overlay" id="editCommentModal">
+        <div class="edit-modal">
+            <h3>✏️ Edit Comment</h3>
+            <input type="hidden" id="editCommentId" />
+            <input type="hidden" id="editCommentPostId" />
+            <div class="form-group">
+                <label for="editCommentContent">Content</label>
+                <textarea id="editCommentContent" rows="4" required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn" id="editCommentCancelBtn">Cancel</button>
+                <button type="button" class="submit-btn" id="editCommentConfirmBtn">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── DELETE COMMENT MODAL ─── -->
+    <div class="delete-modal-overlay" id="commentDeleteModal">
+        <div class="delete-modal">
+            <h3>⚠️ Delete Comment</h3>
+            <p>Are you sure you want to permanently delete this comment? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="commentDeleteCancelBtn">Cancel</button>
+                <button class="confirm-btn" id="commentDeleteConfirmBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ── Check authentication ──
         const username = localStorage.getItem('cloudspace_username');
         if (!username) {
             window.location.href = 'login';
         }
-
-        // ── Token must be set by server after login
         if (!localStorage.getItem('cloudspace_token')) {
             window.location.href = 'login';
         }
@@ -1860,7 +1930,7 @@
 
         // ── Cache helpers ──
         const CACHE_KEY = 'cloudspace_threads_cache';
-        const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes
+        const CACHE_EXPIRY = 5 * 60 * 1000;
 
         function getCachedThreads() {
             try {
@@ -1891,7 +1961,6 @@
         // ── State ──
         let currentForumPostId = null;
         let currentForumSubView = 'feed';
-        let searchDebounceTimer = null;
         let allPosts = [];
         let filteredPosts = [];
 
@@ -1903,7 +1972,6 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const toastContainer = document.getElementById('toastContainer');
 
-        // New search UI elements
         const searchWrapper = document.getElementById('searchWrapper');
         const searchInput = document.getElementById('searchInput');
         const searchDropdown = document.getElementById('searchResultsDropdown');
@@ -1912,14 +1980,13 @@
         let currentFocus = -1;
         const RECENT_SEARCHES_KEY = 'cloudspace_recent_searches';
 
-        // ── Toast Helper with dismiss button ──
+        // ── Toast Helper ──
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             const icon = type === 'success' ? '✅' : '❌';
             toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message">${escapeHtml(message)}</span>`;
 
-            // ── Dismiss button ──
             const closeBtn = document.createElement('span');
             closeBtn.className = 'toast-close';
             closeBtn.textContent = '×';
@@ -1931,16 +1998,14 @@
             toast.appendChild(closeBtn);
 
             toastContainer.appendChild(toast);
-            // Auto-dismiss after 4 seconds
             const timer = setTimeout(() => {
                 toast.classList.add('hide');
                 setTimeout(() => toast.remove(), 400);
             }, 4000);
-            // Clear timer if manually dismissed
             closeBtn.addEventListener('click', () => clearTimeout(timer));
         }
 
-        // ── Navigation switching ──
+        // ── Navigation ──
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             const targetPage = document.getElementById('page-' + pageId);
@@ -1998,7 +2063,7 @@
             return `api/forums/image.php?file=${encodeURIComponent(filename)}&token=${encodeURIComponent(token)}`;
         }
 
-        // ── Load profile, logout, etc. (unchanged) ──
+        // ── Load profile ──
         async function loadProfile() {
             const token = localStorage.getItem('cloudspace_token');
             if (!token) { window.location.href = 'login'; return; }
@@ -2024,6 +2089,8 @@
             localStorage.removeItem('cloudspace_token');
             window.location.href = 'login';
         });
+
+        // ── Change password ──
         document.getElementById('changePasswordForm').addEventListener('submit', async e => {
             e.preventDefault();
             const msg = document.getElementById('passwordMessage');
@@ -2041,6 +2108,8 @@
                 else { msg.classList.add('error'); msg.textContent = data.message || 'Failed to update password.'; }
             } catch (err) { msg.classList.add('error'); msg.textContent = 'Network error.'; }
         });
+
+        // ── Bug report ──
         document.getElementById('bugReportForm').addEventListener('submit', async e => {
             e.preventDefault();
             const msg = document.getElementById('bugMessage');
@@ -2052,7 +2121,7 @@
             document.getElementById('bugReportForm').reset();
         });
 
-        // ── Updated loadLogs with clickable log items ──
+        // ── Logs ──
         async function loadLogs() {
             const token = localStorage.getItem('cloudspace_token');
             const list = document.getElementById('logList');
@@ -2100,7 +2169,6 @@
                             hour: '2-digit',
                             minute: '2-digit'
                         });
-                        // Store full log data as data attributes for modal
                         html += `
                             <li class="log-item" style="cursor:pointer;" data-log='${JSON.stringify(log).replace(/'/g, "&apos;")}'>
                                 <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
@@ -2111,7 +2179,6 @@
                 });
                 list.innerHTML = html;
 
-                // ── Attach click event to each log item to open modal ──
                 document.querySelectorAll('.log-item').forEach(item => {
                     item.addEventListener('click', function() {
                         const logData = JSON.parse(this.dataset.log);
@@ -2142,17 +2209,12 @@
             document.getElementById('logModal').classList.remove('active');
         }
 
-        // ── Delete a specific log entry ──
-        async function deleteLogEntry() {
-            if (!currentLogTimestamp) return;
-            if (!confirm('Delete this log entry?')) return;
-
+        async function deleteLogEntry(timestamp) {
             const token = localStorage.getItem('cloudspace_token');
             if (!token) {
                 showToast('Authentication required.', 'error');
                 return;
             }
-
             try {
                 const res = await fetch('auth-api.php', {
                     method: 'POST',
@@ -2160,14 +2222,14 @@
                     body: JSON.stringify({
                         action: 'delete_log',
                         token: token,
-                        timestamp: currentLogTimestamp
+                        timestamp: timestamp
                     })
                 });
                 const data = await res.json();
                 if (data.status === 'success') {
                     showToast('Log deleted.', 'success');
                     closeLogModal();
-                    loadLogs(); // refresh list
+                    loadLogs();
                 } else {
                     showToast(data.message || 'Failed to delete log.', 'error');
                 }
@@ -2176,27 +2238,14 @@
             }
         }
 
-        // ── Attach event listeners for log modal ──
-        document.getElementById('logCloseBtn').addEventListener('click', closeLogModal);
-        document.getElementById('logDeleteBtn').addEventListener('click', deleteLogEntry);
-        // Click outside to close
-        document.getElementById('logModal').addEventListener('click', function(e) {
-            if (e.target === this) closeLogModal();
-        });
-
-        // ── Image Modal Functions ──
+        // ── Image Modal ──
         function openImageModal(imageUrl) {
-            const modal = document.getElementById('imageModal');
-            const img = document.getElementById('imageModalImg');
-            img.src = imageUrl;
-            modal.classList.add('active');
+            document.getElementById('imageModalImg').src = imageUrl;
+            document.getElementById('imageModal').classList.add('active');
         }
-
         function closeImageModal() {
             document.getElementById('imageModal').classList.remove('active');
         }
-
-        // ── Attach close events for image modal ──
         document.getElementById('imageModalClose').addEventListener('click', closeImageModal);
         document.getElementById('imageModal').addEventListener('click', function(e) {
             if (e.target === this) closeImageModal();
@@ -2207,8 +2256,72 @@
             }
         });
 
+        // ── Comment Edit/Delete ──
+        function openEditCommentModal(commentId, postId, currentContent) {
+            document.getElementById('editCommentId').value = commentId;
+            document.getElementById('editCommentPostId').value = postId;
+            document.getElementById('editCommentContent').value = currentContent;
+            document.getElementById('editCommentModal').classList.add('active');
+        }
+
+        async function submitEditComment() {
+            const commentId = document.getElementById('editCommentId').value;
+            const postId = document.getElementById('editCommentPostId').value;
+            const content = document.getElementById('editCommentContent').value.trim();
+            if (!content) { showToast('Please enter some content.', 'error'); return; }
+            const token = localStorage.getItem('cloudspace_token');
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ action: 'edit_comment', post_id: postId, comment_id: commentId, content: content })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('Comment updated.', 'success');
+                    document.getElementById('editCommentModal').classList.remove('active');
+                    if (currentForumPostId) openForumPost(currentForumPostId);
+                } else {
+                    showToast(data.message || 'Error.', 'error');
+                }
+            } catch (e) {
+                showToast('Network error.', 'error');
+            }
+        }
+
+        async function deleteComment(commentId, postId) {
+            document.getElementById('commentDeleteModal').dataset.commentId = commentId;
+            document.getElementById('commentDeleteModal').dataset.postId = postId;
+            document.getElementById('commentDeleteModal').classList.add('active');
+        }
+
+        async function confirmDeleteComment() {
+            const modal = document.getElementById('commentDeleteModal');
+            const commentId = modal.dataset.commentId;
+            const postId = modal.dataset.postId;
+            if (!commentId || !postId) return;
+            const token = localStorage.getItem('cloudspace_token');
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({ action: 'delete_comment', post_id: postId, comment_id: commentId })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('Comment deleted.', 'success');
+                    modal.classList.remove('active');
+                    if (currentForumPostId) openForumPost(currentForumPostId);
+                } else {
+                    showToast(data.message || 'Error.', 'error');
+                }
+            } catch (e) {
+                showToast('Network error.', 'error');
+            }
+        }
+
         // ============================================================
-        // ── FORUMS FEATURE ──
+        // ── FORUMS ──
         // ============================================================
 
         function fuzzyMatch(searchTerm, target) {
@@ -2224,25 +2337,32 @@
             return true;
         }
 
-        async function fetchAllPosts() {
-            const savedToken = localStorage.getItem('cloudspace_token') || '';
-            try {
-                const response = await fetch(`api/forums/forums-api.php?action=list_posts`, { method:'GET', headers:{ 'Authorization':`Bearer ${savedToken}` } });
-                const dataset = await response.json();
-                if (dataset.status !== 'success') throw new Error(dataset.message || 'Failed');
-                allPosts = dataset.posts || [];
-                allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-                return allPosts;
-            } catch (err) { console.error('fetchAllPosts error:', err); return []; }
-        }
-
-        function renderPosts(posts) {
+        function renderPosts(posts, myPostsOnly = false) {
             const listElement = document.getElementById('globalForumsListElement');
+
+            // ── Custom empty state for "My Forums" ──
+            if (myPostsOnly && (!posts || posts.length === 0)) {
+                listElement.innerHTML = `
+                    <li class="empty-state-custom">
+                        <h3>📭 Not much yet!</h3>
+                        <p>You haven't created any threads. Be the first to share!</p>
+                        <button class="empty-state-btn" id="emptyStateCreateBtn">📝 Create Your First Thread</button>
+                    </li>
+                `;
+                document.getElementById('emptyStateCreateBtn').addEventListener('click', function() {
+                    toggleForumSection('create');
+                });
+                resultCountSpan.textContent = '0 results';
+                return;
+            }
+
+            // ── Generic empty state ──
             if (!posts || posts.length === 0) {
                 listElement.innerHTML = '<li class="empty-state">No threads match your search.</li>';
                 resultCountSpan.textContent = '0 results';
                 return;
             }
+
             resultCountSpan.textContent = posts.length + ' result' + (posts.length > 1 ? 's' : '');
             listElement.innerHTML = '';
             posts.forEach(post => {
@@ -2257,7 +2377,6 @@
                         img.src = imgUrl;
                         img.alt = 'Thumbnail';
                         img.loading = 'lazy';
-                        // ── Click to open image modal ──
                         thumbDiv.addEventListener('click', function(e) {
                             e.stopPropagation();
                             openImageModal(imgUrl);
@@ -2313,7 +2432,7 @@
             });
         }
 
-        // ── Event delegation for like buttons in post list ──
+        // ── Like buttons (delegation) ──
         document.getElementById('globalForumsListElement').addEventListener('click', async function(e) {
             const btn = e.target.closest('.like-btn');
             if (!btn) return;
@@ -2338,7 +2457,6 @@
             } catch (err) { showToast('Network error.', 'error'); }
         });
 
-        // ── Event delegation for like buttons in post detail ──
         document.getElementById('forumPostDetailView').addEventListener('click', async function(e) {
             const btn = e.target.closest('.like-btn-detail');
             if (!btn) return;
@@ -2367,16 +2485,16 @@
             } catch (err) { showToast('Network error.', 'error'); }
         });
 
-        function applySearchFilter(searchTerm) {
+        function applySearchFilter(searchTerm, myPostsOnly = false) {
             if (!searchTerm || searchTerm.trim() === '') filteredPosts = allPosts;
             else {
                 const term = searchTerm.trim();
                 filteredPosts = allPosts.filter(post => fuzzyMatch(term, post.title) || fuzzyMatch(term, post.content));
             }
-            renderPosts(filteredPosts);
+            renderPosts(filteredPosts, myPostsOnly);
         }
 
-        // ── Search dropdown helpers ──
+        // ── Search dropdown ──
         function getRecentSearches() {
             try { return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY)) || []; } catch { return []; }
         }
@@ -2393,7 +2511,7 @@
             saveRecentSearch(query);
             searchDropdown.style.display = 'none';
             searchWrapper.classList.remove('active');
-            applySearchFilter(query);
+            applySearchFilter(query, currentForumSubView === 'my-posts');
         }
 
         function renderDropdown(items, isRecent = false) {
@@ -2407,13 +2525,9 @@
                 items.forEach((itemText) => {
                     const div = document.createElement('div');
                     div.className = `search-item ${isRecent ? 'recent' : ''}`;
-
-                    // ── Text content ──
                     const textSpan = document.createElement('span');
                     textSpan.textContent = itemText;
                     div.appendChild(textSpan);
-
-                    // ── Remove button for recent items only ──
                     if (isRecent) {
                         const removeBtn = document.createElement('button');
                         removeBtn.className = 'remove-recent';
@@ -2422,10 +2536,7 @@
                         removeBtn.dataset.term = itemText;
                         div.appendChild(removeBtn);
                     }
-
-                    // ── Click on item itself to execute search ──
                     div.addEventListener('click', (e) => {
-                        // Ignore if click is on remove button
                         if (e.target.closest('.remove-recent')) return;
                         searchInput.value = itemText;
                         executeSearch(itemText);
@@ -2445,7 +2556,6 @@
             renderDropdown(filteredResults, false);
         }
 
-        // ── Remove recent search on button click (using event delegation on the static parent) ──
         document.getElementById('searchResultsDropdown').addEventListener('click', function(e) {
             const btn = e.target.closest('.remove-recent');
             if (!btn) return;
@@ -2499,14 +2609,10 @@
             if (!searchWrapper.contains(e.target)) { searchDropdown.style.display = 'none'; searchWrapper.classList.remove('active'); }
         });
 
-        // ── Updated toggleForumSection ──
+        // ── toggleForumSection ──
         function toggleForumSection(targetSection) {
             currentForumSubView = targetSection;
-
-            // ── Always hide the detail view when switching tabs ──
             document.getElementById('forumPostDetailView').style.display = 'none';
-
-            // Update tab button states
             document.getElementById('forumFeedTabBtn').classList.toggle('active', targetSection === 'feed');
             document.getElementById('forumMyTabBtn').classList.toggle('active', targetSection === 'my-posts');
             document.getElementById('forumCreateTabBtn').classList.toggle('active', targetSection === 'create');
@@ -2519,7 +2625,6 @@
                 feedPanel.style.display = 'none';
                 createPanel.style.display = 'block';
             } else {
-                // Show feed panel, hide create panel
                 createPanel.style.display = 'none';
                 feedPanel.style.display = 'block';
                 heading.textContent = targetSection === 'my-posts' ? '👤 My Thread Uploads' : 'Latest Public Records';
@@ -2527,12 +2632,11 @@
             }
         }
 
-        // ── Caching-aware fetch ──
+        // ── Fetch and render posts ──
         async function fetchAndRenderPosts(myPostsOnly = false) {
             const listElement = document.getElementById('globalForumsListElement');
             listElement.innerHTML = '<li class="empty-state">Loading...</li>';
 
-            // 1. Try cache (only if not filtering by author)
             if (!myPostsOnly) {
                 const cached = getCachedThreads();
                 if (cached && cached.length > 0) {
@@ -2544,14 +2648,11 @@
                     } else {
                         filteredPosts = allPosts;
                     }
-                    renderPosts(filteredPosts);
-                    // Still fetch in background to refresh cache silently
+                    renderPosts(filteredPosts, myPostsOnly);
                     fetchFreshThreads(myPostsOnly);
                     return;
                 }
             }
-
-            // 2. No cache – fetch fresh
             await fetchFreshThreads(myPostsOnly);
         }
 
@@ -2574,34 +2675,30 @@
                 }
                 allPosts = dataset.posts || [];
                 allPosts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-                // Cache only if not myPostsOnly
                 if (!myPostsOnly) {
                     setCachedThreads(allPosts);
                 }
-
                 const searchVal = searchInput.value.trim();
                 if (searchVal) {
                     filteredPosts = allPosts.filter(post => fuzzyMatch(searchVal, post.title) || fuzzyMatch(searchVal, post.content));
                 } else {
                     filteredPosts = allPosts;
                 }
-                renderPosts(filteredPosts);
+                renderPosts(filteredPosts, myPostsOnly);
             } catch (err) {
                 document.getElementById('globalForumsListElement').innerHTML =
                     '<li class="empty-state">Network error.</li>';
             }
         }
 
-        // ── Edit Thread with Modal ──
-        let editPostId = null; // store the post ID being edited
-
+        // ── Edit Thread ──
+        let editPostId = null;
         function openEditModal(postId, currentTitle, currentContent) {
             editPostId = postId;
             document.getElementById('editTitle').value = currentTitle;
             document.getElementById('editContent').value = currentContent;
             document.getElementById('editFileChosen').textContent = 'No file chosen';
-            document.getElementById('editImage').value = ''; // reset file input
+            document.getElementById('editImage').value = '';
             document.getElementById('editModal').classList.add('active');
         }
 
@@ -2613,29 +2710,26 @@
                 showToast('Title and content are required.', 'error');
                 return;
             }
-
             const formData = new FormData();
             formData.append('action', 'update_post');
             formData.append('post_id', editPostId);
             formData.append('title', title);
             formData.append('content', content);
-
             const imageInput = document.getElementById('editImage');
             if (imageInput.files[0]) {
                 formData.append('image', imageInput.files[0]);
             }
-
             const token = localStorage.getItem('cloudspace_token');
             try {
                 const response = await fetch('api/forums/forums-api.php', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + token },
-                    body: formData   // multipart/form-data
+                    body: formData
                 });
                 const data = await response.json();
                 if (data.status === 'success') {
                     showToast('Thread updated successfully!', 'success');
-                    clearThreadCache(); // invalidate cache
+                    clearThreadCache();
                     document.getElementById('editModal').classList.remove('active');
                     fetchAndRenderPosts(currentForumSubView === 'my-posts');
                 } else {
@@ -2646,7 +2740,6 @@
             }
         }
 
-        // ── Attach event listeners for edit modal ──
         document.getElementById('editCancelBtn').addEventListener('click', function() {
             document.getElementById('editModal').classList.remove('active');
         });
@@ -2655,17 +2748,15 @@
             document.getElementById('editFileChosen').textContent = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
         });
 
-        // ── Delete Thread with custom modal (optimized, timing updated) ──
+        // ── Delete Thread ──
         async function deleteThread(postId) {
             const modal = document.getElementById('deleteModal');
             const confirmBtn = document.getElementById('deleteConfirmBtn');
             const cancelBtn = document.getElementById('deleteCancelBtn');
 
-            // Set postId as data attribute for reference
             modal.dataset.postId = postId;
             modal.classList.add('active');
 
-            // Return a promise that resolves when user chooses
             return new Promise((resolve) => {
                 const handleConfirm = () => {
                     closeModal(() => resolve(true));
@@ -2680,12 +2771,9 @@
                 };
 
                 const closeModal = (callback) => {
-                    // Remove the 'active' class to trigger fade-out (200ms)
                     modal.classList.remove('active');
-                    // Wait for the transition to finish (200ms) then call callback
                     setTimeout(() => {
                         callback();
-                        // Clean up event listeners
                         confirmBtn.removeEventListener('click', handleConfirm);
                         cancelBtn.removeEventListener('click', handleCancel);
                         modal.removeEventListener('click', handleOutside);
@@ -2697,8 +2785,6 @@
                 modal.addEventListener('click', handleOutside);
             }).then((confirmed) => {
                 if (!confirmed) return;
-
-                // ── Actual deletion ──
                 const token = localStorage.getItem('cloudspace_token');
                 if (!token) {
                     showToast('Authentication token missing.', 'error');
@@ -2730,6 +2816,7 @@
             });
         }
 
+        // ── Open Post ──
         async function openForumPost(postId) {
             currentForumPostId = postId;
             try {
@@ -2743,9 +2830,7 @@
                 document.getElementById('forumDetailAuthor').textContent = data.post.author;
                 document.getElementById('forumDetailDate').textContent = formatDate(data.post.timestamp);
 
-                // Add views and likes to detail meta
                 const meta = document.querySelector('.post-detail-meta');
-                // Remove any previously added extra spans
                 meta.querySelectorAll('.views-count, .likes-count').forEach(el => el.remove());
                 const viewSpan = document.createElement('span');
                 viewSpan.className = 'views-count';
@@ -2767,7 +2852,6 @@
                 renderForumComments(data.comments);
                 document.getElementById('forumCommentInput').value = '';
 
-                // Call view_post to increment views
                 (async () => {
                     const token = localStorage.getItem('cloudspace_token');
                     if (token) {
@@ -2786,6 +2870,7 @@
             } catch (err) { alert('Network error loading post.'); }
         }
 
+        // ── Render Comments ──
         function renderForumComments(comments) {
             const list = document.getElementById('forumCommentsList');
             list.innerHTML = '';
@@ -2795,11 +2880,46 @@
                 const li = document.createElement('li');
                 li.className = 'comment-item';
                 const isYours = comment.author.toLowerCase() === loggedUser;
-                li.innerHTML = `<div class="comment-header"><span class="comment-author">${escapeHtml(comment.author)}${isYours?'<span class="you-badge">You</span>':''}</span><span class="comment-date">${formatDate(comment.timestamp)}</span></div><div class="comment-content">${escapeHtml(comment.content)}</div>`;
+                let actionsHtml = '';
+                if (isYours) {
+                    actionsHtml = `
+                        <button class="edit-comment-btn" data-comment-id="${comment.comment_id}" data-post-id="${comment.post_id}">✎</button>
+                        <button class="delete-comment-btn" data-comment-id="${comment.comment_id}" data-post-id="${comment.post_id}">🗑</button>
+                    `;
+                }
+                li.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">${escapeHtml(comment.author)}${isYours?'<span class="you-badge">You</span>':''}</span>
+                        <span class="comment-date">${formatDate(comment.timestamp)}</span>
+                        <span>${actionsHtml}</span>
+                    </div>
+                    <div class="comment-content">${escapeHtml(comment.content)}</div>
+                `;
                 list.appendChild(li);
+            });
+
+            document.querySelectorAll('.edit-comment-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const commentId = this.dataset.commentId;
+                    const postId = this.dataset.postId;
+                    const parentLi = this.closest('.comment-item');
+                    const contentDiv = parentLi.querySelector('.comment-content');
+                    const currentContent = contentDiv.textContent;
+                    openEditCommentModal(commentId, postId, currentContent);
+                });
+            });
+            document.querySelectorAll('.delete-comment-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const commentId = this.dataset.commentId;
+                    const postId = this.dataset.postId;
+                    deleteComment(commentId, postId);
+                });
             });
         }
 
+        // ── Post Comment ──
         async function postForumComment() {
             const input = document.getElementById('forumCommentInput');
             const content = input.value.trim();
@@ -2831,9 +2951,10 @@
         function goBackToForumFeed() {
             document.getElementById('forumPostDetailView').style.display = 'none';
             document.getElementById('forumMainFeedPanel').style.display = 'block';
-            fetchAndRenderPosts(currentForumSubView==='my-posts');
+            fetchAndRenderPosts(currentForumSubView === 'my-posts');
         }
 
+        // ── Create Thread ──
         async function transmitNewThreadPayload(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('forumSubmitBtn');
@@ -2901,6 +3022,33 @@
         document.getElementById('forumCommentSubmitBtn').addEventListener('click', postForumComment);
         document.getElementById('forumCommentInput').addEventListener('keydown', e => {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); postForumComment(); }
+        });
+
+        // ── Comment modals ──
+        document.getElementById('editCommentCancelBtn').addEventListener('click', function() {
+            document.getElementById('editCommentModal').classList.remove('active');
+        });
+        document.getElementById('editCommentConfirmBtn').addEventListener('click', submitEditComment);
+        document.getElementById('commentDeleteCancelBtn').addEventListener('click', function() {
+            document.getElementById('commentDeleteModal').classList.remove('active');
+        });
+        document.getElementById('commentDeleteConfirmBtn').addEventListener('click', confirmDeleteComment);
+        document.getElementById('editCommentModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+        document.getElementById('commentDeleteModal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+
+        // ── Log modal ──
+        document.getElementById('logCloseBtn').addEventListener('click', closeLogModal);
+        document.getElementById('logModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLogModal();
+        });
+        document.getElementById('logDeleteBtn').addEventListener('click', async function() {
+            const timestamp = currentLogTimestamp;
+            if (!timestamp) return;
+            await deleteLogEntry(timestamp);
         });
 
         window.toggleForumSection = toggleForumSection;

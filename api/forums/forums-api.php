@@ -49,7 +49,7 @@ foreach ([$postsDir, $commentsDir, $byAuthorDir, $byCommenterDir, $imagesDir] as
     if (!file_exists($dir)) mkdir($dir, 0755, true);
 }
 
-// ── Helpers (unchanged) ──
+// ── Helpers ──
 function generateId() {
     return 'c_' . bin2hex(random_bytes(8));
 }
@@ -79,6 +79,29 @@ function authorCommentsFile($authorUsername) {
 function commenterCommentsFile($commenterUsername) {
     global $byCommenterDir;
     return $byCommenterDir . strtolower($commenterUsername) . '.json';
+}
+
+// ── Index update helpers for comments ──
+function updateCommentInIndex($file, $commentId, $newContent, $newTimestamp) {
+    $data = readJson($file);
+    if (!is_array($data)) return;
+    foreach ($data as &$item) {
+        if ($item['comment_id'] === $commentId) {
+            $item['content'] = $newContent;
+            $item['timestamp'] = $newTimestamp;
+            break;
+        }
+    }
+    writeJson($file, $data);
+}
+
+function removeCommentFromIndex($file, $commentId) {
+    $data = readJson($file);
+    if (!is_array($data)) return;
+    $data = array_filter($data, function($item) use ($commentId) {
+        return $item['comment_id'] !== $commentId;
+    });
+    writeJson($file, array_values($data));
 }
 
 // ── Parse request ──
@@ -799,6 +822,171 @@ switch ($action) {
         }
         writeJson($postFile, $post);
         echo json_encode(["status" => "success", "likes" => $post['likes'], "liked" => $liked]);
+        break;
+
+    // ── EDIT COMMENT ──
+    case 'edit_comment':
+        // Authenticate
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        $commentId = trim($input['comment_id'] ?? '');
+        $newContent = trim($input['content'] ?? '');
+        if (!$postId || !$commentId || !$newContent) {
+            echo json_encode(["status" => "error", "message" => "post_id, comment_id, and content are required."]);
+            exit;
+        }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
+            exit;
+        }
+
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+
+        // Load comments for this post
+        $commentsFile = commentFileForPost($postId);
+        $comments = readJson($commentsFile);
+        if (!is_array($comments)) {
+            echo json_encode(["status" => "error", "message" => "No comments found."]);
+            exit;
+        }
+
+        $found = false;
+        foreach ($comments as &$c) {
+            if ($c['comment_id'] === $commentId) {
+                // Check author
+                if (strtolower($c['author']) !== strtolower($username)) {
+                    echo json_encode(["status" => "error", "message" => "Not your comment."]);
+                    exit;
+                }
+                $c['content'] = $newContent;
+                $c['timestamp'] = date('c');
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            echo json_encode(["status" => "error", "message" => "Comment not found."]);
+            exit;
+        }
+        writeJson($commentsFile, $comments);
+
+        // Update by_author and by_commenter files
+        $newTimestamp = date('c');
+        updateCommentInIndex(authorCommentsFile($post['author']), $commentId, $newContent, $newTimestamp);
+        updateCommentInIndex(commenterCommentsFile($username), $commentId, $newContent, $newTimestamp);
+
+        echo json_encode(["status" => "success", "message" => "Comment updated."]);
+        break;
+
+    // ── DELETE COMMENT ──
+    case 'delete_comment':
+        // Authenticate
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+        $token = null;
+        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            $token = $matches[1];
+        }
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Authorization token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+
+        $postId = trim($input['post_id'] ?? '');
+        $commentId = trim($input['comment_id'] ?? '');
+        if (!$postId || !$commentId) {
+            echo json_encode(["status" => "error", "message" => "post_id and comment_id are required."]);
+            exit;
+        }
+        if (!isValidPostId($postId)) {
+            echo json_encode(["status" => "error", "message" => "Invalid post ID format."]);
+            exit;
+        }
+
+        $postFile = $postsDir . $postId . '.json';
+        $post = readJson($postFile);
+        if (!$post) {
+            echo json_encode(["status" => "error", "message" => "Post not found."]);
+            exit;
+        }
+
+        $commentsFile = commentFileForPost($postId);
+        $comments = readJson($commentsFile);
+        if (!is_array($comments)) {
+            echo json_encode(["status" => "error", "message" => "No comments found."]);
+            exit;
+        }
+
+        $found = false;
+        $comments = array_filter($comments, function($c) use ($commentId, $username, &$found) {
+            if ($c['comment_id'] === $commentId) {
+                if (strtolower($c['author']) !== strtolower($username)) {
+                    $found = 'unauthorized';
+                    return false;
+                }
+                $found = true;
+                return false; // remove
+            }
+            return true;
+        });
+        if ($found === 'unauthorized') {
+            echo json_encode(["status" => "error", "message" => "Not your comment."]);
+            exit;
+        }
+        if (!$found) {
+            echo json_encode(["status" => "error", "message" => "Comment not found."]);
+            exit;
+        }
+        writeJson($commentsFile, array_values($comments));
+
+        // Remove from indexes
+        removeCommentFromIndex(authorCommentsFile($post['author']), $commentId);
+        removeCommentFromIndex(commenterCommentsFile($username), $commentId);
+
+        echo json_encode(["status" => "success", "message" => "Comment deleted."]);
         break;
 
     default:
