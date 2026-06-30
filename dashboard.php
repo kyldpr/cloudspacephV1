@@ -296,10 +296,10 @@
             box-shadow: 2px 2px 0 #dbb594;
         }
 
-        /* Thumbnail */
+        /* ── Thumbnail (enlarged & clickable) ── */
         .post-thumb {
-            flex: 0 0 110px;
-            height: 110px;
+            flex: 0 0 160px;
+            height: 160px;
             border-radius: 16px;
             overflow: hidden;
             background: #f5ede4;
@@ -307,6 +307,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .post-thumb:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .post-thumb img {
             width: 100%;
@@ -1258,14 +1264,90 @@
             background: #9fb89a;
             transform: translateY(-2px);
         }
+        /* ── Delete button in log modal (matching delete confirm style) ── */
         .log-modal .modal-actions .delete-btn {
             background: #c62828;
             color: #fff;
             box-shadow: 2px 3px 0 #8b1a1a;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
         .log-modal .modal-actions .delete-btn:hover {
             background: #b71c1c;
             transform: translateY(-2px);
+            box-shadow: 2px 5px 0 #8b1a1a;
+        }
+        .log-modal .modal-actions .delete-btn:active {
+            transform: translateY(2px);
+            box-shadow: 2px 1px 0 #8b1a1a;
+        }
+
+        /* ── Image Viewer Modal ── */
+        .image-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 250ms ease;
+            will-change: opacity;
+        }
+        .image-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .image-modal {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-modal img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+            border: 3px solid #b2c9ab;
+            object-fit: contain;
+            background: #fcf8f0;
+        }
+        .image-modal-close {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: #1a2a5e;
+            color: #fcf8f0;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 4px 0 #0a0a2e;
+            transition: all 0.2s ease;
+        }
+        .image-modal-close:hover {
+            background: #f4c2c2;
+            color: #1a2a5e;
+            transform: rotate(90deg);
         }
 
         /* ── Mobile Responsive ── */
@@ -1741,15 +1823,23 @@
     <div class="log-modal-overlay" id="logModal">
         <div class="log-modal">
             <h3>📋 Log Details</h3>
-            <div class="log-detail-item"><strong>Timestamp:</strong> <span id="logTimestamp"></span></div>
+            <div class="log-detail-item"><strong>🕒 Timestamp:</strong> <span id="logTimestamp"></span></div>
             <div class="log-detail-item"><strong>IP Address:</strong> <span id="logIP"></span></div>
             <div class="log-detail-item"><strong>Country:</strong> <span id="logCountry"></span></div>
             <div class="log-detail-item"><strong>User Agent:</strong> <span id="logUserAgent"></span></div>
             <div class="log-detail-item"><strong>Action:</strong> <span id="logAction"></span></div>
             <div class="modal-actions" style="margin-top:1.5rem;">
                 <button class="cancel-btn" id="logCloseBtn">Close</button>
-                <button class="delete-btn" id="logDeleteBtn" style="background:#c62828;color:#fff;box-shadow:2px 3px 0 #8b1a1a;">🗑 Delete This Log</button>
+                <button class="delete-btn" id="logDeleteBtn">🗑 Delete This Log</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ─── IMAGE VIEWER MODAL ─── -->
+    <div class="image-modal-overlay" id="imageModal">
+        <div class="image-modal">
+            <img id="imageModalImg" src="" alt="Full image" />
+            <button class="image-modal-close" id="imageModalClose">&times;</button>
         </div>
     </div>
 
@@ -2094,6 +2184,29 @@
             if (e.target === this) closeLogModal();
         });
 
+        // ── Image Modal Functions ──
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalImg');
+            img.src = imageUrl;
+            modal.classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // ── Attach close events for image modal ──
+        document.getElementById('imageModalClose').addEventListener('click', closeImageModal);
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeImageModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('imageModal').classList.contains('active')) {
+                closeImageModal();
+            }
+        });
+
         // ============================================================
         // ── FORUMS FEATURE ──
         // ============================================================
@@ -2141,7 +2254,14 @@
                     const imgUrl = getSecureImageUrl(post.image);
                     if (imgUrl) {
                         const img = document.createElement('img');
-                        img.src = imgUrl; img.alt = 'Thumbnail';
+                        img.src = imgUrl;
+                        img.alt = 'Thumbnail';
+                        img.loading = 'lazy';
+                        // ── Click to open image modal ──
+                        thumbDiv.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            openImageModal(imgUrl);
+                        });
                         thumbDiv.appendChild(img);
                     } else {
                         const noImg = document.createElement('span');
