@@ -158,6 +158,7 @@ switch ($action) {
                 if (!isset($post['liked_by'])) $post['liked_by'] = [];
                 $post['liked'] = $currentUser ? in_array(strtolower($currentUser), array_map('strtolower', $post['liked_by'])) : false;
                 unset($post['liked_by']); // not needed in output
+                unset($post['viewed_by']); // hide viewed_by from output
 
                 $commentsFile = commentFileForPost($post['id']);
                 $comments = readJson($commentsFile);
@@ -222,6 +223,7 @@ switch ($action) {
         }
         $post['liked'] = $liked;
         unset($post['liked_by']); // remove list, only keep count
+        unset($post['viewed_by']); // hide viewed_by
 
         $commentsFile = commentFileForPost($postId);
         $comments = readJson($commentsFile);
@@ -485,7 +487,8 @@ switch ($action) {
             "image"     => $imageFilename,
             "views"     => 0,
             "likes"     => 0,
-            "liked_by"  => []
+            "liked_by"  => [],
+            "viewed_by" => []  // ← new field for unique views
         ];
 
         $postFile = $postsDir . $postId . '.json';
@@ -685,8 +688,9 @@ switch ($action) {
         echo json_encode(["status" => "success", "message" => "Post deleted."]);
         break;
 
-    // ── VIEW POST (increment view count) ──
+    // ── VIEW POST (increment view count, one per user) ──
     case 'view_post':
+        // Authenticate
         $headers = [];
         if (function_exists('getallheaders')) {
             $headers = getallheaders();
@@ -723,9 +727,18 @@ switch ($action) {
             echo json_encode(["status" => "error", "message" => "Post not found."]);
             exit;
         }
-        // Increment views
-        $post['views'] = isset($post['views']) ? $post['views'] + 1 : 1;
-        writeJson($postFile, $post);
+
+        // Initialize viewed_by if not exist
+        if (!isset($post['viewed_by'])) $post['viewed_by'] = [];
+
+        // Check if this user already viewed
+        $user = strtolower($username);
+        if (!in_array($user, array_map('strtolower', $post['viewed_by']))) {
+            $post['views'] = isset($post['views']) ? $post['views'] + 1 : 1;
+            $post['viewed_by'][] = $user;
+            writeJson($postFile, $post);
+        }
+
         echo json_encode(["status" => "success", "views" => $post['views']]);
         break;
 

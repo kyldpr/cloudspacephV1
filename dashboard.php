@@ -1179,6 +1179,95 @@
             transform: translateY(-2px);
         }
 
+        /* ── Log Detail Modal ── */
+        .log-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 200ms ease;
+            will-change: opacity;
+        }
+        .log-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+            transition: opacity 300ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .log-modal {
+            background: #fcf8f0;
+            border: 2px solid #b2c9ab;
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 6px 8px 0 #dbb594;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 200ms ease, opacity 200ms ease;
+            will-change: transform, opacity;
+        }
+        .log-modal-overlay.active .log-modal {
+            transform: scale(1);
+            opacity: 1;
+            transition: transform 300ms cubic-bezier(0.4,0,0.2,1),
+                        opacity 300ms cubic-bezier(0.4,0,0.2,1);
+        }
+        .log-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #1a2a5e;
+            margin-bottom: 1rem;
+        }
+        .log-detail-item {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: #0a0a2e;
+        }
+        .log-detail-item strong {
+            color: #1a2a5e;
+        }
+        .log-modal .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .log-modal .modal-actions button {
+            padding: 0.6rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            box-shadow: 2px 3px 0 #8a9a7a;
+        }
+        .log-modal .modal-actions .cancel-btn {
+            background: #b2c9ab;
+            color: #0a0a2e;
+        }
+        .log-modal .modal-actions .cancel-btn:hover {
+            background: #9fb89a;
+            transform: translateY(-2px);
+        }
+        .log-modal .modal-actions .delete-btn {
+            background: #c62828;
+            color: #fff;
+            box-shadow: 2px 3px 0 #8b1a1a;
+        }
+        .log-modal .modal-actions .delete-btn:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
         /* ── Mobile Responsive ── */
         @media (max-width: 768px) {
             .app {
@@ -1648,6 +1737,22 @@
         </div>
     </div>
 
+    <!-- ─── LOG DETAIL MODAL ─── -->
+    <div class="log-modal-overlay" id="logModal">
+        <div class="log-modal">
+            <h3>📋 Log Details</h3>
+            <div class="log-detail-item"><strong>Timestamp:</strong> <span id="logTimestamp"></span></div>
+            <div class="log-detail-item"><strong>IP Address:</strong> <span id="logIP"></span></div>
+            <div class="log-detail-item"><strong>Country:</strong> <span id="logCountry"></span></div>
+            <div class="log-detail-item"><strong>User Agent:</strong> <span id="logUserAgent"></span></div>
+            <div class="log-detail-item"><strong>Action:</strong> <span id="logAction"></span></div>
+            <div class="modal-actions" style="margin-top:1.5rem;">
+                <button class="cancel-btn" id="logCloseBtn">Close</button>
+                <button class="delete-btn" id="logDeleteBtn" style="background:#c62828;color:#fff;box-shadow:2px 3px 0 #8b1a1a;">🗑 Delete This Log</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ── Check authentication ──
         const username = localStorage.getItem('cloudspace_username');
@@ -1856,17 +1961,32 @@
             msg.classList.add('success'); msg.textContent = '✅ Thank you! Your report has been submitted.';
             document.getElementById('bugReportForm').reset();
         });
+
+        // ── Updated loadLogs with clickable log items ──
         async function loadLogs() {
             const token = localStorage.getItem('cloudspace_token');
             const list = document.getElementById('logList');
             list.innerHTML = '<li class="empty-state">Loading logs...</li>';
-            if (!token) { list.innerHTML = '<li class="empty-state">Not authenticated.</li>'; return; }
+            if (!token) {
+                list.innerHTML = '<li class="empty-state">Not authenticated.</li>';
+                return;
+            }
             try {
-                const res = await fetch('auth-api.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action:'get_logs',token}) });
+                const res = await fetch('auth-api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'get_logs', token: token })
+                });
                 const data = await res.json();
-                if (data.status !== 'success') { list.innerHTML = `<li class="empty-state">${data.message || 'Failed to load logs.'}</li>`; return; }
+                if (data.status !== 'success') {
+                    list.innerHTML = `<li class="empty-state">${data.message || 'Failed to load logs.'}</li>`;
+                    return;
+                }
                 const logs = data.logs || [];
-                if (logs.length === 0) { list.innerHTML = '<li class="empty-state">No recent logs available.</li>'; return; }
+                if (logs.length === 0) {
+                    list.innerHTML = '<li class="empty-state">No recent logs available.</li>';
+                    return;
+                }
                 const groups = {};
                 logs.forEach(log => {
                     const date = new Date(log.timestamp);
@@ -1878,19 +1998,101 @@
                 let html = '';
                 sortedDates.forEach(dateKey => {
                     const dateObj = new Date(dateKey + 'T00:00:00');
-                    const displayDate = dateObj.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+                    const displayDate = dateObj.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
                     html += `<li style="padding:0.3rem 0;font-weight:800;color:#1a2a5e;background:transparent;border-bottom:2px solid #b2c9ab;">📅 ${displayDate}</li>`;
                     groups[dateKey].forEach(log => {
-                        const time = new Date(log.timestamp).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
-                        html += `<li class="log-item"><span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span><span class="log-time">IP: ${escapeHtml(log.ip_address)}</span></li>`;
+                        const time = new Date(log.timestamp).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        // Store full log data as data attributes for modal
+                        html += `
+                            <li class="log-item" style="cursor:pointer;" data-log='${JSON.stringify(log).replace(/'/g, "&apos;")}'>
+                                <span>🕒 ${time} &bull; ${escapeHtml(log.action)}</span>
+                                <span class="log-time">IP: ${escapeHtml(log.ip_address)}</span>
+                            </li>
+                        `;
                     });
                 });
                 list.innerHTML = html;
+
+                // ── Attach click event to each log item to open modal ──
+                document.querySelectorAll('.log-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const logData = JSON.parse(this.dataset.log);
+                        openLogModal(logData);
+                    });
+                });
+
             } catch (err) {
                 console.warn('loadLogs error:', err);
                 list.innerHTML = '<li class="empty-state">Network error loading logs.</li>';
             }
         }
+
+        // ── Log Modal ──
+        let currentLogTimestamp = null;
+
+        function openLogModal(logData) {
+            currentLogTimestamp = logData.timestamp;
+            document.getElementById('logTimestamp').textContent = logData.timestamp;
+            document.getElementById('logIP').textContent = logData.ip_address || 'N/A';
+            document.getElementById('logCountry').textContent = logData.country || 'N/A';
+            document.getElementById('logUserAgent').textContent = logData.user_agent || 'N/A';
+            document.getElementById('logAction').textContent = logData.action;
+            document.getElementById('logModal').classList.add('active');
+        }
+
+        function closeLogModal() {
+            document.getElementById('logModal').classList.remove('active');
+        }
+
+        // ── Delete a specific log entry ──
+        async function deleteLogEntry() {
+            if (!currentLogTimestamp) return;
+            if (!confirm('Delete this log entry?')) return;
+
+            const token = localStorage.getItem('cloudspace_token');
+            if (!token) {
+                showToast('Authentication required.', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('auth-api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete_log',
+                        token: token,
+                        timestamp: currentLogTimestamp
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('Log deleted.', 'success');
+                    closeLogModal();
+                    loadLogs(); // refresh list
+                } else {
+                    showToast(data.message || 'Failed to delete log.', 'error');
+                }
+            } catch (err) {
+                showToast('Network error.', 'error');
+            }
+        }
+
+        // ── Attach event listeners for log modal ──
+        document.getElementById('logCloseBtn').addEventListener('click', closeLogModal);
+        document.getElementById('logDeleteBtn').addEventListener('click', deleteLogEntry);
+        // Click outside to close
+        document.getElementById('logModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLogModal();
+        });
 
         // ============================================================
         // ── FORUMS FEATURE ──

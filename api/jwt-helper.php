@@ -91,6 +91,21 @@ class JWTSecurity {
         exit;
     }
 
+    // ── Helper to get country code from IP using ip-api.com ──
+    private static function getCountryFromIP($ip) {
+        // Use ip-api.com free service (no API key required)
+        $url = "http://ip-api.com/json/{$ip}?fields=status,countryCode";
+        $response = @file_get_contents($url);
+        if ($response) {
+            $data = json_decode($response, true);
+            if ($data['status'] === 'success') {
+                return $data['countryCode'] ?? 'Unknown';
+            }
+        }
+        return 'Unknown';
+    }
+
+    // ── Enhanced logUserAction with user_agent and country ──
     public static function logUserAction($username, $actionDescription) {
         $logsDir = dirname(__DIR__) . '/api/profiles/users/logs/';
         if (!is_dir($logsDir)) {
@@ -103,10 +118,17 @@ class JWTSecurity {
         if (file_exists($logFile)) {
             $currentLogs = json_decode(file_get_contents($logFile), true) ?: [];
         }
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN';
+        $country = self::getCountryFromIP($ip);
+
         array_unshift($currentLogs, [
-            'timestamp' => date('Y-m-d H:i:s'),
-            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN',
-            'action' => $actionDescription
+            'timestamp'   => date('Y-m-d H:i:s'),
+            'ip_address'  => $ip,
+            'user_agent'  => $userAgent,
+            'country'     => $country,
+            'action'      => $actionDescription
         ]);
         file_put_contents($logFile, json_encode($currentLogs, JSON_PRETTY_PRINT));
     }

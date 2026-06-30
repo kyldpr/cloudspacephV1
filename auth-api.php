@@ -359,6 +359,57 @@ switch ($action) {
         ]);
         break;
 
+    // ─── DELETE A SPECIFIC LOG ENTRY ───
+    case 'delete_log':
+        $token = $inputData['token'] ?? '';
+        if (!$token) {
+            echo json_encode(["status" => "error", "message" => "Token required."]);
+            exit;
+        }
+        $username = JWTSecurity::validateToken($token);
+        if (!$username) {
+            echo json_encode(["status" => "error", "message" => "Invalid or expired token."]);
+            exit;
+        }
+        if (!isValidUsername($username)) {
+            echo json_encode(["status" => "error", "message" => "Invalid username in token."]);
+            exit;
+        }
+
+        $timestamp = $inputData['timestamp'] ?? '';
+        if (!$timestamp) {
+            echo json_encode(["status" => "error", "message" => "Timestamp is required."]);
+            exit;
+        }
+
+        $logsFile = $baseDir . 'logs/' . strtolower($username) . '.json';
+        if (!file_exists($logsFile)) {
+            echo json_encode(["status" => "error", "message" => "No logs found."]);
+            exit;
+        }
+
+        $logs = json_decode(file_get_contents($logsFile), true);
+        if (!is_array($logs)) {
+            echo json_encode(["status" => "error", "message" => "Invalid log data."]);
+            exit;
+        }
+
+        // Filter out the log with the given timestamp
+        $newLogs = array_filter($logs, function($log) use ($timestamp) {
+            return $log['timestamp'] !== $timestamp;
+        });
+
+        if (count($newLogs) === count($logs)) {
+            echo json_encode(["status" => "error", "message" => "Log entry not found."]);
+            exit;
+        }
+
+        // Re-index and save
+        file_put_contents($logsFile, json_encode(array_values($newLogs), JSON_PRETTY_PRINT));
+
+        echo json_encode(["status" => "success", "message" => "Log entry deleted."]);
+        break;
+
     default:
         echo json_encode(["status" => "error", "message" => "Invalid action specified."]);
         break;
